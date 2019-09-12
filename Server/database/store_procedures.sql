@@ -1,3 +1,8 @@
+select a.nombre , b.salario_hora as salario
+from empleados a
+inner join salarios b on b.cedula_empleado = a.cedula;
+
+
 USE `rrhh_db`;
 DROP procedure IF EXISTS `nuevoEmpleado`;
 
@@ -26,28 +31,92 @@ end$$
 DELIMITER ;
 CALL nuevoEmpleado('802220222','Dora','Gonzales', 'Fuentes', 'd79ora@gmail.com', '2010-09-25', 1, 1, 2000.00);
 
-select * from empleados;
-select a.nombre, a.cedula , b.salario_hora as salario
-from empleados a
-inner join salario b on b.cedula_empleado = a.cedula;
 
-select * from telefonos;
+USE `rrhh_db`;
+DROP procedure IF EXISTS `nuevoPermiso`;
 
- insert into telefonos(id_empleado, numero, tipo_telefono)
-        values(1, '45345', 1);
-CREATE EVENT `obtener planillas` 
-ON SCHEDULE AT now() + INTERVAL 30 day
-DO update tabla
-set valido = 0
-where
-DATE_ADD(fechaCreacion, INTERVAL 45 DAY)<NOW() and valido=1;
-
-DELIMITER ;;
-CREATE FUNCTION FIRST_DAY(day DATE)
-RETURNS DATE DETERMINISTIC
+DELIMITER $$
+USE `rrhh_db`$$
+CREATE PROCEDURE `nuevoPermiso` (
+	in _cedula varchar(9),
+    in _fecha datetime,
+    in _descripcion varchar(300),
+    in _costoSalarial decimal(10,2)
+)
 BEGIN
-  RETURN ADDDATE(LAST_DAY(SUBDATE(day, INTERVAL 1 MONTH)), 1);
-END;;
+	IF (SELECT cedula FROM empleados WHERE cedula = _cedula AND activo = true) then
+		insert into permisos(cedula_empleado, fecha, descripcion, costo_salarial)
+        values(_cedula, _fecha, _descripcion, _costoSalarial);
+    end if;
+END$$
+
 DELIMITER ;
-SELECT FIRST_DAY('2010-09-25');
+CALL nuevoPermiso('802220222', '2015-09-25', 'Esta es la primera prueba de los pemisos de salida', -500.00);
+
+
+USE `rrhh_db`;
+DROP procedure IF EXISTS `nuevoAumento`;
+
+DELIMITER $$
+USE `rrhh_db`$$
+CREATE DEFINER=`root`@`localhost` PROCEDURE `nuevoAumento`(
+	in _cedula varchar(9),
+    in _fecha datetime,
+    in _aumento_salarial decimal(10,2)
+)
+BEGIN
+IF (SELECT cedula FROM empleados WHERE cedula = _cedula AND activo = true) then
+		insert into aumento_salarial(cedula_empleado, fecha, cantidad)
+        values(_cedula, _fecha, _aumento_salarial);
+        update salarios
+        set salario_hora = salario_hora + _aumento_salarial
+        where cedula_empleado = _cedula;
+    end if;
+END$$
+
+DELIMITER ;
+CALL nuevoAumento('802220222', '2018-09-25', 800.00);
+
+
+USE `rrhh_db`;
+DROP procedure IF EXISTS `nuevoRegistroDisciplinario`;
+
+DELIMITER $$
+USE `rrhh_db`$$
+CREATE PROCEDURE `nuevoRegistroDisciplinario` (
+	in _cedula varchar(9),
+    in _fecha datetime,
+    in _descripcion varchar(300)
+)
+BEGIN
+IF (SELECT cedula FROM empleados WHERE cedula = _cedula AND activo = true) then
+		insert into registro_disciplinario(cedula_empleado, fecha, descripcion)
+        values(_cedula, _fecha, _descripcion);
+    end if;
+END$$
+DELIMITER ;
+CALL nuevoRegistroDisciplinario('802220222', '2018-09-25', 'Mal trato al cliente');
+
+
+USE `rrhh_db`;
+DROP procedure IF EXISTS `nuevoBono`;
+
+DELIMITER $$
+USE `rrhh_db`$$
+CREATE PROCEDURE `nuevoBono` (
+	in _cedula varchar(9),
+    in _motivo varchar(200),
+    in _cantidad decimal (10.2),
+    in _fecha datetime
+)
+BEGIN
+IF (SELECT cedula FROM empleados WHERE cedula = _cedula AND activo = true) then
+		insert into bonos(cedula_empleado, motivo, cantidad, fecha)
+        values(_cedula, _motivo, _cantidad, _fecha);
+    end if;
+END$$
+
+DELIMITER ;
+CALL nuevoBono('802220222', 'Trabajo duro', 1000.00 ,'2018-09-25');
+
 

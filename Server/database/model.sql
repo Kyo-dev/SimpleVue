@@ -22,6 +22,7 @@ create table empleados(
     fecha_contrato datetime default now() not null,
     tipo_empleado tinyint,
     planilla int default 1 not null,
+    activo boolean default true not null,
     constraint fk_empleados_planilla foreign key (planilla) references planilla(id),
     constraint fk_empleados_tipo_empleado foreign key (tipo_empleado) references tipo_empleados(id),
     constraint pk_empleados primary key (cedula)
@@ -65,11 +66,12 @@ create table permisos(
     cedula_empleado varchar(9) not null,
     descripcion varchar(300) not null,
     costo_salarial decimal(10,2) not null,
+    fecha datetime not null,
     constraint fk_permisos_empleados foreign key(cedula_empleado) references empleados(cedula),
     constraint ch_costo_salarial check (costo_salarial <= 0),
     constraint pk_permisos primary key(id)
 );
-create table registro_disciplario(
+create table registro_disciplinario(
 	id int auto_increment,
     cedula_empleado varchar(9) not null,
     descripcion varchar(300) not null,
@@ -98,7 +100,7 @@ create table aumento_salarial(
     fecha datetime default now() not null,
     cantidad decimal(10,2) not null,
     constraint fk_aumentos_empleados foreign key(cedula_empleado) references empleados(cedula),
-    constraint ch_aumento_saliarl check(cantidad >= 0),
+    constraint ch_aumento_salarial check(cantidad >= 0),
     constraint pk_aumento_salarial primary key(id)
 );
 create table bonos(
@@ -106,6 +108,7 @@ create table bonos(
     cedula_empleado varchar(9) not null,
     motivo varchar(200) not null,
     cantidad decimal(10,2) not null,
+    fecha datetime not null, 
     constraint fk_bonos_empleados foreign key(cedula_empleado) references empleados(cedula),
     constraint ch_bonos check (cantidad >= 0),
     constraint pk_bonos primary key(id)
