@@ -1,20 +1,29 @@
 create database rrhh_db;
+use rrhh_db;
+SET GLOBAL event_scheduler = ON;
 create table tipo_empleados(
 	id tinyint auto_increment not null,
     nombre_cargo varchar(50) not null,
     activo boolean default true,
     constraint pk_tipo_empleado primary key(id)
 );
+create table planilla(
+	id int auto_increment not null,
+    fecha datetime not null, 
+    activo boolean default true,
+    constraint pk_planilla primary key (id, fecha)
+);
 create table empleados(
 	cedula varchar(9) not null, 
     nombre varchar(50) not null,
     p_apellido varchar(50) not null,
     s_apellido varchar(50) not null,
-    correo text unique not null,
-    fecha_contrato date default now() not null,
+    correo varchar(200) unique not null,
+    fecha_contrato datetime default now() not null,
     tipo_empleado tinyint,
-    constraint ch_empleados_salario check(salario_hora >= 0),
-    constraint fk_tipo_empleado_empleados foreign key (tipo_empleado) references tipo_empleados(id),
+    planilla int default 1 not null,
+    constraint fk_empleados_planilla foreign key (planilla) references planilla(id),
+    constraint fk_empleados_tipo_empleado foreign key (tipo_empleado) references tipo_empleados(id),
     constraint pk_empleados primary key (cedula)
 );
 create table adm (
@@ -33,7 +42,10 @@ create table telefonos(
 	id int auto_increment,
     numero varchar(8) unique not null,
     cedula_empleado varchar(9) not null,
-    constraint fk_cedula_empleado foreign key(cedula_empleado) references tipo_telefonos(id)
+    tipo_telefono tinyint not null,
+    constraint fk_telefonos_tipo_telefono foreign key(tipo_telefono) references tipo_telefonos(id),
+    constraint fk_telefonos_empleados foreign key(cedula_empleado) references empleados(cedula),
+    constraint pk_telefonos primary key (id)
 );
 create table tareas(
 	id int auto_increment not null,
@@ -61,7 +73,7 @@ create table registro_disciplario(
 	id int auto_increment,
     cedula_empleado varchar(9) not null,
     descripcion varchar(300) not null,
-    fecha date default now() not null,
+    fecha datetime default now() not null,
     constraint fk_registro_disciplinario_empleados foreign key(cedula_empleado) references empleados(cedula),
     constraint pk_registro_disciplinario primary key(id)
 );
@@ -73,7 +85,7 @@ create table horas_extra(
     constraint fk_horas_extra_empleados foreign key(cedula_empleado) references empleados(cedula),
     constraint pk_horas_extra primary key(id)
 );
-create table salario(
+create table salarios(
 	id int auto_increment,
     cedula_empleado varchar(9) not null,
 	salario_hora decimal(10,2) not null,
@@ -83,7 +95,7 @@ create table salario(
 create table aumento_salarial(
 	id int auto_increment,
     cedula_empleado varchar(9) not null,
-    fecha date default now() not null,
+    fecha datetime default now() not null,
     cantidad decimal(10,2) not null,
     constraint fk_aumentos_empleados foreign key(cedula_empleado) references empleados(cedula),
     constraint ch_aumento_saliarl check(cantidad >= 0),
@@ -94,7 +106,7 @@ create table bonos(
     cedula_empleado varchar(9) not null,
     motivo varchar(200) not null,
     cantidad decimal(10,2) not null,
-    constraint fk_aumentos_empleados foreign key(cedula_empleado) references empleados(cedula),
+    constraint fk_bonos_empleados foreign key(cedula_empleado) references empleados(cedula),
     constraint ch_bonos check (cantidad >= 0),
     constraint pk_bonos primary key(id)
 );
@@ -106,16 +118,14 @@ create table vacaciones(
     constraint fk_vacaciones foreign key(cedula_empleado) references empleados(cedula),
     constraint pk_vacaciones primary key(id)
 );
-create table planilla(
-	id int auto_increment not null,
-    fecha date default now() not null
-);
 create table farmacia(
 	id int auto_increment,
     cedula_juridica varchar (20) not null,
     nombre varchar(100) not null,
     ubicacion varchar (200) not null,
     cedula_adm varchar(9),
+    planilla int not null,
     constraint fk_farmacia_adm foreign key (cedula_adm) references adm(cedula),
+    constraint fk_farmacia_planilla foreign key(planilla) references planilla(id),
     constraint pk_farmacia primary key (id)
 );
