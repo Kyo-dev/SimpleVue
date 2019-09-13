@@ -4,6 +4,7 @@ const mysqlConnection = mysql.createConnection({
     host: 'localhost',
     user: 'root',
     password: 'password',
+    multipleStatements: true,
     database: 'rrhh_db'
 })
 mysqlConnection.connect(function(err){

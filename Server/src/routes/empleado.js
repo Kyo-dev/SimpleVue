@@ -1,7 +1,8 @@
 import {Router} from 'express'
 const router = Router()
-import { nuevoEmpleado, todosEmpleados } from '../controllers/empleado.controller'
+import { nuevoEmpleado, todosEmpleados, empleadoDNI } from '../controllers/empleado.controller'
 router.get('/', todosEmpleados)
-router.post('/', nuevoEmpleado )
+router.get('/:cedula', empleadoDNI)
+router.post('/', nuevoEmpleado)
 
 export default router
