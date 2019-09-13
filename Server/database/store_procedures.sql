@@ -29,7 +29,7 @@ begin
 end$$
 
 DELIMITER ;
-CALL nuevoEmpleado('802220222','Dora','Gonzales', 'Fuentes', 'd79ora@gmail.com', '2010-09-25', 1, 1, 2000.00);
+CALL nuevoEmpleado('802220222','Dora','Gonzales', 'Fuentes', 'd79ora@gmail.com', '2010-09-25', 2, 1, 2000.00);
 
 
 USE `rrhh_db`;
@@ -119,4 +119,51 @@ END$$
 DELIMITER ;
 CALL nuevoBono('802220222', 'Trabajo duro', 1000.00 ,'2018-09-25');
 
+
+USE `rrhh_db`;
+DROP procedure IF EXISTS `nuevaTareaCargo`;
+
+DELIMITER $$
+USE `rrhh_db`$$
+CREATE PROCEDURE `nuevaTareaCargo` (
+	in _titulo varchar(30),
+    in _descripcion varchar(300),
+    in _id_tipo_empleado tinyint
+)
+BEGIN
+	insert into tareas(titulo, descripcion)
+    values (_titulo, _descripcion);
+    set @idTarea = last_insert_id();
+    insert into cargo_tareas(id_tipo_empleado, id_tarea)
+    values(_id_tipo_empleado, @idTarea);
+END$$
+
+DELIMITER ;
+CALL nuevaTareaCargo('Tarea1-adm', 'Primera pueba', 1);
+
+select a.id_tipo_empleado, a.id_tarea, b.titulo, b.descripcion, c.nombre_cargo
+from cargo_tareas a
+inner join  tareas b on a.id_tarea = b.id
+inner join tipo_empleados c on c.id = a.id_tipo_empleado;
+
+
+USE `rrhh_db`;
+DROP procedure IF EXISTS `nuevoAdm`;
+
+DELIMITER $$
+USE `rrhh_db`$$
+CREATE DEFINER=`root`@`localhost` PROCEDURE `nuevoAdm`(
+	in _cedula varchar(9),
+    in _clave text,
+    in _fecha datetime
+)
+BEGIN
+if (SELECT cedula FROM empleados WHERE cedula = _cedula AND activo = true and tipo_empleado = 1) then
+	insert into adms(cedula, clave, fecha)
+    values(_cedula, _clave, _fecha);
+end if;
+END$$
+
+DELIMITER ;
+CALL nuevoAdm('802220222', 'Clave', '2018-02-25');
 

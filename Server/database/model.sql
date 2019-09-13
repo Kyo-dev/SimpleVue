@@ -28,11 +28,13 @@ create table empleados(
     constraint pk_empleados primary key (cedula)
 );
 create table adm (
+	id tinyint auto_increment,
 	cedula varchar(9) unique,
     clave text not null,
+    fecha datetime default now() not null,
     activo boolean default true,
     constraint fk_adm_empleados foreign key(cedula) references empleados(cedula),
-    constraint pk_admi primary key (cedula)
+    constraint pk_admi primary key (id)
 );
 create table tipo_telefonos(
 	id tinyint auto_increment,
@@ -84,6 +86,7 @@ create table horas_extra(
     cedula_empleado varchar(9) not null,
     cantidad_horas tinyint not null,
     motivo varchar(300) not null,
+    fecha datetime default now() not null, 
     constraint fk_horas_extra_empleados foreign key(cedula_empleado) references empleados(cedula),
     constraint pk_horas_extra primary key(id)
 );
