@@ -167,3 +167,24 @@ END$$
 DELIMITER ;
 CALL nuevoAdm('802220222', 'Clave', '2018-02-25');
 
+
+USE `rrhh_db`;
+DROP procedure IF EXISTS `nuevaHoraExtra`;
+
+DELIMITER $$
+USE `rrhh_db`$$
+CREATE PROCEDURE `nuevaHoraExtra` (
+	in _cedula varchar(9),
+    in _cantidad_horas text,
+    in _motivo varchar(300),
+    in _fecha datetime
+)
+BEGIN
+if (SELECT cedula FROM empleados WHERE cedula = _cedula AND activo = true) then
+	insert into horas_extra(cedula_empleado, cantidad_horas, motivo, fecha)
+    values(_cedula, _cantidad_horas, _motivo, _fecha);
+end if;
+END$$
+
+DELIMITER ;
+CALL nuevaHoraExtra('802220222', 2, 'Probando el sp', '2018-02-25');
