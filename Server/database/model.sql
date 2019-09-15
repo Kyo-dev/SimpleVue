@@ -30,7 +30,7 @@ create table empleados(
 create table adm (
 	id tinyint auto_increment,
 	cedula varchar(9) unique,
-    clave text not null,
+    clave varchar(400) not null,
     fecha datetime default now() not null,
     activo boolean default true,
     constraint fk_adm_empleados foreign key(cedula) references empleados(cedula),

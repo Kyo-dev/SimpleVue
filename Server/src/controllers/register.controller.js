@@ -21,8 +21,7 @@ export async function registerAdmin(req, res) {
                 })
             })
         }
-    })
-    
+    }) 
 }
 
 export default router

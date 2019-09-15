@@ -165,8 +165,8 @@ end if;
 END$$
 
 DELIMITER ;
-CALL nuevoAdm('802220222', 'Clave', '2018-02-25');
-
+CALL nuevoAdm('7897867', '1234', '2018-02-25');
+Select * from empleados where cedula = '7897867'
 
 USE `rrhh_db`;
 DROP procedure IF EXISTS `nuevaHoraExtra`;
