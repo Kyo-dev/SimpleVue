@@ -1,8 +1,3 @@
-select a.nombre , b.salario_hora as salario
-from empleados a
-inner join salarios b on b.cedula_empleado = a.cedula;
-
-
 USE `rrhh_db`;
 DROP procedure IF EXISTS `nuevoEmpleado`;
 
@@ -31,6 +26,7 @@ end$$
 DELIMITER ;
 CALL nuevoEmpleado('802220222','Dora','Gonzales', 'Fuentes', 'd79ora@gmail.com', '2010-09-25', 2, 1, 2000.00);
 
+select * from adm
 
 USE `rrhh_db`;
 DROP procedure IF EXISTS `nuevoPermiso`;
@@ -141,11 +137,6 @@ END$$
 DELIMITER ;
 CALL nuevaTareaCargo('Tarea1-adm', 'Primera pueba', 1);
 
-select a.id_tipo_empleado, a.id_tarea, b.titulo, b.descripcion, c.nombre_cargo
-from cargo_tareas a
-inner join  tareas b on a.id_tarea = b.id
-inner join tipo_empleados c on c.id = a.id_tipo_empleado;
-
 
 USE `rrhh_db`;
 DROP procedure IF EXISTS `nuevoAdm`;
@@ -166,7 +157,6 @@ END$$
 
 DELIMITER ;
 CALL nuevoAdm('7897867', '1234', '2018-02-25');
-Select * from empleados where cedula = '7897867'
 
 USE `rrhh_db`;
 DROP procedure IF EXISTS `nuevaHoraExtra`;

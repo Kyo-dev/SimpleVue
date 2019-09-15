@@ -81,15 +81,14 @@ export async function registerAdmin(req, res) {
 export async function loginAdm(req, res) {
     const { _correo, _clave, _cedula } = req.body
     console.log(req.body._clave)
-    if (_correo.length <= 0) {
-        res.status(401).json({ "message:": "Por favor ingrese su correo" })
-    }
     await mysqlConnection.query('SELECT correo FROM empleados WHERE correo = ?', [_correo], (err, rows, fields) => {
+        console.log('HOLA')
         if (!err) {
             mysqlConnection.query('SELECT a.clave FROM adm a inner join empleados b on a.cedula = b.cedula where a.cedula = ?', [_cedula], (err, rows, fields) => {
                 console.log('Clave encriptada: ')
                 let data = JSON.stringify(rows[0])
                 let clave = data.substring(10,data.length-2)
+                console.log('ESTA ES LA CLAVE' + clave)
                 console.log(clave)
                 if (!err) {
                     console.log('si entra')
