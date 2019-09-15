@@ -1,9 +1,10 @@
 import mysql from 'mysql'
+import config from './config.key'
 
 const mysqlConnection = mysql.createConnection({
     host: 'localhost',
     user: 'root',
-    password: 'password',
+    password: config.pass,
     multipleStatements: true,
     database: 'rrhh_db'
 })
