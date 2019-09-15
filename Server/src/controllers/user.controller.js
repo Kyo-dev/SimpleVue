@@ -88,10 +88,12 @@ export async function loginAdm(req, res) {
         if (!err) {
             mysqlConnection.query('SELECT a.clave FROM adm a inner join empleados b on a.cedula = b.cedula where a.cedula = ?', [_cedula], (err, rows, fields) => {
                 console.log('Clave encriptada: ')
-                console.log(JSON.stringify(rows[0]))
+                let data = JSON.stringify(rows[0])
+                let clave = data.substring(10,data.length-2)
+                console.log(clave)
                 if (!err) {
                     console.log('si entra')
-                    bcrypt.compare(_clave, JSON.stringify(rows[0]), (err, result) => {
+                    bcrypt.compare(_clave, clave, (err, result) => {
                         if (err) res.status(401).json({message: "error"})
                         if (result){
                             console.log('si entra2')
