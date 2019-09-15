@@ -91,8 +91,9 @@ export async function loginAdm(req, res) {
                 console.log(JSON.stringify(rows[0]))
                 if (!err) {
                     console.log('si entra')
-                    bcrypt.compare(_clave, JSON.stringify(rows[0], (err, result) => {
-                        if (!err) {
+                    bcrypt.compare(_clave, JSON.stringify(rows[0]), (err, result) => {
+                        if (err) res.status(401).json({message: "error"})
+                        if (result){
                             console.log('si entra2')
                             const token = jwt.sign({
                                 email: _correo,
@@ -102,7 +103,7 @@ export async function loginAdm(req, res) {
                                 {
                                     expiresIn: "1h"
                                 })
-                            res.status(200).json({
+                            return res.status(200).json({
                                 Auth: true,
                                 result: result,
                                 token: token,
@@ -111,9 +112,7 @@ export async function loginAdm(req, res) {
                         } else {
                             res.status(401).json({ message: 'Auth faild 3' })
                         }
-                    }))
-                } else {
-                    res.status(401).json({ "message:": "Error 01" })
+                    })
                 }
             })
 
