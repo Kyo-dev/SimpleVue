@@ -11,7 +11,7 @@ let router = new Router({
     {
       path: '/',
       name: 'home',
-      component: () => import(/* webpackChunkName: "about" */ './views/Home.vue'),
+      component: () => import(/* webpackChunkName: "home" */ './views/Home.vue'),
       meta: {
         requiresAuth: true
       }
@@ -20,6 +20,15 @@ let router = new Router({
       path: '/login',
       name: 'login',
       component: () => import(/* webpackChunkName: "login" */ './views/Login.vue')
+    },
+    {
+      path: '/404Page',
+      name: '404page',
+      component: () => import(/* webpackChunkName: "login" */ './views/404Page.vue')
+    },
+    {
+      path: '*',
+      redirect: '/404Page',
     }
   ]
 })

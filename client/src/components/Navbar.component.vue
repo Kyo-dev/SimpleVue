@@ -5,9 +5,9 @@
         <router-link to="/">Inicio</router-link> | 
       </span>
       <v-spacer></v-spacer>
-      <span v-if="!isLoggedIn">
+      <!-- <span v-if="!isLoggedIn">
         <router-link to="/Login">Login</router-link> | 
-      </span>
+      </span> -->
       <span v-if="isLoggedIn"><a @click="logout">Logout</a>
       </span>
       <router-view/>

@@ -1,11 +1,4 @@
 <template>
-  <!-- <v-app>
-    <v-content>
-      <router-link to="/Home">Inicio</router-link> | 
-      <router-link to="/Login">Login</router-link> | 
-      <router-view/>
-    </v-content>
-  </v-app> -->
   <div>
     <Navbar/>
   </div>
@@ -14,8 +7,6 @@
 <script>
 
 import Navbar from '../src/views/Navbar'
-// import HelloWorld from '../components/HelloWorld';
-
 export default {
   name: "App",
   components: {
