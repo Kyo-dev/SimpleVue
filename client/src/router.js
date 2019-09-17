@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import Router from 'vue-router'
+import store from './store/store'
 
 Vue.use(Router)
 
@@ -10,7 +11,10 @@ let router = new Router({
     {
       path: '/',
       name: 'home',
-      component: () => import(/* webpackChunkName: "about" */ './views/Home.vue')
+      component: () => import(/* webpackChunkName: "about" */ './views/Home.vue'),
+      meta: {
+        requiresAuth: true
+      }
     },
     {
       path: '/login',
