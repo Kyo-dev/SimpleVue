@@ -82,8 +82,9 @@ export async function loginAdm(req, res) {
     const { _correo, _clave, _cedula } = req.body
     console.log(req.body._clave)
     await mysqlConnection.query('SELECT correo FROM empleados WHERE correo = ?', [_correo], (err, rows, fields) => {
-        console.log('HOLA')
+        console.log('MENSAJE 01')
         if (!err) {
+            console.log('MENSAJE 02')
             mysqlConnection.query('SELECT a.clave FROM adm a inner join empleados b on a.cedula = b.cedula where a.cedula = ?', [_cedula], (err, rows, fields) => {
                 console.log('Clave encriptada: ')
                 let data = JSON.stringify(rows[0])
@@ -91,11 +92,11 @@ export async function loginAdm(req, res) {
                 console.log('ESTA ES LA CLAVE' + clave)
                 console.log(clave)
                 if (!err) {
-                    console.log('si entra')
+                    console.log('MENSAJE 03')
                     bcrypt.compare(_clave, clave, (err, result) => {
                         if (err) res.status(401).json({message: "error"})
                         if (result){
-                            console.log('si entra2')
+                            console.log('MENSAJE 04')
                             const token = jwt.sign({
                                 email: _correo,
                                 userID: _cedula
