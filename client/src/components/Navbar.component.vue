@@ -1,20 +1,22 @@
 <template>
-  <v-app>
     <v-content>
-      <span v-if="isLoggedIn">
+      <v-container>
+        <v-toolbar>
+        <span v-if="isLoggedIn">
         <router-link to="/">Inicio</router-link> | 
       </span>
+      <span v-if="isLoggedIn">
+        <router-link to="/employee">Empleados</router-link> | 
+      </span>
       <v-spacer></v-spacer>
-      <!-- <span v-if="!isLoggedIn">
-        <router-link to="/Login">Login</router-link> | 
-      </span> -->
       <span v-if="isLoggedIn"><a @click="logout">Logout</a>
       </span>
-      <router-view/>
+        </v-toolbar>
+        <router-view/>
+      </v-container>
     </v-content>
-  </v-app>
+ 
 </template>
-
 <script>
   export default {
     computed : {

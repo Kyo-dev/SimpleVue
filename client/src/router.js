@@ -22,6 +22,11 @@ let router = new Router({
       component: () => import(/* webpackChunkName: "login" */ './views/Login.vue')
     },
     {
+      path: '/employee',
+      name: 'employee',
+      component: () => import(/* webpackChunkName: "employee" */ './views/Employee.vue')
+    },
+    {
       path: '/404Page',
       name: '404page',
       component: () => import(/* webpackChunkName: "login" */ './views/404Page.vue')

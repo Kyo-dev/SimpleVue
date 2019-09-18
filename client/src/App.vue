@@ -1,6 +1,8 @@
 <template>
   <div>
-    <Navbar/>
+    <v-app light>
+        <Navbar/>
+     </v-app>
   </div>
 </template>
 
