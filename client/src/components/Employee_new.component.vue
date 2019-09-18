@@ -6,56 +6,47 @@
         <v-form ref="form" v-model="valid">
           <v-text-field
             v-model="employee.cedula"
-            :counter="30"
+            :counter="9"
             label="Cédula"
             :rules="cedulaRules"
             required
           ></v-text-field>
           <v-text-field
             v-model="employee.nombre"
-            :counter="30"
+            :counter="50"
             label="Nombre"
             :rules="nombreRules"
             required
           ></v-text-field>
           <v-text-field
             v-model="employee.p_apellido"
-            :counter="30"
+            :counter="50"
             label="Primer apellido"
             :rules="p_apellidoRules"
             required
           ></v-text-field>
           <v-text-field
             v-model="employee.s_apellido"
-            :counter="30"
+            :counter="50"
             label="Segundo apellido"
             :rules="s_apellidoRules"
             required
           ></v-text-field>
           <v-text-field
             v-model="employee.correo"
-            :counter="30"
+            :counter="200"
             label="Correo electrónico"
             :rules="correoRules"
             required
           ></v-text-field>
-          <v-text-field
+          <!-- <v-text-field
             v-model="employee.tipo_empleado"
-            :counter="30"
             label="Cargo del empleado"
             :rules="cargoRules"
             required
-          ></v-text-field>
-          <v-text-field
-            v-model="employee.planilla"
-            :counter="30"
-            label="Planilla "
-            :rules="planillaRules"
-            required
-          ></v-text-field>
+          ></v-text-field> -->
           <v-text-field
             v-model="employee.salario_hora"
-            :counter="30"
             label="Salario por hora"
             :rules="salarioRules"
             required
@@ -66,7 +57,28 @@
       <!-- SECTION CALENDARIO -->
       <v-spacer></v-spacer>
       <v-flex xs12 md6>
-        <v-sheet height="490">
+        <v-sheet height="390">
+          <p>Cargo del empleado</p>
+          <v-radio-group v-model="employee.tipo_empleado" row>
+            <v-radio
+             label="Doctor" 
+             value="2"
+             color="primary"
+             :rules="cargoRules"
+             ></v-radio>
+            <v-radio 
+              label="Dependiente" 
+              value="3"
+              color="primary"
+              :rules="cargoRules"
+              ></v-radio>
+            <v-radio 
+              label="Mensajero" 
+              value="4"
+              color="primary"
+              :rules="cargoRules"
+              ></v-radio>
+          </v-radio-group>
           <v-card>
             <v-date-picker 
               v-model="employee.fecha_contrato"
@@ -84,10 +96,10 @@
 
 
 <script>
-// import { mapGetters, mapActions } from "vuex";
+import { mapGetters, mapActions } from "vuex";
 
 class Employee {
-  constructor(cedula, nombre, p_apellido, s_apellido, correo, fecha_contrato, tipo_empleado, planilla, salario_hora) {
+  constructor(cedula, nombre, p_apellido, s_apellido, correo, fecha_contrato, tipo_empleado, salario_hora) {
     (this.cedula = cedula),
     (this.nombre = nombre),
     (this.p_apellido = p_apellido),
@@ -95,7 +107,6 @@ class Employee {
     (this.correo = correo),
     (this.fecha_contrato = fecha_contrato),
     (this.tipo_empleado = tipo_empleado),
-    (this.planilla = planilla),
     (this.salario_hora = salario_hora);
   }
 }
@@ -109,28 +120,34 @@ export default {
             employees: [],
             edit: false,
             actEdit: '', 
+            items: ['Calle Central'],
              cedulaRules: [        
-                v => !!v || "Por favor ingrese la cédula del empleado",
-                v => (v && v.length == 9) || "La cédula debe ser de 9 caracteres",
-                v => /^\d+$/.test(v) || "Solo se admiten números positivos"
+              v => !!v || "Por favor ingrese la cédula del empleado",
+              v => (v && v.length == 9) || "La cédula debe ser de 9 caracteres",
+              v => /^\d+$/.test(v) || "Solo se admiten números positivos"
              ],
              nombreRules: [
-                v => !!v || "Por favor ingrese el nombre del nuevo empleado",
-                v => (v && v.length <= 50) || "El nombre es muy grande"
+              v => !!v || "Por favor ingrese el nombre del nuevo empleado",
+              v => (v && v.length <= 50) || "El nombre es muy grande"
              ],
             p_apellidoRules: [
-                v => !!v || "Por favor ingrese el primer apellido",
-                v => (v && v.length <= 50) || "El primer apellido es muy grande"
+              v => !!v || "Por favor ingrese el primer apellido",
+              v => (v && v.length <= 50) || "El primer apellido es muy grande"
             ],
             s_apellidoRules: [
-                v => !!v || "Por favor ingrese el primer apellido",
-                v => (v && v.length <= 50) || "El segundo apellido es muy grande"
+              v => !!v || "Por favor ingrese el primer apellido",
+              v => (v && v.length <= 50) || "El segundo apellido es muy grande"
             ],
             correoRules: [
-
+              v => !!v || "Por favor ingrese el correo del empleado",
+              v => /[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/.test(v) || "Error el escribir el correo"
             ],
             cargoRules: [
-
+              v => !!v || "Por favor seleccione un cargo"
+            ],
+            salarioRules: [
+              v => !!v || "Por favor ingrese el salario por hora del nuevo empleado",
+              v => /^(\d{1}\.)?(\d+\.?)+(,\d{2})?$/.test(v) || "El salario debe llevar 2 decimales, ejemplo 1234.56"
             ]
         }
     }
