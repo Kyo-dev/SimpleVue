@@ -13,6 +13,7 @@
     <th>Fecha de contrato</th>
     <th>Correo electronico</th> 
     <th>Salario por hora</th> 
+    <th>BORRAR</th> 
 	</tr>
 	</thead>
 	<tbody>
@@ -24,11 +25,11 @@
 		<td>{{item.fecha_contrato.substr(0,10)}}</td>
 		<td>{{item.correo}}</td>
 		<td>{{item.salario_hora}}</td>
+		<td @click="delEmployee(item.cedula)">DELETE<v-icon small color="error" class="icons">delete</v-icon></td>
     <!-- <td @click="deleteEmployee(item.cedula)"><v-icon small color="error" class="icons"></v-icon></td> -->
 		<!-- <td @click="putEmployee(item._id)"><v-icon small color="warning" class="icons">create</v-icon></td> -->
 		<!-- <td>{{item.date.substr(0,10)}}</td> -->
-		<!-- <td @click="DELETE_Activitie(item._id)"><v-icon small color="error" class="icons">delete</v-icon></td>
-		<td @click="UPDATE_Activitie(item._id)"><v-icon small color="warning" class="icons">create</v-icon></td> -->
+		<!-- <td @click="UPDATE_Activitie(item._id)"><v-icon small color="warning" class="icons">create</v-icon></td> -->
 	</tr>
 	</tbody>
 </table>
@@ -38,8 +39,16 @@
 <script>
 import { mapGetters, mapActions } from "vuex";
 export default {
+
  methods: {
-    ...mapActions(["fetchEmployee"])
+	...mapActions(["fetchEmployee", "deleteEmployee"]),
+	delEmployee(cedula){
+		console.log('SOY EL deleteEmployee' + cedula)
+		this.deleteEmployee(cedula)
+	},
+	postEmployee(employee){
+      this.insertEmployee(this.employee)
+    }
    },
 
    computed: mapGetters(["allEmployees"]),

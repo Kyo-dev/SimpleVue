@@ -211,9 +211,6 @@ export default {
     ...mapActions(["fetchEmployee", "insertEmployee"]),
     postEmployee(employee){
       this.insertEmployee(this.employee)
-    },
-    deleteEmployee(){
-
     }
    },
 

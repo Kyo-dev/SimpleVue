@@ -14,7 +14,7 @@ const actions = {
             'http://localhost:4000/api/usuarios/empleados'
         );
         commit('setEmployee', response.data);
-        console.log('Soy el axios get ' + response.data)
+        
     }, 
     async insertEmployee({commit}, employee){
         const data = {
@@ -29,19 +29,21 @@ const actions = {
         }
         console.log('soy el inserEmployee')
         const response = await axios.post(
-            'http://localhost:4000/api/usuarios/empleados', data)
+            'http://localhost:4000/api/usuarios/empleados/', data)
         commit('newEmployee', response.data);
     },
-    async updateEmployee({commit}, employee){
-        const response = await axios.put({
-            
-        })
+
+    async deleteEmployee({commit}, cedula){
+        console.log('SOY EL DELETE' + cedula)
+        await axios.delete(`http://localhost:4000/api/usuarios/empleados/${cedula}`)
+        commit('removeEmployee',cedula);
     }
 }
 
 const mutations = {
     setEmployee: (state, employees) => (state.employees = employees),
-    newEmployee: (state, employee) => state.employees.unshift(employee)
+    newEmployee: (state, employee) => state.employees.unshift(employee),
+    removeEmployee: (state, cedula) => (state.employees = state.employees.filter(employee => employee.cedula !== cedula))
 }
 
 export default {
