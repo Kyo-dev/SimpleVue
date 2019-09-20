@@ -51,6 +51,13 @@
             :rules="salarioRules"
             required
           ></v-text-field>
+          <template v-if="edit ===false ">    
+            <v-btn :disabled="!valid" color="success" @click="postEmployee">Nuevo empleado</v-btn>
+            <!-- <v-btn color="warning" @click="reset">Borrar formulario</v-btn> -->
+          </template>
+          <!-- <template v-else="">
+            <v-btn :disabled="!valid" color="success" @click="POST_Activitie">Actualizar</v-btn>
+          </template> -->
         </v-form>
         <!-- !SECTION  -->
       </v-flex>
@@ -150,7 +157,22 @@ export default {
               v => /^(\d{1}\.)?(\d+\.?)+(,\d{2})?$/.test(v) || "El salario debe llevar 2 decimales, ejemplo 1234.56"
             ]
         }
+    },
+    
+ methods: {
+    ...mapActions(["fetchEmployee", "insertEmployee"]),
+    postEmployee(employee){
+      console.log(this.employee)
+      this.insertEmployee(this.employee)
     }
+   },
+
+   computed: mapGetters(["allEmployees"]),
+    created() {
+      this.fetchEmployee();
+    //   console.log(this.fetchEmployee())
+   },
+
 }
 
 </script>
