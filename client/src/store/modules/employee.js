@@ -14,6 +14,7 @@ const actions = {
             'http://localhost:4000/api/usuarios/empleados'
         );
         commit('setEmployee', response.data);
+        console.log('Soy el axios get ' + response.data)
     }, 
     async insertEmployee({commit}, employee){
         const data = {
@@ -30,6 +31,11 @@ const actions = {
         const response = await axios.post(
             'http://localhost:4000/api/usuarios/empleados', data)
         commit('newEmployee', response.data);
+    },
+    async updateEmployee({commit}, employee){
+        const response = await axios.put({
+            
+        })
     }
 }
 

@@ -64,7 +64,7 @@
       <!-- SECTION CALENDARIO -->
       <v-spacer></v-spacer>
       <v-flex xs12 md6>
-        <v-sheet height="390">
+        <v-sheet height="450">
           <p>Cargo del empleado</p>
           <v-radio-group v-model="employee.tipo_empleado" row>
             <v-radio
@@ -98,6 +98,54 @@
       </v-flex>
       <!-- !SECTION  -->
     </v-layout>
+    <!--SECTION TABLA  -->
+    <!--
+<v-spacer></v-spacer>
+<br>
+<br>
+ <table >
+	<thead>
+	<tr>
+		<th>Cedula</th>
+		<th>Nombre</th>
+		<th>Primer apellido</th>
+    <th>Segundo apellido</th>
+    <th>Fecha de contrato</th>
+    <th>Correo electronico</th> 
+    <th>Salario por hora</th> 
+	</tr>
+	</thead>
+	<tbody>
+	<tr v-for="item of allEmployees" :key="item.id" >
+		<td>{{item.cedula}}</td>
+		<td>{{item.nombre}}</td>
+		<td>{{item.p_apellido}}</td>
+		<td>{{item.s_apellido}}</td>
+		<td>{{item.fecha_contrato}}</td>
+		<td>{{item.correo}}</td>
+		<td>{{item.salario_hora}}</td>
+    <!<td @click="deleteEmployee(item.cedula)"><v-icon small color="error" class="icons"></v-icon></td> -->
+		<!-- <td @click="putEmployee(item._id)"><v-icon small color="warning" class="icons">create</v-icon></td> -->
+		<!-- <td>{{item.date.substr(0,10)}}</td> -->
+
+    <!-- 
+      _cedula: employee.cedula,
+            _nombre: employee.nombre,
+            _p_apellido: employee.p_apellido,
+            _s_apellido: employee.s_apellido,
+            _correo: employee.correo,
+            _fecha_contrato: employee.fecha_contrato,
+            _tipo_empleado: employee.tipo_empleado,
+            _salario_hora: employee.salario_hora
+
+     -->
+		<!-- <td @click="DELETE_Activitie(item._id)"><v-icon small color="error" class="icons">delete</v-icon></td>
+		<td @click="UPDATE_Activitie(item._id)"><v-icon small color="warning" class="icons">create</v-icon></td> 
+	</tr>
+	</tbody>
+</table>
+-->
+    <!-- !SECTION  -->
   </v-container>
 </template>
 
@@ -114,7 +162,7 @@ class Employee {
     (this.correo = correo),
     (this.fecha_contrato = fecha_contrato),
     (this.tipo_empleado = tipo_empleado),
-    (this.salario_hora = salario_hora);
+    (this.salario_hora = salario_hora)
   }
 }
 
@@ -127,7 +175,7 @@ export default {
             employees: [],
             edit: false,
             actEdit: '', 
-            items: ['Calle Central'],
+            // items: ['Calle Central'],
              cedulaRules: [        
               v => !!v || "Por favor ingrese la cédula del empleado",
               v => (v && v.length == 9) || "La cédula debe ser de 9 caracteres",
@@ -162,15 +210,17 @@ export default {
  methods: {
     ...mapActions(["fetchEmployee", "insertEmployee"]),
     postEmployee(employee){
-      console.log(this.employee)
       this.insertEmployee(this.employee)
+    },
+    deleteEmployee(){
+
     }
    },
 
-   computed: mapGetters(["allEmployees"]),
+  //  computed: mapGetters(["allEmployees"]),
     created() {
       this.fetchEmployee();
-    //   console.log(this.fetchEmployee())
+      console.log(this.fetchEmployee())
    },
 
 }

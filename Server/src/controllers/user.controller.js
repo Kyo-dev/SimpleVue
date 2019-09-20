@@ -5,7 +5,7 @@ import jwt from 'jsonwebtoken'
 
 //SECTION EMPLEADOS
 export async function newEmployee(req, res) {
-    const { _cedula, _nombre, _p_apellido, _s_apellido, _correo, _fecha_contrato, _tipo_empleado, _planilla, _salario_hora } = req.body
+    const { _cedula, _nombre, _p_apellido, _s_apellido, _correo, _fecha_contrato, _tipo_empleado,  _salario_hora } = req.body
     const query = `
         SET @_cedula = ?;
         SET @_nombre = ?;
@@ -14,13 +14,13 @@ export async function newEmployee(req, res) {
         SET @_correo = ?;
         SET @_fecha_contrato = ?;
         SET @_tipo_empleado = ?;
-        SET @_planilla = ?;
+        
         SET @_salario_hora = ?;
-        CALL nuevoEmpleado(@_cedula, @_nombre,@_p_apellido,@_s_apellido, @_correo, @_fecha_contrato,@_tipo_empleado, @_planilla, @_salario_hora);
+        CALL nuevoEmpleado(@_cedula, @_nombre,@_p_apellido,@_s_apellido, @_correo, @_fecha_contrato,@_tipo_empleado,  @_salario_hora);
     `
     await mysqlConnection.query('SELECT correo From empleados Where correo = ? OR cedula = ?', [_correo, _cedula], (err, rows, fields)=>{
         if(!rows[0]){
-            mysqlConnection.query(query, [_cedula, _nombre, _p_apellido, _s_apellido, _correo, _fecha_contrato, _tipo_empleado, _planilla, _salario_hora], (err, rows, fields) =>{
+            mysqlConnection.query(query, [_cedula, _nombre, _p_apellido, _s_apellido, _correo, _fecha_contrato, _tipo_empleado,  _salario_hora], (err, rows, fields) =>{
                 if(!err){
                     res.json({Status: 'Nuevo empleado registrado satisfactoriamente'})
                 }else {
@@ -36,7 +36,8 @@ export async function newEmployee(req, res) {
 }
 
 export async function allEmployee(req, res){
-    await mysqlConnection.query('SELECT cedula, nombre, p_apellido, s_apellido, correo, fecha_contrato, tipo_empleado FROM empleados', (err, rows, fields) =>{
+    await mysqlConnection.query(`SELECT a.cedula, a.nombre, a.p_apellido, a.s_apellido, a.correo, a.fecha_contrato, a.tipo_empleado, b.salario_hora 
+                                FROM empleados a inner join salarios b on a.cedula = b.cedula_empleado`, (err, rows, fields) =>{
         if(!err){
             res.json(rows)
         } else {
@@ -52,7 +53,24 @@ export async function employeeDNI(req, res){
         if(!err){
             res.json(rows[0])
         } else{
-            console.log(err)
+            console.log(err);
+            res.json({"Message": err})
+        }
+    })
+}
+
+export async function deleteEmployee(req, res){
+    const {_cedula} = req.params
+    const query = `
+        SET @_cedula = ?;
+        CALL nuevoDespido(@_cedula);
+    `
+    await mysqlConnection.query(query,[_cedula], (err, rows, fields)=>{
+        if(!err){
+            res.json(rows[0])
+        }else{
+            console.log(err);
+            res.json({"Message": err})
         }
     })
 }

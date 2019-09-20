@@ -24,7 +24,8 @@ export async function login(req, res) {
                             },
                                 process.env.SECRET_KEY = config.secret,
                                 {
-                                    expiresIn: "1h"
+                                    expiresIn: '1m' 
+                                    
                                 })
                             return res.status(200).json({
                                 Auth: true,

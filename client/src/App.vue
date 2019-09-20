@@ -1,14 +1,14 @@
 <template>
   <div>
     <v-app light>
-        <Navbar/>
+      <Navbar/>
      </v-app>
   </div>
 </template>
 
 <script>
 
-import Navbar from '../src/views/Navbar'
+import Navbar from '../src/views/Navbar.vue'
 export default {
   name: "App",
   components: {

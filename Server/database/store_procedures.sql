@@ -11,22 +11,20 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `nuevoEmpleado`(
     in _correo varchar(200),
     in _fecha_contrato datetime,
     in _tipo_empleado int,
-    in _planilla int,
+    
     in _salario_hora decimal(10,2)
 )
 begin
 	IF NOT EXISTS (select cedula from empleados where cedula = _cedula) THEN
-		insert into empleados (cedula, nombre, p_apellido, s_apellido, correo, fecha_contrato, tipo_empleado, planilla)
-        values(_cedula, _nombre, _p_apellido, _s_apellido, _correo, _fecha_contrato, _tipo_empleado, _planilla);
+		insert into empleados (cedula, nombre, p_apellido, s_apellido, correo, fecha_contrato, tipo_empleado)
+        values(_cedula, _nombre, _p_apellido, _s_apellido, _correo, _fecha_contrato, _tipo_empleado);
         insert into salarios(cedula_empleado, salario_hora)
         values(_cedula, _salario_hora);
     END IF;
 end$$
 
 DELIMITER ;
-CALL nuevoEmpleado('802220222','Dora','Gonzales', 'Fuentes', 'd79ora@gmail.com', '2010-09-25', 2, 1, 2000.00);
-
-select * from adm
+CALL nuevoEmpleado('102220222','Tina','Fuentes', 'Oviedo', 'tina@gmail.com', '2010-09-25', 2, 1, 2000.00);
 
 USE `rrhh_db`;
 DROP procedure IF EXISTS `nuevoPermiso`;
