@@ -1,6 +1,6 @@
 <template>
   <v-container>
-<!-- SECTION  FORMULARIO -->
+<!-- SECTION  Left -->
     <v-layout row wrap align-center>
       <v-flex xs12 md4>
         <v-form ref="form" v-model="valid">
@@ -53,15 +53,12 @@
           ></v-text-field>
           <template v-if="edit ===false ">    
             <v-btn :disabled="!valid" color="success" @click="postEmployee">Nuevo empleado</v-btn>
-            <!-- <v-btn color="warning" @click="reset">Borrar formulario</v-btn> -->
+            <v-btn color="warning" @click="reset">Borrar formulario</v-btn>
           </template>
-          <!-- <template v-else="">
-            <v-btn :disabled="!valid" color="success" @click="POST_Activitie">Actualizar</v-btn>
-          </template> -->
         </v-form>
         <!-- !SECTION  -->
       </v-flex>
-      <!-- SECTION CALENDARIO -->
+      <!-- SECTION Right -->
       <v-spacer></v-spacer>
       <v-flex xs12 md6>
         <v-sheet height="450">
@@ -92,60 +89,14 @@
               full-width
               locale="es"
               :min="min"
+              header-color="primary"
+              color="primary"
             ></v-date-picker>
           </v-card>
         </v-sheet>
       </v-flex>
       <!-- !SECTION  -->
     </v-layout>
-    <!--SECTION TABLA  -->
-    <!--
-<v-spacer></v-spacer>
-<br>
-<br>
- <table >
-	<thead>
-	<tr>
-		<th>Cedula</th>
-		<th>Nombre</th>
-		<th>Primer apellido</th>
-    <th>Segundo apellido</th>
-    <th>Fecha de contrato</th>
-    <th>Correo electronico</th> 
-    <th>Salario por hora</th> 
-	</tr>
-	</thead>
-	<tbody>
-	<tr v-for="item of allEmployees" :key="item.id" >
-		<td>{{item.cedula}}</td>
-		<td>{{item.nombre}}</td>
-		<td>{{item.p_apellido}}</td>
-		<td>{{item.s_apellido}}</td>
-		<td>{{item.fecha_contrato}}</td>
-		<td>{{item.correo}}</td>
-		<td>{{item.salario_hora}}</td>
-    <!<td @click="deleteEmployee(item.cedula)"><v-icon small color="error" class="icons"></v-icon></td> -->
-		<!-- <td @click="putEmployee(item._id)"><v-icon small color="warning" class="icons">create</v-icon></td> -->
-		<!-- <td>{{item.date.substr(0,10)}}</td> -->
-
-    <!-- 
-      _cedula: employee.cedula,
-            _nombre: employee.nombre,
-            _p_apellido: employee.p_apellido,
-            _s_apellido: employee.s_apellido,
-            _correo: employee.correo,
-            _fecha_contrato: employee.fecha_contrato,
-            _tipo_empleado: employee.tipo_empleado,
-            _salario_hora: employee.salario_hora
-
-     -->
-		<!-- <td @click="DELETE_Activitie(item._id)"><v-icon small color="error" class="icons">delete</v-icon></td>
-		<td @click="UPDATE_Activitie(item._id)"><v-icon small color="warning" class="icons">create</v-icon></td> 
-	</tr>
-	</tbody>
-</table>
--->
-    <!-- !SECTION  -->
   </v-container>
 </template>
 
@@ -175,7 +126,6 @@ export default {
             employees: [],
             edit: false,
             actEdit: '', 
-            // items: ['Calle Central'],
              cedulaRules: [        
               v => !!v || "Por favor ingrese la cédula del empleado",
               v => (v && v.length == 9) || "La cédula debe ser de 9 caracteres",
@@ -211,15 +161,21 @@ export default {
     ...mapActions(["fetchEmployee", "insertEmployee"]),
     postEmployee(employee){
       this.insertEmployee(this.employee)
+      this.fetchEmployee()
+    },
+    validate() {
+      if (this.$refs.form.validate()) {
+        this.snackbar = true;
+      }
+    },
+    reset() {
+      this.$refs.form.reset();
     }
    },
-
-  //  computed: mapGetters(["allEmployees"]),
-    created() {
+   created() {
       this.fetchEmployee();
       console.log(this.fetchEmployee())
-   },
-
+   }   
 }
 
 </script>

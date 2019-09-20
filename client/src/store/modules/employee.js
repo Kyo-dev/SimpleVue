@@ -31,6 +31,7 @@ const actions = {
         const response = await axios.post(
             'http://localhost:4000/api/usuarios/empleados/', data)
         commit('newEmployee', response.data);
+        console.log (response.data)
     },
 
     async deleteEmployee({commit}, cedula){
