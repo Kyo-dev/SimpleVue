@@ -8,6 +8,7 @@ import userRoute from './routes/users'
 import loginRoute from './routes/login'
 import permitsRoute from './routes/permits'
 import bonusRoute from './routes/salaryBonus'
+import misconduct from './routes/misconduct'
 
 
 app.use((req, res, next)=>{
@@ -22,6 +23,7 @@ app.use((req, res, next)=>{
     }
     next()
 })
+
 //ANCHOR middlewares
 app.use(morgan('dev'))
 app.use(json())
@@ -31,7 +33,7 @@ app.use(json())
 app.use(('/api/usuarios'), userRoute)
 app.use(('/api/usuarios'), permitsRoute)
 app.use(('/api/usuarios'), bonusRoute)
-
+app.use(('/api/usuarios'), misconduct)
 // app.use(('/api/registro-adm'), registerRoute)
 // app.use(('/api/login'), loginRoute)
 

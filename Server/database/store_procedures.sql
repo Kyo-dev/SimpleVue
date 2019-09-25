@@ -213,3 +213,25 @@ BEGIN
 END$$
 
 DELIMITER ;
+
+
+USE `rrhh_db`;
+DROP procedure IF EXISTS `actualizarRegistroDisciplinario`;
+
+DELIMITER $$
+USE `rrhh_db`$$
+CREATE PROCEDURE `actualizarRegistroDisciplinario` (
+	in _id integer,
+	in _cedula varchar(9),
+    in _fecha datetime,
+    in _descripcion varchar(300)
+)
+BEGIN
+	update registro_disciplinario
+	set cedula_empleado = _cedula,
+        fecha = _fecha,
+        descripcion = _descripcion
+	where id = _id;
+END$$
+
+DELIMITER ;
