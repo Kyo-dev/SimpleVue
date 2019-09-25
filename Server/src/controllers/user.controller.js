@@ -21,7 +21,7 @@ export async function newEmployee(req, res) {
     await mysqlConnection.query('SELECT correo From empleados Where correo = ? OR cedula = ?', [_correo, _cedula], (err, rows, fields) => {
         if (!rows[0]) {
             mysqlConnection.query(query, [_cedula, _nombre, _p_apellido, _s_apellido, _correo, _fecha_contrato, _tipo_empleado, _salario_hora], (err, rows, fields) => {
-                if (!err) {
+                if (!err && rows.length > 0) {
                     res.json({ Status: 'Nuevo empleado registrado satisfactoriamente' })
                 } else {
                     console.log(err);
@@ -38,7 +38,7 @@ export async function newEmployee(req, res) {
 export async function allEmployee(req, res) {
     await mysqlConnection.query(`SELECT a.cedula, a.nombre, a.p_apellido, a.s_apellido, a.correo, a.fecha_contrato, a.tipo_empleado, b.salario_hora 
                                 FROM empleados a inner join salarios b on a.cedula = b.cedula_empleado where activo = true`, (err, rows, fields) => {
-        if (!err) {
+        if (!err && rows.length > 0) {
             res.json(rows)
         } else {
             console.log(err);
@@ -50,7 +50,7 @@ export async function allEmployee(req, res) {
 export async function employeeDNI(req, res) {
     const { _cedula } = req.params
     await mysqlConnection.query('SELECT cedula, nombre, p_apellido, s_apellido, correo, fecha_contrato, tipo_empleado FROM empleados WHERE cedula = ?', [_cedula], (err, rows, fields) => {
-        if (!err) {
+        if (!err && rows.length > 0) {
             res.json(rows[0])
         } else {
             console.log(err);
@@ -78,32 +78,44 @@ export async function deleteEmployee(req, res) {
 
 //SECTION ADM
 export async function registerAdmin(req, res) {
-    const _cedula = req.body._cedula
-    let _clave = req.body._clave
-    await mysqlConnection.query('SELECT cedula FROM empleados WHERE cedula = ?', [_cedula], (err, rows, fields) => {
-        if (rows[0]) {
+    let {_correo, _clave, _fecha} = req.body
+    const query = `
+        SET @_correo = ?;
+        SET @_clave = ?;
+        SET @_fecha = ?;
+        CALL nuevoAdm(@_correo, @_clave, @_fecha);
+    `
+    await mysqlConnection.query('SELECT correo FROM empleados WHERE correo = ?', [_correo], (err, rows, fields) => {
+        if (!err) {
+            console.log('ENTRA 1')
             bcrypt.hash(_clave, 10, (err, hash) => {
+                console.log('entra 2 ')
+                console.log(_clave)
                 _clave = hash
-                mysqlConnection.query('INSERT INTO adm(cedula, clave) values (?, ?)', [_cedula, _clave], (err, rows, fields) => {
+                console.log(_clave)
+                mysqlConnection.query(query, [_correo, _clave, _fecha], (err, rows, fields) => {
+                    // console.log(rows)
                     if (!err) {
-                        res.json({ "mensaje": "correcto" })
+                        console.log('correct')
+                        res.json({rows})
                     } else {
-                        res.json({ "mensaje": "error" })
+                        res.json({ "mensaje": "errors" })
                     }
                 })
             })
+        }else{
+            res.json({ "mensaje": "error 2" })
         }
     })
 }
 
 export async function loginAdm(req, res) {
-    const { _correo, _clave, _cedula } = req.body
-    console.log(req.body._clave)
+    const { _correo, _clave } = req.body
     await mysqlConnection.query('SELECT correo FROM empleados WHERE correo = ?', [_correo], (err, rows, fields) => {
         if (!err && rows.length > 0) {
             console.log(rows)
             console.log('MENSAJE 01')
-            mysqlConnection.query('SELECT a.clave FROM adm a inner join empleados b on a.cedula = b.cedula where a.cedula = ?', [_cedula], (err, rows, fields) => {
+            mysqlConnection.query('SELECT a.clave FROM adm a inner join empleados b on a.correo = b.correo where a.correo = ?', [_correo], (err, rows, fields) => {
                 if (!err && rows.length > 0) {
                     console.log('CLAVE DE ROWS')
                     const data = JSON.stringify(rows[0])
@@ -116,7 +128,7 @@ export async function loginAdm(req, res) {
                             console.log('MENSAJE 04')
                             const token = jwt.sign({
                                 email: _correo,
-                                userID: _cedula
+                                
                             },
                                 process.env.SECRET_KEY = config.secret,
                                 {

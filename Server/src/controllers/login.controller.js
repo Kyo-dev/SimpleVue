@@ -4,14 +4,14 @@ import config from '../config.key'
 import jwt from 'jsonwebtoken'
 
 export async function login(req, res) {
-    const { _correo, _clave, _cedula } = req.body
+    const { _correo, _clave} = req.body
     console.log(req.body._clave)
     if (_correo.length <= 0) {
         res.status(401).json({ "message:": "Por favor ingrese su correo" })
     }
     await mysqlConnection.query('SELECT correo FROM empleados WHERE correo = ?', [_correo], (err, rows, fields) => {
         if (!err) {
-            mysqlConnection.query('SELECT a.clave FROM adm a inner join empleados b on a.cedula = b.cedula where a.cedula = ?', [_cedula], (err, rows, fields) => {
+            mysqlConnection.query('SELECT a.clave FROM adm a inner join empleados b on a.correo = b.correo where a.correo = ?', [_correo], (err, rows, fields) => {
                 console.log(rows[0])
                 if (!err) {
                     console.log('si entra')
@@ -20,7 +20,6 @@ export async function login(req, res) {
                             console.log('si entra2')
                             const token = jwt.sign({
                                 email: _correo,
-                                userID: _cedula
                             },
                                 process.env.SECRET_KEY = config.secret,
                                 {

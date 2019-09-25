@@ -6,6 +6,8 @@ const app = express()
 import userRoute from './routes/users'
 // import registerRoute from './routes/register'
 import loginRoute from './routes/login'
+import permitsRoute from './routes/permits'
+import bonusRoute from './routes/salaryBonus'
 
 
 app.use((req, res, next)=>{
@@ -27,6 +29,8 @@ app.use(json())
 
 //ANCHOR construyendo routes
 app.use(('/api/usuarios'), userRoute)
+app.use(('/api/usuarios'), permitsRoute)
+app.use(('/api/usuarios'), bonusRoute)
 
 // app.use(('/api/registro-adm'), registerRoute)
 // app.use(('/api/login'), loginRoute)

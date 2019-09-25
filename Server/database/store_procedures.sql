@@ -24,7 +24,7 @@ begin
 end$$
 
 DELIMITER ;
-CALL nuevoEmpleado('102220222','Tina','Fuentes', 'Oviedo', 'tina@gmail.com', '2010-09-25', 2, 1, 2000.00);
+
 
 USE `rrhh_db`;
 DROP procedure IF EXISTS `nuevoPermiso`;
@@ -45,8 +45,6 @@ BEGIN
 END$$
 
 DELIMITER ;
-CALL nuevoPermiso('802220222', '2015-09-25', 'Esta es la primera prueba de los pemisos de salida', -500.00);
-
 
 USE `rrhh_db`;
 DROP procedure IF EXISTS `nuevoAumento`;
@@ -69,7 +67,6 @@ IF (SELECT cedula FROM empleados WHERE cedula = _cedula AND activo = true) then
 END$$
 
 DELIMITER ;
-CALL nuevoAumento('802220222', '2018-09-25', 800.00);
 
 
 USE `rrhh_db`;
@@ -89,7 +86,6 @@ IF (SELECT cedula FROM empleados WHERE cedula = _cedula AND activo = true) then
     end if;
 END$$
 DELIMITER ;
-CALL nuevoRegistroDisciplinario('802220222', '2018-09-25', 'Mal trato al cliente');
 
 
 USE `rrhh_db`;
@@ -111,8 +107,6 @@ IF (SELECT cedula FROM empleados WHERE cedula = _cedula AND activo = true) then
 END$$
 
 DELIMITER ;
-CALL nuevoBono('802220222', 'Trabajo duro', 1000.00 ,'2018-09-25');
-
 
 USE `rrhh_db`;
 DROP procedure IF EXISTS `nuevaTareaCargo`;
@@ -133,7 +127,6 @@ BEGIN
 END$$
 
 DELIMITER ;
-CALL nuevaTareaCargo('Tarea1-adm', 'Primera pueba', 1);
 
 
 USE `rrhh_db`;
@@ -142,19 +135,19 @@ DROP procedure IF EXISTS `nuevoAdm`;
 DELIMITER $$
 USE `rrhh_db`$$
 CREATE DEFINER=`root`@`localhost` PROCEDURE `nuevoAdm`(
-	in _cedula varchar(9),
+	in _correo varchar(200),
     in _clave text,
     in _fecha datetime
 )
 BEGIN
-if (SELECT cedula FROM empleados WHERE cedula = _cedula AND activo = true and tipo_empleado = 1) then
-	insert into adms(cedula, clave, fecha)
-    values(_cedula, _clave, _fecha);
+if (SELECT cedula FROM empleados WHERE correo = _correo AND activo = true and tipo_empleado = 1) then
+	insert into adm(correo, clave, fecha)
+    values(_correo, _clave, _fecha);
 end if;
 END$$
 
 DELIMITER ;
-CALL nuevoAdm('7897867', '1234', '2018-02-25');
+
 
 USE `rrhh_db`;
 DROP procedure IF EXISTS `nuevaHoraExtra`;
@@ -176,3 +169,25 @@ END$$
 
 DELIMITER ;
 CALL nuevaHoraExtra('802220222', 2, 'Probando el sp', '2018-02-25');
+
+
+USE `rrhh_db`;
+DROP procedure IF EXISTS `actualizarPermiso`;
+
+DELIMITER $$
+USE `rrhh_db`$$
+CREATE PROCEDURE `actualizarPermiso` (
+	in _id integer,
+    in _fecha datetime,
+    in _descripcion varchar(300),
+    in _costoSalarial decimal(10,2)
+)
+BEGIN
+	update permisos
+	set descripcion = _descripcion,
+		costo_salarial = _costoSalarial,
+        fecha = _fecha
+	where id = _id;
+END$$
+
+DELIMITER ;
