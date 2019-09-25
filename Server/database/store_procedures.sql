@@ -235,3 +235,23 @@ BEGIN
 END$$
 
 DELIMITER ;
+
+
+USE `rrhh_db`;
+DROP procedure IF EXISTS `actualizarAumento`;
+
+DELIMITER $$
+USE `rrhh_db`$$
+CREATE PROCEDURE `actualizarAumento` (
+	in _id integer,
+	in _cedula varchar(9),
+    in _aumento_salarial decimal(10,2)
+)
+BEGIN
+update aumento_salarial
+	set cedula_empleado = _cedula,
+        cantidad = _cantidad
+	where id = _id;
+END$$
+
+DELIMITER ;
