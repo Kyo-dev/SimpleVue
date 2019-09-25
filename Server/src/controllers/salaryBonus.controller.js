@@ -35,7 +35,7 @@ export async function newBonus(req, res){
 }
 
 export async function allBonus(req, res){
-    await mysqlConnection.query(`select a.cedula_empleado, a.motivo, a.cantidad, a.fecha, b.nombre, b.p_apellido from bonos a
+    await mysqlConnection.query(`select a.id, a.cedula_empleado, a.motivo, a.cantidad, a.fecha, b.nombre, b.p_apellido, b.activo from bonos a
     inner join empleados b on a.cedula_empleado = b.cedula`, (err, rows, fields)=>{
         !err ? res.json(rows) : res.json({"Message": err})
     })
@@ -44,12 +44,29 @@ export async function allBonus(req, res){
 export async function bonusDNI(req, res){
     const {_dni} = req.params
     await mysqlConnection.query(`select a.cedula_empleado, a.motivo, a.cantidad, a.fecha, b.nombre, b.p_apellido from bonos a
-    inner join empleados b on a.cedula_empleado = b.cedula where activo = true and cedula = ?`, [_dni], (err, rows, fields)=>{
+    inner join empleados b on a.cedula_empleado = b.cedula where b.activo = true and cedula = ?`, [_dni], (err, rows, fields)=>{
+        !err ? res.json(rows) : res.json({"Message": err})
+    })
+}
+
+export async function updateBonoID(req, res){
+    const {_id} = req.params
+    const {_description, _amount, _date} = req.body
+    const query = `
+        SET @_id = ?;
+        SET @_motivo = ?;
+        SET @_cantidad = ?;
+        SET @_fecha = ?;
+        CALL actualizarBono(@_id, @_motivo, @_cantidad, @_fecha)
+    `
+    await mysqlConnection.query(query, [_id, _description, _amount, _date], (err, rows, fields)=>{
         !err ? res.json(rows) : res.json({"Message": err})
     })
 }
 
 export async function deleteBonusID(req, res){
     const {_id} = req.params
-    await mysqlConnection.query('delete from bonos where = ?', )
+    await mysqlConnection.query('delete from bonos where id = ?', [_id], (err, rows, fields)=>{
+        !err ? res.json({Status: "OK"}) : res.json({"Message": err})
+    })
 }

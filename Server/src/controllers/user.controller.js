@@ -161,3 +161,6 @@ export async function loginAdm(req, res) {
 }
 
 //!SECTION 
+
+    // "_correo": "Charlotte@icloud.com",
+    // "_clave": "charlotte"

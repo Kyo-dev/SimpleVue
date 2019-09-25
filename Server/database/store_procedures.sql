@@ -191,3 +191,25 @@ BEGIN
 END$$
 
 DELIMITER ;
+
+
+USE `rrhh_db`;
+DROP procedure IF EXISTS `actualizarBono`;
+
+DELIMITER $$
+USE `rrhh_db`$$
+CREATE PROCEDURE `actualizarBono` (
+	in _id integer,
+    in _motivo varchar(200),
+    in _cantidad decimal (10.2),
+    in _fecha datetime
+)
+BEGIN
+	update bonos
+	set motivo = _motivo,
+		cantidad = _cantidad,
+        fecha = _fecha
+	where id = _id;
+END$$
+
+DELIMITER ;
