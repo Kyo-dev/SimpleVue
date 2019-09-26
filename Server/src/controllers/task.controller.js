@@ -15,7 +15,7 @@ export async function nuevaTarea(req, res) {
 
 export async function todasTareas(req, res) {
     const query = `
-        select a.titulo, a.descripcion, c.nombre_cargo
+        select a.id, a.titulo, a.descripcion, c.nombre_cargo
         from tareas a inner join cargo_tareas d on a.id = d.id_tarea
         inner join tipo_empleados c on d.id_tipo_empleado = c.id where a.activo = true;
     `

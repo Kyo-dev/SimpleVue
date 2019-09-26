@@ -127,9 +127,10 @@ create table vacaciones(
 	id int auto_increment,
     cedula_empleado varchar(9) not null,
     fecha_salida date not null,
-    fechar_ingreso date not null,
+    fecha_entrada date not null,
     activo boolean default true not null,
     constraint fk_vacaciones foreign key(cedula_empleado) references empleados(cedula),
+    constraint ch_vacaciones check(fecha_entrada <> fecha_salida),
     constraint pk_vacaciones primary key(id)
 );
 create table farmacia(

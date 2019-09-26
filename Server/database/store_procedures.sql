@@ -292,3 +292,61 @@ BEGIN
 END$$
 
 DELIMITER ;
+
+
+USE `rrhh_db`;
+DROP procedure IF EXISTS `nuevasVacaciones`;
+
+DELIMITER $$
+USE `rrhh_db`$$
+CREATE PROCEDURE `nuevasVacaciones` (
+	in _cedula varchar(9),
+    in _fecha_salida datetime,
+    in _fecha_entrada datetime
+)
+BEGIN
+	if(fecha_salida <> fecha_entrada) then
+		insert into vacaciones (cedula_empleado, fecha_salida, fecha_entrada)
+        values (_cedula, _fecha_salida, _fecha_entrada);
+    end if; 
+END$$
+
+DELIMITER ;
+
+
+USE `rrhh_db`;
+DROP procedure IF EXISTS `eliminarVacaciones`;
+
+DELIMITER $$
+USE `rrhh_db`$$
+CREATE PROCEDURE `eliminarVacaciones` (
+	in _id integer
+)
+BEGIN
+	update vacaciones
+    set activo = false
+    where id = _id;
+END$$
+
+DELIMITER ;
+
+
+USE `rrhh_db`;
+DROP procedure IF EXISTS `actualizarVacaciones`;
+
+DELIMITER $$
+USE `rrhh_db`$$
+CREATE PROCEDURE `actualizarVacaciones` (
+	in _id integer,
+    in _fecha_salida datetime,
+    in _fecha_entrada datetime
+)
+BEGIN
+	update vacaciones
+    set  fecha_salida = _fecha_salida,
+		 fecha_entrada = _fecha_entrada
+    where id = _id;
+END$$
+
+DELIMITER ;
+
