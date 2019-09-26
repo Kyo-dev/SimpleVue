@@ -9,7 +9,8 @@ import userRoute from './routes/users'
 import permitsRoute from './routes/permits'
 import bonusRoute from './routes/salaryBonus'
 import misconduct from './routes/misconduct'
-import salaryIncrease from './routes/salaryIncrease'
+import salaryIncreaseRoute from './routes/salaryIncrease'
+import taskRoute from './routes/task'
 
 app.use((req, res, next)=>{
     res.header("Access-Control-Allow-Origin", "*")
@@ -34,7 +35,8 @@ app.use(('/api/usuarios'), userRoute)
 app.use(('/api/usuarios'), permitsRoute)
 app.use(('/api/usuarios'), bonusRoute)
 app.use(('/api/usuarios'), misconduct)
-app.use(('/api/usuarios'), salaryIncrease)
+app.use(('/api/usuarios'), salaryIncreaseRoute)
+app.use(('/api/usuarios'), taskRoute)
 
 // app.use(('/api/registro-adm'), registerRoute)
 // app.use(('/api/login'), loginRoute)

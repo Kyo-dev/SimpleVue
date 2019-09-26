@@ -255,3 +255,40 @@ update aumento_salarial
 END$$
 
 DELIMITER ;
+
+USE `rrhh_db`;
+DROP procedure IF EXISTS `eliminarTarea`;
+
+DELIMITER $$
+USE `rrhh_db`$$
+CREATE PROCEDURE `eliminarTarea` (
+	in _id integer
+)
+BEGIN
+	update tareas
+    set activo = false
+    where id = _id;
+END$$
+
+DELIMITER ;
+
+
+USE `rrhh_db`;
+DROP procedure IF EXISTS `actualizarTarea`;
+
+DELIMITER $$
+USE `rrhh_db`$$
+CREATE DEFINER=`root`@`localhost` PROCEDURE `actualizarTarea`(
+	in _id integer,
+	in _titulo varchar(30),
+    in _descripcion varchar(300)
+)
+BEGIN
+	UPDATE tareas
+    SET titulo = _titulo,
+		descripcion = _descripcion
+    WHERE id = _id;
+    
+END$$
+
+DELIMITER ;
