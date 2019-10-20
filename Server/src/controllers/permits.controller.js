@@ -1,7 +1,7 @@
 import mysqlConnection from '../database.key'
 import config from '../config.key'
 
-export async function newPermit(req, res){
+export async function nuevoPermiso(req, res){
     const {_dni, _date, _description, _cost} = req.body
     const query = `
         SET @_cedula = ?;
@@ -33,7 +33,7 @@ export async function newPermit(req, res){
     })
 }
 
-export async function allPermits(req, res){
+export async function todosPermisos(req, res){
     await mysqlConnection.query(`Select a.id, a.cedula_empleado, b.nombre, b.p_apellido, a.descripcion, a.costo_salarial, a.fecha from permisos a
     inner join empleados b on a.cedula_empleado = b.cedula`, (err, rows, fields)=>{
         if (!err && rows.length > 0) {
@@ -44,7 +44,7 @@ export async function allPermits(req, res){
         }
     })  
 }
-export async function permitDNI(req, res){
+export async function permisoDNI(req, res){
     const {_dni} = req.params
     await mysqlConnection.query(`Select a.id, a.cedula_empleado, b.nombre, b.p_apellido, a.descripcion, a.costo_salarial, a.fecha from permisos a
                                 inner join empleados b on a.cedula_empleado = b.cedula where activo = true and cedula = ?`, [_dni], (err, rows, fields)=>{
@@ -56,7 +56,7 @@ export async function permitDNI(req, res){
         }
     })
 }
-export async function deletePermitID(req, res){
+export async function borrarPermiso(req, res){
     const {_id} = req.params
     await mysqlConnection.query(`delete from permisos where id = ?`, [_id], (err, rows, fields)=>{
         if (!err && rows.length > 0) {
@@ -69,7 +69,7 @@ export async function deletePermitID(req, res){
         }
     })
 }
-export async function updatePermitID(req, res){
+export async function actualizarPermiso(req, res){
     const {_id} = req.params
     const {_date, _description, _cost} = req.body
     const query = `

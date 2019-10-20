@@ -1,10 +1,10 @@
 import {Router} from 'express'
 const router = Router()
-import { newBonus, allBonus, bonusDNI, deleteBonusID, updateBonoID } from '../controllers/salaryBonus.controller'
+import { nuevoBono, todosBonos, bonoDNI, borrarBono, actualizarBono } from '../controllers/salaryBonus.controller'
 
-router.post('/bonos', newBonus)
-router.get('/bonos', allBonus)
-router.get('/bonos/:_dni', bonusDNI)
-router.delete('/bonos/:_id', deleteBonusID)
-router.put('/bonos/:_id', updateBonoID)
+router.post('/bonos', nuevoBono)
+router.get('/bonos', todosBonos)
+router.get('/bonos/:_dni', bonoDNI)
+router.put('/bonos/:_id', actualizarBono)
+router.delete('/bonos/:_id', borrarBono)
 export default router

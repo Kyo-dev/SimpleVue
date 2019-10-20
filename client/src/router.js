@@ -24,7 +24,18 @@ let router = new Router({
     {
       path: '/employee',
       name: 'employee',
-      component: () => import(/* webpackChunkName: "employee" */ './views/Employee.vue')
+      component: () => import(/* webpackChunkName: "employee" */ './views/Employee.vue'),
+      meta: {
+        requiresAuth: true
+      }
+    },
+    {
+      path: '/one/employee',
+      name: 'One_employee',
+      component: () => import(/* webpackChunkName: "one_employee" */ './views/OneEmployee.vue'),
+      meta: {
+        requiresAuth: true
+      }
     },
     {
       path: '/404Page',

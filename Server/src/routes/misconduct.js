@@ -1,10 +1,10 @@
 import {Router} from 'express'
-import { newMisconduct, allMisconduct, misconductID, updateMisconduct, deleteMisconduct} from '../controllers/misconduct.controller'
+import { nuevaDisciplina, todasDisciplinas, disciplinaID, actualizarDisciplina, borrarDisciplina} from '../controllers/misconduct.controller'
 const router = Router()
 
-router.post('/disciplina', newMisconduct)
-router.get('/disciplina', allMisconduct)
-router.get('/disciplina/:_id', misconductID)
-router.put('/disciplina/:_id', updateMisconduct)
-router.delete('/disciplina/:_id', deleteMisconduct)
+router.post('/disciplina', nuevaDisciplina)
+router.get('/disciplina', todasDisciplinas)
+router.get('/disciplina/:_id', disciplinaID)
+router.put('/disciplina/:_id', actualizarDisciplina)
+router.delete('/disciplina/:_id', borrarDisciplina)
 export default router

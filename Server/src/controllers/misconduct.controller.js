@@ -1,6 +1,6 @@
 import mysqlConnection from '../database.key'
 
-export async function newMisconduct(req, res){
+export async function nuevaDisciplina(req, res){
     const {_dni, _date, _description} = req.body
     const query = `
         SET @_cedula = ?;
@@ -20,14 +20,14 @@ export async function newMisconduct(req, res){
     })
 }
 
-export async function allMisconduct(req, res) {
+export async function todasDisciplinas(req, res) {
     await mysqlConnection.query(`Select a.id, a.cedula_empleado, b.nombre, b.p_apellido, a.descripcion, a.fecha from registro_disciplinario a
     inner join empleados b on a.cedula_empleado = b.cedula`, (err, rows, fields)=>{
         !err ? res.json(rows) : res.json({"Message": err})
     }) 
 }
 
-export async function misconductID(req, res) {
+export async function disciplinaID(req, res) {
     const {_id} = req.params
     await mysqlConnection.query(`Select a.id, a.cedula_empleado, b.nombre, b.p_apellido, a.descripcion, a.fecha from registro_disciplinario a
     inner join empleados b on a.cedula_empleado = b.cedula where a.id = ?`, [_id],(err, rows, fields)=>{
@@ -35,7 +35,7 @@ export async function misconductID(req, res) {
     })
 }
 
-export async function updateMisconduct(req, res){
+export async function actualizarDisciplina(req, res){
     const {_id} = req.params
     const {_dni, _date, _description} = req.body
     const query = `
@@ -50,7 +50,7 @@ export async function updateMisconduct(req, res){
     })
 }
 
-export async function deleteMisconduct(req, res){
+export async function borrarDisciplina(req, res){
     const {_id} = req.params
     await mysqlConnection.query('update registro_disciplinario set activo = false where id = ?', [_id],(err, rows, fields)=>{
         !err ? res.json({Status: "OK"}) : res.json({"Message": err})

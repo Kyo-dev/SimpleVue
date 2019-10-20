@@ -161,7 +161,7 @@ export default {
     ...mapActions(["fetchEmployee", "insertEmployee"]),
     postEmployee(employee){
       this.insertEmployee(this.employee)
-      this.fetchEmployee()
+      
     },
     validate() {
       if (this.$refs.form.validate()) {
@@ -174,7 +174,6 @@ export default {
    },
    created() {
       this.fetchEmployee();
-      console.log(this.fetchEmployee())
    }   
 }
 

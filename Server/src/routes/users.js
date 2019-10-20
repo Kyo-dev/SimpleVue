@@ -10,7 +10,3 @@ router.delete('/empleados/:_cedula', deleteEmployee)
 router.post('/nuevo-adm', registerAdmin)
 router.post('/login',loginAdm )
 export default router
-
-// "_correo:":"tina@gmail.com",
-// "_clave": "asdfis1234ka",
-// "_cedula":"102220222"

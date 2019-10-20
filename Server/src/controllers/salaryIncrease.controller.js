@@ -1,6 +1,6 @@
 import mysqlConnection from '../database.key'
 
-export async function newSalaryIncrease(req, res) {
+export async function nuevoAumento(req, res) {
     const {_dni, _date, _increase} = req.body
     const query = `
         SET @_cedula = ?;
@@ -20,7 +20,7 @@ export async function newSalaryIncrease(req, res) {
     })
 }
 
-export async function allSalaryIncrease(req, res) {
+export async function todosAumentos(req, res) {
     await mysqlConnection.query(`select a.id, a.cedula_empleado, c.salario_hora, a.cantidad, a.fecha, b.nombre, b.p_apellido, b.activo from aumento_salarial a
     inner join empleados b on a.cedula_empleado = b.cedula
     inner join salarios c on c.cedula_empleado = b.cedula`, (err, rows, fields)=>{
@@ -28,7 +28,7 @@ export async function allSalaryIncrease(req, res) {
     })
 }
 
-export async function salaryIncreaseDNI(req, res) {
+export async function aumentoDNI(req, res) {
     const {_dni} = req.params
     await mysqlConnection.query(`select a.id, a.cedula_empleado, c.salario_hora, a.cantidad, a.fecha, b.nombre, b.p_apellido, b.activo from aumento_salarial a
     inner join empleados b on a.cedula_empleado = b.cedula

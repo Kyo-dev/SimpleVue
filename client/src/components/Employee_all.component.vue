@@ -48,9 +48,7 @@ export default {
   },
 
   computed: mapGetters(["allEmployees"]),
-  created() {
-    this.fetchEmployee();
-  }
+  
 };
 </script>
 <style>
