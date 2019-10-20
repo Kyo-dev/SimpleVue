@@ -36,3 +36,14 @@ export async function aumentoDNI(req, res) {
         !err ? res.json(rows) : res.json({Status: err})
     })
 }
+
+export async function borrarAumento(req, res){
+    const {_id} = req.body
+    const query =`
+        SET @_id = ?;
+        CALL eliminarAumento(@_id)
+    `
+    await mysqlConnection.query(query, [_id], (err, rows, fields)=>{
+        !err ? res.json({Status: "OK"}) : res.json({Status: err})
+    })
+}

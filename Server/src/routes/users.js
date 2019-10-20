@@ -1,12 +1,12 @@
 import {Router} from 'express'
 const router = Router()
-import { allEmployee, employeeDNI, newEmployee , registerAdmin, loginAdm, deleteEmployee } from '../controllers/user.controller'
+import { todosEmpleados, empleadoDNI, nuevoEmpleado , crearAdm, loginAdm, nuevoDespido } from '../controllers/user.controller'
 
-router.post('/empleados', newEmployee)
-router.get('/empleados', allEmployee)
-router.get('/empleados/:_cedula', employeeDNI)
-router.delete('/empleados/:_cedula', deleteEmployee)
+router.post('/empleados', nuevoEmpleado)
+router.get('/empleados', todosEmpleados)
+router.get('/empleados/:_cedula', empleadoDNI)
+router.delete('/empleados', nuevoDespido)
 
-router.post('/nuevo-adm', registerAdmin)
+router.post('/nuevo-adm', crearAdm)
 router.post('/login',loginAdm )
 export default router

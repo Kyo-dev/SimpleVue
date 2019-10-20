@@ -27,6 +27,15 @@ create table empleados(
     constraint fk_empleados_tipo_empleado foreign key (tipo_empleado) references tipo_empleados(id),
     constraint pk_empleados primary key (cedula)
 );
+create table despidos(
+    id int auto_increment not null,
+    cedula varchar(9) not null,
+    descripcion varchar(300),
+    fecha_despido datetime default now() not null,
+    activo boolean default true,
+    constraint fk_despidos_empleados foreign key (cedula) references empleados(cedula),
+    constraint pk_despidos primary key(id)
+);
 create table adm (
 	id tinyint auto_increment,
 	correo varchar(200) unique not null,

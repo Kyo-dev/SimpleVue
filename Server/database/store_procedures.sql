@@ -402,3 +402,40 @@ END$$
 
 DELIMITER ;
 
+
+USE `rrhh_db`;
+DROP procedure IF EXISTS `eliminarAumento`;
+
+DELIMITER $$
+USE `rrhh_db`$$
+CREATE PROCEDURE `eliminarAumento` (
+	in _id integer
+)
+BEGIN
+	delete from aumento_salarial
+    where id = _id;
+END$$
+
+DELIMITER ;
+
+
+USE `rrhh_db`;
+DROP procedure IF EXISTS `nuevoDespido`;
+
+DELIMITER $$
+USE `rrhh_db`$$
+CREATE PROCEDURE `nuevoDespido` (
+	in _cedula varchar(9),
+    in _descripcion varchar(300)
+)
+BEGIN
+	IF (SELECT cedula FROM empleados WHERE cedula = _cedula AND activo = true) then
+		insert into despidos(cedula, descripcion)
+        values (_cedula, _descripcion);
+		update empleados
+        set activo = false
+        where cedula = _cedula;
+    end if;
+END$$
+
+DELIMITER ;

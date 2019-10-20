@@ -4,7 +4,7 @@ import config from '../config.key'
 import jwt from 'jsonwebtoken'
 
 //SECTION EMPLEADOS
-export async function newEmployee(req, res) {
+export async function nuevoEmpleado(req, res) {
     const { _cedula, _nombre, _p_apellido, _s_apellido, _correo, _fecha_contrato, _tipo_empleado, _salario_hora } = req.body
     const query = `
         SET @_cedula = ?;
@@ -14,7 +14,6 @@ export async function newEmployee(req, res) {
         SET @_correo = ?;
         SET @_fecha_contrato = ?;
         SET @_tipo_empleado = ?;
-        
         SET @_salario_hora = ?;
         CALL nuevoEmpleado(@_cedula, @_nombre,@_p_apellido,@_s_apellido, @_correo, @_fecha_contrato,@_tipo_empleado,  @_salario_hora);
     `
@@ -35,7 +34,7 @@ export async function newEmployee(req, res) {
     })
 }
 
-export async function allEmployee(req, res) {
+export async function todosEmpleados(req, res) {
     await mysqlConnection.query(`SELECT a.cedula, a.nombre, a.p_apellido, a.s_apellido, a.correo, a.fecha_contrato, a.tipo_empleado, b.salario_hora 
                                 FROM empleados a inner join salarios b on a.cedula = b.cedula_empleado where a.activo = true`, (err, rows, fields) => {
         if (!err && rows.length > 0) {
@@ -47,7 +46,7 @@ export async function allEmployee(req, res) {
     })
 }
 
-export async function employeeDNI(req, res) {
+export async function empleadoDNI(req, res) {
     const { _cedula } = req.params
     await mysqlConnection.query('SELECT cedula, nombre, p_apellido, s_apellido, correo, fecha_contrato, tipo_empleado FROM empleados WHERE cedula = ?', [_cedula], (err, rows, fields) => {
         if (!err && rows.length > 0) {
@@ -59,17 +58,22 @@ export async function employeeDNI(req, res) {
     })
 }
 
-export async function deleteEmployee(req, res) {
-    const { _cedula } = req.params
+export async function nuevoDespido(req, res) {
+    const { _cedula, _descripcion } = req.body
     const query = `
         SET @_cedula = ?;
-        CALL nuevoDespido(@_cedula);
+        SET @_descripcion = ?;
+        CALL nuevoDespido(@_cedula, @_descripcion);
     `
-    await mysqlConnection.query(query, [_cedula], (err, rows, fields) => {
-        if (!err) {
-            res.json(rows[0])
+    await mysqlConnection.query('SELECT cedula FROM empleados WHERE cedula = ? AND activo = true;', [_cedula], (err, rows, fields) => {
+        if (rows.length > 0) {
+            console.log('01')
+            mysqlConnection.query(query, [_cedula, _descripcion], (err, rows, fields)=>{
+                console.log('02')
+                !err ? res.json({Status: "OK"}) : res.json({"Message": err})
+            })
         } else {
-            console.log(err);
+            console.log('Usuario invalido');
             res.json({ "Message": err })
         }
     })
@@ -77,7 +81,7 @@ export async function deleteEmployee(req, res) {
 //!SECTION 
 
 //SECTION ADM
-export async function registerAdmin(req, res) {
+export async function crearAdm(req, res) {
     let {_correo, _clave, _fecha} = req.body
     const query = `
         SET @_correo = ?;
