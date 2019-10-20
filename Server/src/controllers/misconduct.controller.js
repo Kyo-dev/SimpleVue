@@ -22,7 +22,7 @@ export async function nuevaDisciplina(req, res){
 
 export async function todasDisciplinas(req, res) {
     await mysqlConnection.query(`Select a.id, a.cedula_empleado, b.nombre, b.p_apellido, a.descripcion, a.fecha from registro_disciplinario a
-    inner join empleados b on a.cedula_empleado = b.cedula`, (err, rows, fields)=>{
+    inner join empleados b on a.cedula_empleado = b.cedula and a.activo = true`, (err, rows, fields)=>{
         !err ? res.json(rows) : res.json({"Message": err})
     }) 
 }
@@ -51,8 +51,12 @@ export async function actualizarDisciplina(req, res){
 }
 
 export async function borrarDisciplina(req, res){
-    const {_id} = req.params
-    await mysqlConnection.query('update registro_disciplinario set activo = false where id = ?', [_id],(err, rows, fields)=>{
+    const {_id} = req.body
+    const query = `
+        SET @_id = ?;
+        CALL eliminarRegistroDisciplinario(@_id);
+    `
+    await mysqlConnection.query(query, [_id], (err, rows, fields)=>{
         !err ? res.json({Status: "OK"}) : res.json({"Message": err})
     })
 }

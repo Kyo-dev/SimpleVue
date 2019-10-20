@@ -65,8 +65,12 @@ export async function actualizarBono(req, res){
 }
 
 export async function borrarBono(req, res){
-    const {_id} = req.params
-    await mysqlConnection.query('delete from bonos where id = ?', [_id], (err, rows, fields)=>{
+    const {_id} = req.body
+    const query = `
+        SET @_id = ?
+        CALL eliminarBono(@_id)
+    `
+    await mysqlConnection.query(query, [_id],(err, rows, fields)=>{
         !err ? res.json({Status: "OK"}) : res.json({"Message": err})
     })
 }

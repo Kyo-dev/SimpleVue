@@ -216,6 +216,23 @@ DELIMITER ;
 
 
 USE `rrhh_db`;
+DROP procedure IF EXISTS `eliminarBono`;
+
+DELIMITER $$
+USE `rrhh_db`$$
+CREATE PROCEDURE `eliminarBono` (
+	in _id integer
+)
+BEGIN
+	update bonos
+    set activo = false
+    where id = _id;
+END$$
+
+DELIMITER ;
+
+
+USE `rrhh_db`;
 DROP procedure IF EXISTS `actualizarRegistroDisciplinario`;
 
 DELIMITER $$
@@ -232,6 +249,23 @@ BEGIN
         fecha = _fecha,
         descripcion = _descripcion
 	where id = _id;
+END$$
+
+DELIMITER ;
+
+
+USE `rrhh_db`;
+DROP procedure IF EXISTS `eliminarRegistroDisciplinario`;
+
+DELIMITER $$
+USE `rrhh_db`$$
+CREATE PROCEDURE `eliminarRegistroDisciplinario` (
+	in _id integer
+)
+BEGIN
+	update registro_disciplinario
+    set activo = false
+    where id = _id;    
 END$$
 
 DELIMITER ;
@@ -292,6 +326,24 @@ BEGIN
 END$$
 
 DELIMITER ;
+
+
+USE `rrhh_db`;
+DROP procedure IF EXISTS `eliminarPermiso`;
+
+DELIMITER $$
+USE `rrhh_db`$$
+CREATE PROCEDURE `eliminarPermiso` (
+	in _id integer
+)
+BEGIN
+	update permisos
+    set activo = false
+    where id = _id;
+END$$
+
+DELIMITER ;
+
 
 
 USE `rrhh_db`;

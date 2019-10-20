@@ -6,5 +6,5 @@ router.post('/disciplina', nuevaDisciplina)
 router.get('/disciplina', todasDisciplinas)
 router.get('/disciplina/:_id', disciplinaID)
 router.put('/disciplina/:_id', actualizarDisciplina)
-router.delete('/disciplina/:_id', borrarDisciplina)
+router.delete('/disciplina/', borrarDisciplina)
 export default router
