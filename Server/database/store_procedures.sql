@@ -156,7 +156,7 @@ DELIMITER $$
 USE `rrhh_db`$$
 CREATE PROCEDURE `nuevaHoraExtra` (
 	in _cedula varchar(9),
-    in _cantidad_horas text,
+    in _cantidad_horas tinyint,
     in _motivo varchar(300),
     in _fecha datetime
 )
@@ -439,3 +439,118 @@ BEGIN
 END$$
 
 DELIMITER ;
+
+USE `rrhh_db`;
+DROP procedure IF EXISTS `actualizarEmpleado`;
+
+DELIMITER $$
+USE `rrhh_db`$$
+CREATE PROCEDURE `actualizarEmpleado` (
+	in _cedula varchar(9),
+    in _nombre varchar(50),
+    in _p_apellido varchar(50),
+    in _s_apellido varchar(50),
+    in _correo varchar(200),
+    in _fecha_contrato datetime,
+    in _tipo_empleado int,
+    in _salario_hora decimal(10,2)
+)
+BEGIN
+	IF (SELECT cedula FROM empleados WHERE cedula = _cedula AND activo = true AND _tipo_empleado <> 1) then
+		update empleados
+        set 
+			nombre = _nombre,
+			p_apellido =_p_apellido,
+			s_apellido = _s_apellido,
+			correo = _correo,
+			fecha_contrato = _fecha_contrato,
+			tipo_empleado = _tipo_empleado
+        where cedula = _cedula;
+        update salarios 
+        set salario_hora = _salario_hora
+        where cedula_empleado = _cedula;
+	end if;
+END$$
+
+DELIMITER ;
+
+
+USE `rrhh_db`;
+DROP procedure IF EXISTS `eliminarHoraExtra`;
+
+DELIMITER $$
+USE `rrhh_db`$$
+CREATE DEFINER=`root`@`localhost` PROCEDURE `eliminarHoraExtra`(
+	in _id integer
+)
+BEGIN
+	update horas_extra
+    set activo = false
+    where id = _id;
+END$$
+
+DELIMITER ;
+
+
+USE `rrhh_db`;
+DROP procedure IF EXISTS `actualizarHorasExtra`;
+
+DELIMITER $$
+USE `rrhh_db`$$
+CREATE PROCEDURE `actualizarHorasExtra` (
+	in _id integer,
+	in _cedula varchar(9),
+    in _cantidad_horas tinyint,
+    in _motivo varchar(300),
+    in _fecha datetime
+)
+BEGIN
+	update horas_extra
+    set
+		cedula = _cedula,
+        cantidad_horas = _cantidad_horas,
+        motivo = _motivo,
+        fecha = _fecha
+    where id = _id;
+END$$
+
+DELIMITER ;
+
+
+USE `rrhh_db`;
+DROP procedure IF EXISTS `eliminarTareaCargo`;
+
+DELIMITER $$
+USE `rrhh_db`$$
+CREATE PROCEDURE `eliminarTareaCargo` (
+	in _id integer
+)
+BEGIN
+	update tareas
+    set activo = false
+    where id = _id;
+END$$
+
+DELIMITER ;
+
+
+USE `rrhh_db`;
+DROP procedure IF EXISTS `actualizarTareaCargo`;
+
+DELIMITER $$
+USE `rrhh_db`$$
+CREATE PROCEDURE `actualizarTareaCargo` (
+	in _id integer,
+	in _titulo varchar(30),
+    in _descripcion varchar(300)
+)
+BEGIN
+	update tareas
+    set 
+		titulo = _titulo,
+        descripcion = _descripcion
+    where id = _id;
+END$$
+
+DELIMITER ;
+
