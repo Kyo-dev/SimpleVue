@@ -11,15 +11,15 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `nuevoEmpleado`(
     in _correo varchar(200),
     in _fecha_contrato datetime,
     in _tipo_empleado int,
-    
-    in _salario_hora decimal(10,2)
+    in _salario_hora decimal(10,2),
+    in _jornada_hora decimal(4.2)
 )
 begin
 	IF NOT EXISTS (select cedula from empleados where cedula = _cedula) THEN
 		insert into empleados (cedula, nombre, p_apellido, s_apellido, correo, fecha_contrato, tipo_empleado)
         values(_cedula, _nombre, _p_apellido, _s_apellido, _correo, _fecha_contrato, _tipo_empleado);
-        insert into salarios(cedula_empleado, salario_hora)
-        values(_cedula, _salario_hora);
+        insert into salarios(cedula_empleado, salario_hora, jornada_hora)
+        values(_cedula, _salario_hora, _jornada_hora);
     END IF;
 end$$
 
@@ -453,7 +453,8 @@ CREATE PROCEDURE `actualizarEmpleado` (
     in _correo varchar(200),
     in _fecha_contrato datetime,
     in _tipo_empleado int,
-    in _salario_hora decimal(10,2)
+    in _salario_hora decimal(10,2),
+    in _jornada_hora decimal(4.2)
 )
 BEGIN
 	IF (SELECT cedula FROM empleados WHERE cedula = _cedula AND activo = true AND _tipo_empleado <> 1) then
@@ -467,7 +468,9 @@ BEGIN
 			tipo_empleado = _tipo_empleado
         where cedula = _cedula;
         update salarios 
-        set salario_hora = _salario_hora
+        set 
+            salario_hora = _salario_hora,
+            jornada_hora = _jornada_hora
         where cedula_empleado = _cedula;
 	end if;
 END$$
@@ -491,7 +494,6 @@ END$$
 
 DELIMITER ;
 
-
 USE `rrhh_db`;
 DROP procedure IF EXISTS `actualizarHorasExtra`;
 
@@ -507,7 +509,7 @@ CREATE PROCEDURE `actualizarHorasExtra` (
 BEGIN
 	update horas_extra
     set
-		cedula = _cedula,
+		cedula_empleado = _cedula,
         cantidad_horas = _cantidad_horas,
         motivo = _motivo,
         fecha = _fecha
@@ -515,7 +517,6 @@ BEGIN
 END$$
 
 DELIMITER ;
-
 
 USE `rrhh_db`;
 DROP procedure IF EXISTS `eliminarTareaCargo`;

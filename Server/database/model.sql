@@ -107,6 +107,7 @@ create table salarios(
 	id int auto_increment,
     cedula_empleado varchar(9) not null,
 	salario_hora decimal(10,2) not null,
+    jornada_hora decimal(4.2) not null,
     activo boolean default true not null,
 	constraint fk_salario_empleados foreign key(cedula_empleado) references empleados(cedula),
     constraint pk_salario primary key(id)
