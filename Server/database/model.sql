@@ -7,12 +7,6 @@ create table tipo_empleados(
     activo boolean default true,
     constraint pk_tipo_empleado primary key(id)
 );
-create table planilla(
-	id int auto_increment not null,
-    fecha datetime not null, 
-    activo boolean default true,
-    constraint pk_planilla primary key (id, fecha)
-);
 create table empleados(
 	cedula varchar(9) not null, 
     nombre varchar(50) not null,
@@ -21,9 +15,7 @@ create table empleados(
     correo varchar(200) unique not null,
     fecha_contrato datetime default now() not null,
     tipo_empleado tinyint,
-    planilla int default 1 not null,
     activo boolean default true not null,
-    constraint fk_empleados_planilla foreign key (planilla) references planilla(id),
     constraint fk_empleados_tipo_empleado foreign key (tipo_empleado) references tipo_empleados(id),
     constraint pk_empleados primary key (cedula)
 );
@@ -107,7 +99,7 @@ create table salarios(
 	id int auto_increment,
     cedula_empleado varchar(9) not null,
 	salario_hora decimal(10,2) not null,
-    jornada_hora decimal(4.2) not null,
+    jornada decimal(4.2) not null,
     activo boolean default true not null,
 	constraint fk_salario_empleados foreign key(cedula_empleado) references empleados(cedula),
     constraint pk_salario primary key(id)
@@ -142,15 +134,4 @@ create table vacaciones(
     constraint fk_vacaciones foreign key(cedula_empleado) references empleados(cedula),
     constraint ch_vacaciones check(fecha_entrada <> fecha_salida),
     constraint pk_vacaciones primary key(id)
-);
-create table farmacia(
-	id int auto_increment,
-    cedula_juridica varchar (20) not null,
-    nombre varchar(100) not null,
-    ubicacion varchar (200) not null,
-    correo_adm varchar(9),
-    planilla int not null,
-    constraint fk_farmacia_adm foreign key (correo_adm) references adm(correo),
-    constraint fk_farmacia_planilla foreign key(planilla) references planilla(id),
-    constraint pk_farmacia primary key (id)
 );
