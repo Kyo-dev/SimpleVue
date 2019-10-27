@@ -5,7 +5,7 @@ import jwt from 'jsonwebtoken'
 
 //SECTION EMPLEADOS
 export async function nuevoEmpleado(req, res) {
-    const { _cedula, _nombre, _p_apellido, _s_apellido, _correo, _fecha_contrato, _tipo_empleado, _salario_hora } = req.body
+    const {_cedula, _nombre, _p_apellido, _s_apellido, _correo, _fecha_contrato, _tipo_empleado, _salario_hora, _jornada, _numero, _tipo_telefono} = req.body
     const query = `
         SET @_cedula = ?;
         SET @_nombre = ?;
@@ -15,11 +15,14 @@ export async function nuevoEmpleado(req, res) {
         SET @_fecha_contrato = ?;
         SET @_tipo_empleado = ?;
         SET @_salario_hora = ?;
-        CALL nuevoEmpleado(@_cedula, @_nombre,@_p_apellido,@_s_apellido, @_correo, @_fecha_contrato,@_tipo_empleado,  @_salario_hora);
+        SET @_jornada = ?;
+        SET @_numero = ?;
+        SET @_tipo_telefono = ?;
+        CALL nuevoEmpleado(@_cedula, @_nombre,@_p_apellido,@_s_apellido, @_correo, @_fecha_contrato,@_tipo_empleado,  @_salario_hora, @_jornada, @_numero, @_tipo_telefono);
     `
     await mysqlConnection.query('SELECT correo From empleados Where correo = ? OR cedula = ?', [_correo, _cedula], (err, rows, fields) => {
         if (!rows[0]) {
-            mysqlConnection.query(query, [_cedula, _nombre, _p_apellido, _s_apellido, _correo, _fecha_contrato, _tipo_empleado, _salario_hora], (err, rows, fields) => {
+            mysqlConnection.query(query, [_cedula, _nombre, _p_apellido, _s_apellido, _correo, _fecha_contrato, _tipo_empleado, _salario_hora, _jornada, _numero, _tipo_telefono], (err, rows, fields) => {
                 if (!err && rows.length > 0) {
                     res.json({ Status: 'Nuevo empleado registrado satisfactoriamente' })
                 } else {
@@ -48,12 +51,48 @@ export async function todosEmpleados(req, res) {
 
 export async function empleadoDNI(req, res) {
     const { _cedula } = req.params
-    await mysqlConnection.query('SELECT cedula, nombre, p_apellido, s_apellido, correo, fecha_contrato, tipo_empleado FROM empleados WHERE cedula = ?', [_cedula], (err, rows, fields) => {
+    await mysqlConnection.query(`SELECT a.cedula, a.nombre, a.p_apellido, a.s_apellido, a.correo, c.numero, a.fecha_contrato, a.tipo_empleado, b.salario_hora, b.jornada
+                                FROM empleados a 
+                                INNER JOIN salarios b on a.cedula = b.cedula_empleado
+                                INNER JOIN telefonos c on a.cedula = c.cedula_empleado
+                                WHERE a.activo = true AND cedula = ?;`, [_cedula], (err, rows, fields) => {
         if (!err && rows.length > 0) {
             res.json(rows[0])
         } else {
             console.log(err);
             res.json({ "Message": err })
+        }
+    })
+}
+
+export async function actualizarEmpleado(req, res) {
+    const {_cedula} = req.params
+    const { _nombre, _p_apellido, _s_apellido, _correo, _fecha_contrato, _tipo_empleado, _salario_hora, _jornada, _numero, _tipo_telefono} = req.body
+    const query = `
+        SET @_cedula = ?;
+        SET @_nombre = ?;
+        SET @_p_apellido = ?;
+        SET @_s_apellido = ?;
+        SET @_correo = ?;
+        SET @_fecha_contrato = ?;
+        SET @_tipo_empleado = ?;
+        SET @_salario_hora = ?;
+        SET @_jornada = ?;
+        SET @_numero = ?;
+        SET @_tipo_telefono = ?;
+        CALL actualizarEmpleado(@_cedula, @_nombre, @_p_apellido, @_s_apellido, @_correo, @_fecha_contrato, @_tipo_empleado, @_salario_hora, @_jornada, @_numero, @_tipo_telefono);
+    `
+    await mysqlConnection.query('select cedula from empleados where cedula = ?', [_cedula], (err, rows, fields)=>{
+        if(!err && rows.length > 0){
+            mysqlConnection.query(query, [_cedula, _nombre, _p_apellido, _s_apellido, _correo, _fecha_contrato, _tipo_empleado, _salario_hora, _jornada, _numero, _tipo_telefono], (err, rows, fields)=>{
+                if(!err){
+                    !err ? res.json({Status: "OK"}) : res.json({Status: err})
+                }else{
+                    res.json({Status: err})
+                }
+            })
+        }else {
+            res.json({Status: err})
         }
     })
 }
@@ -163,7 +202,6 @@ export async function loginAdm(req, res) {
     })
 
 }
-
 //!SECTION 
 
     // "_correo": "Charlotte@icloud.com",

@@ -1,5 +1,4 @@
 import mysqlConnection from '../database.key'
-import config from '../config.key'
 
 export async function nuevoPermiso(req, res){
     const {_cedula, _fecha, _descripcion, _costoSalarial} = req.body

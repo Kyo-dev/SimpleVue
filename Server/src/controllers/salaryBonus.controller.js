@@ -1,8 +1,7 @@
 import mysqlConnection from '../database.key'
-import config from '../config.key'
 
 export async function nuevoBono(req, res){
-    const{_dni, _description, _amount, _date} = req.body
+    const{_cedula, _motivo, _cantidad, _fecha} = req.body
     const query = `
         SET @_cedula = ?;
         SET @_motivo = ?;
@@ -10,11 +9,11 @@ export async function nuevoBono(req, res){
         SET @_fecha = ?;
         CALL nuevoBono(@_cedula, @_motivo, @_cantidad, @_fecha) 
     `
-    await mysqlConnection.query('Select cedula from empleados where cedula = ? and activo = true', [_dni], (err, rows, fields) =>{
+    await mysqlConnection.query('Select cedula from empleados where cedula = ? and activo = true', [_cedula], (err, rows, fields) =>{
         if(!err){
             if(rows.length > 0){
                 console.log('entra')
-                mysqlConnection.query(query, [_dni, _description, _amount, _date], (err, rows, fields) =>{
+                mysqlConnection.query(query, [_cedula, _motivo, _cantidad, _fecha], (err, rows, fields) =>{
                     if(!err){
                         res.json({Status: 'Nuevo bono registrado'})
                     }else{
@@ -36,22 +35,22 @@ export async function nuevoBono(req, res){
 
 export async function todosBonos(req, res){
     await mysqlConnection.query(`select a.id, a.cedula_empleado, a.motivo, a.cantidad, a.fecha, b.nombre, b.p_apellido, b.activo from bonos a
-    inner join empleados b on a.cedula_empleado = b.cedula`, (err, rows, fields)=>{
+    inner join empleados b on a.cedula_empleado = b.cedula and a.activo = true;`, (err, rows, fields)=>{
         !err ? res.json(rows) : res.json({"Message": err})
     })
 }
 
-export async function bonoDNI(req, res){
-    const {_dni} = req.body
+export async function bonoCedula(req, res){
+    const {_cedula} = req.params
     await mysqlConnection.query(`select a.cedula_empleado, a.motivo, a.cantidad, a.fecha, b.nombre, b.p_apellido from bonos a
-    inner join empleados b on a.cedula_empleado = b.cedula where b.activo = true and cedula = ?`, [_dni], (err, rows, fields)=>{
+    inner join empleados b on a.cedula_empleado = b.cedula where b.activo = true and cedula = ?`, [_cedula], (err, rows, fields)=>{
         !err ? res.json(rows) : res.json({"Message": err})
     })
 }
 
 export async function actualizarBono(req, res){
     const {_id} = req.params
-    const {_description, _amount, _date} = req.body
+    const {_motivo, _cantidad, _fecha} = req.body
     const query = `
         SET @_id = ?;
         SET @_motivo = ?;
@@ -59,16 +58,16 @@ export async function actualizarBono(req, res){
         SET @_fecha = ?;
         CALL actualizarBono(@_id, @_motivo, @_cantidad, @_fecha)
     `
-    await mysqlConnection.query(query, [_id, _description, _amount, _date], (err, rows, fields)=>{
-        !err ? res.json(rows) : res.json({"Message": err})
+    await mysqlConnection.query(query, [_id, _motivo, _cantidad, _fecha], (err, rows, fields)=>{
+        !err ? res.json({Status: "OK"}) : res.json({"Message": err})
     })
 }
 
 export async function borrarBono(req, res){
-    const {_id} = req.body
+    const {_id} = req.params
     const query = `
-        SET @_id = ?
-        CALL eliminarBono(@_id)
+        SET @_id = ?;
+        CALL eliminarBono(@_id);
     `
     await mysqlConnection.query(query, [_id],(err, rows, fields)=>{
         !err ? res.json({Status: "OK"}) : res.json({"Message": err})

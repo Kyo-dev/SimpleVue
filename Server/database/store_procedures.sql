@@ -10,16 +10,20 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `nuevoEmpleado`(
     in _s_apellido varchar(50),
     in _correo varchar(200),
     in _fecha_contrato datetime,
-    in _tipo_empleado int,
+    in _tipo_empleado tinyint,
     in _salario_hora decimal(10,2),
-    in _jornada_hora decimal(4.2)
+    in _jornada decimal(4.2), 
+    in _numero varchar(8),
+    in _tipo_telefono tinyint
 )
 begin
 	IF NOT EXISTS (select cedula from empleados where cedula = _cedula) THEN
 		insert into empleados (cedula, nombre, p_apellido, s_apellido, correo, fecha_contrato, tipo_empleado)
         values(_cedula, _nombre, _p_apellido, _s_apellido, _correo, _fecha_contrato, _tipo_empleado);
-        insert into salarios(cedula_empleado, salario_hora, jornada_hora)
-        values(_cedula, _salario_hora, _jornada_hora);
+        insert into salarios(cedula_empleado, salario_hora, jornada)
+        values(_cedula, _salario_hora, _jornada);
+        insert into telefonos(numero, tipo_telefono, cedula_empleado)
+        values(_numero, _tipo_telefono, _cedula);
     END IF;
 end$$
 
@@ -357,7 +361,7 @@ CREATE PROCEDURE `nuevasVacaciones` (
     in _fecha_entrada datetime
 )
 BEGIN
-	if(fecha_salida <> fecha_entrada) then
+	if(_fecha_salida <> _fecha_entrada) then
 		insert into vacaciones (cedula_empleado, fecha_salida, fecha_entrada)
         values (_cedula, _fecha_salida, _fecha_entrada);
     end if; 
@@ -409,10 +413,16 @@ DROP procedure IF EXISTS `eliminarAumento`;
 DELIMITER $$
 USE `rrhh_db`$$
 CREATE PROCEDURE `eliminarAumento` (
-	in _id integer
+	in _id integer,
+    in _cedula varchar(9)
 )
 BEGIN
-	delete from aumento_salarial
+	select @cantAumento := cantidad from aumento_salarial where id = _id;
+    update salarios
+    set salario_hora = salario_hora - @cantAumento
+    where cedula_empleado = _cedula;
+	update aumento_salarial
+    set activo = false
     where id = _id;
 END$$
 
@@ -454,10 +464,12 @@ CREATE PROCEDURE `actualizarEmpleado` (
     in _fecha_contrato datetime,
     in _tipo_empleado int,
     in _salario_hora decimal(10,2),
-    in _jornada_hora decimal(4.2)
+    in _jornada decimal(4.2),
+    in _numero varchar(8),
+    in _tipo_telefono tinyint
 )
 BEGIN
-	IF (SELECT cedula FROM empleados WHERE cedula = _cedula AND activo = true AND _tipo_empleado <> 1) then
+	IF (SELECT cedula FROM empleados WHERE cedula = _cedula) then
 		update empleados
         set 
 			nombre = _nombre,
@@ -470,7 +482,10 @@ BEGIN
         update salarios 
         set 
             salario_hora = _salario_hora,
-            jornada_hora = _jornada_hora
+            jornada = _jornada
+        where cedula_empleado = _cedula;
+        update telefonos
+        set numero = _numero
         where cedula_empleado = _cedula;
 	end if;
 END$$

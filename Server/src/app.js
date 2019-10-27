@@ -3,8 +3,6 @@ import morgan from 'morgan'
 const app = express()
 
 //ANCHOR importando rutas
-// import registerRoute from './routes/register'
-// import loginRoute from './routes/login'
 import userRoute from './routes/users'
 import permitsRoute from './routes/permits'
 import bonusRoute from './routes/salaryBonus'

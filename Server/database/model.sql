@@ -47,6 +47,7 @@ create table telefonos(
     numero varchar(8) unique not null,
     cedula_empleado varchar(9) not null,
     tipo_telefono tinyint not null,
+    activo boolean default true,
     constraint fk_telefonos_tipo_telefono foreign key(tipo_telefono) references tipo_telefonos(id),
     constraint fk_telefonos_empleados foreign key(cedula_empleado) references empleados(cedula),
     constraint pk_telefonos primary key (id)

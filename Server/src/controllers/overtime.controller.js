@@ -26,7 +26,8 @@ export async function horasExtraEmpleado (req, res){
         FROM horas_extra a
         INNER JOIN empleados b
         ON a.cedula_empleado = b.cedula
-        WHERE a.cedula_empleado = ${_cedula};
+        WHERE a.activo = true and
+        a.cedula_empleado = ${_cedula};
     `
     await mysqlConnection.query('SELECT cedula FROM empleados WHERE cedula = ?', [_cedula], (err, rows, fields)=>{
         if(!err && rows.length > 0){
@@ -43,7 +44,8 @@ export async function todasHorasExtra(req, res){
         SELECT a.id, a.cedula_empleado, b.p_apellido, b.nombre, a.cantidad_horas, a.motivo, a.fecha 
         FROM horas_extra a
         INNER JOIN empleados b
-        ON a.cedula_empleado = b.cedula;
+        ON a.cedula_empleado = b.cedula
+        WHERE a.activo = true;
     `
     await mysqlConnection.query(query, (err, rows, fields)=>{
         !err ? res.json(rows) : res.json({"Message": err})
