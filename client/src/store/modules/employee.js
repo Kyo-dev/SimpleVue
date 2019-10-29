@@ -1,50 +1,51 @@
 import axios from 'axios'
 
 const state = {
-    employees: []
+    empleados: []
 }
 
 const getters = {
-    allEmployees: state => state.employees
+    allEmpleados: state => state.empleados
 }
 
 const actions = {
-    async fetchEmployee({commit}){
+    async fetchEmpleado({commit}){
         const response = await axios.get(
             'http://localhost:4000/api/usuarios/empleados'
         );
-        commit('setEmployee', response.data);
-        
-    }, 
-    async insertEmployee({commit}, employee){
+        commit('setEmpleado', response.data);
+    },
+    async insertEmpleado({commit}, empleado){
         const data = {
-            _cedula: employee.cedula,
-            _nombre: employee.nombre,
-            _p_apellido: employee.p_apellido,
-            _s_apellido: employee.s_apellido,
-            _correo: employee.correo,
-            _fecha_contrato: employee.fecha_contrato,
-            _tipo_empleado: employee.tipo_empleado,
-            _salario_hora: employee.salario_hora
+            _cedula: empleado.cedula,
+            _nombre: empleado.nombre,
+            _p_apellido: empleado.p_apellido,
+            _s_apellido: empleado.s_apellido,
+            _correo: empleado.correo,
+            _fecha_contrato: empleado.fecha_contrato,
+            _tipo_empleado: empleado.tipo_empleado,
+            _salario_hora: empleado.salario_hora,
+            _jornada: empleado.jornada,
+            _numero: empleado.numero,
+            _tipo_telefono: empleado.tipo_telefono
         }
-        console.log('soy el inserEmployee')
         const response = await axios.post(
             'http://localhost:4000/api/usuarios/empleados/', data)
-        commit('newEmployee', response.data);
+        commit('newEmpleado', response.data);
         console.log (response.data)
     },
 
-    async deleteEmployee({commit}, cedula){
+    async deleteEmpleado({commit}, cedula){
         console.log('SOY EL DELETE' + cedula)
         await axios.delete(`http://localhost:4000/api/usuarios/empleados/${cedula}`)
-        commit('removeEmployee',cedula);
+        commit('removeEmpleado',cedula);
     }
 }
 
 const mutations = {
-    setEmployee: (state, employees) => (state.employees = employees),
-    newEmployee: (state, employee) => state.employees.unshift(employee),
-    removeEmployee: (state, cedula) => (state.employees = state.employees.filter(employee => employee.cedula !== cedula))
+    setEmpleado: (state, empleados) => (state.empleados = empleados),
+    newEmpleado: (state, empleado) => state.empleados.unshift(empleado),
+    removeEmpleado: (state, cedula) => (state.empleados = state.empleados.filter(empleado => empleado.cedula !== cedula))
 }
 
 export default {

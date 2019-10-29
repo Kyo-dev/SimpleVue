@@ -17,7 +17,7 @@
         </tr>
       </thead>
       <tbody>
-        <tr v-for="item of allEmployees" :key="item.id">
+        <tr v-for="item of allEmpleados" :key="item.id">
           <td class="td">{{item.cedula}}</td>
           <td class="td">{{item.nombre}}</td>
           <td class="td">{{item.p_apellido}}</td>
@@ -25,7 +25,7 @@
           <td class="td">{{item.fecha_contrato}}</td>
           <td class="td">{{item.correo}}</td>
           <td class="td">{{item.salario_hora}}</td>
-          <td class="td" @click="delEmployee(item.cedula)">
+          <td class="td" @click="delEmpleado(item.cedula)">
             DELETE
             <v-icon small color="error" class="icons">delete</v-icon>
           </td>
@@ -38,17 +38,15 @@
 import { mapGetters, mapActions } from "vuex";
 export default {
   methods: {
-    ...mapActions(["fetchEmployee", "deleteEmployee"]),
-    delEmployee(cedula) {
-      this.deleteEmployee(cedula);
+    ...mapActions(["fetchEmpleados", "deleteEmpleado"]),
+    delEmpleado(cedula) {
+      this.deleteEmpleado(cedula);
     },
-    postEmployee(employee) {
-      this.insertEmployee(this.employee);
+    postEmpleado(empleado) {
+      this.insertEmpleado(this.empleado);
     }
   },
-
-  computed: mapGetters(["allEmployees"]),
-  
+  computed: mapGetters(["allEmpleados"]),
 };
 </script>
 <style>

@@ -1,6 +1,8 @@
 <template>
 <div>
-    <Employee />
+    
+      <Employee />
+    
     <AllEmployee />
 </div>  
 </template>
@@ -18,5 +20,5 @@ export default {
 </script>
 
 <style>
-
+ 
 </style>

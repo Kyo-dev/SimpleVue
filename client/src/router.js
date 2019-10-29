@@ -22,17 +22,17 @@ let router = new Router({
       component: () => import(/* webpackChunkName: "login" */ './views/Login.vue')
     },
     {
-      path: '/employee',
-      name: 'employee',
+      path: '/empleado',
+      name: 'empleado',
       component: () => import(/* webpackChunkName: "employee" */ './views/Employee.vue'),
       meta: {
         requiresAuth: true
       }
     },
     {
-      path: '/one/employee',
-      name: 'One_employee',
-      component: () => import(/* webpackChunkName: "one_employee" */ './views/OneEmployee.vue'),
+      path: '/bonos',
+      name: 'bonos',
+      component: () => import(/* webpackChunkName: "one_employee" */ './views/Bonus.vue'),
       meta: {
         requiresAuth: true
       }

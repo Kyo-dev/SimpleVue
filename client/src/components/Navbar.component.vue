@@ -6,10 +6,10 @@
              <router-link to="/">Inicio</router-link> | 
           </span>
             <span v-if="isLoggedIn">
-              <router-link to="/employee">Empleados</router-link> | 
+              <router-link to="/empleado">Empleados</router-link> | 
             </span>
             <span v-if="isLoggedIn">
-              <router-link to="/one/employee">Info empleados</router-link> | 
+              <router-link to="/bonos">Bonos</router-link> | 
             </span>
       <v-spacer></v-spacer>
           <span v-if="isLoggedIn">
