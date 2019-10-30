@@ -1,5 +1,5 @@
 <template>
-  <v-container>
+  <v-container class="border-container">
 <!-- SECTION  Left -->
     <v-layout row wrap align-center>
       <v-flex xs12 md4>
@@ -196,7 +196,7 @@ export default {
     ...mapActions(["fetchEmpleado", "insertEmpleado"]),
     postEmpleado(empleado){
       this.insertEmpleado(this.empleado)
-      computed: mapGetters(["allEmpleados"])
+      // computed: mapGetters(["allEmpleados"])
     },
     validate() {
       if (this.$refs.form.validate()) {
@@ -207,13 +207,11 @@ export default {
       this.$refs.form.reset();
     }
    },
-   created() {
-      this.fetchEmpleado();
-   },
 }
-
 </script>
 
-<style lang="stylus">
-
+<style>
+.border-container{
+  padding: 0em 2em 0em 2em;
+}
 </style>

@@ -40,7 +40,7 @@
 import { mapGetters, mapActions } from "vuex";
 export default {
   methods: {
-    ...mapActions(["fetchEmpleados", "deleteEmpleado"]),
+    ...mapActions(["fetchEmpleado", "deleteEmpleado"]),
     delEmpleado(cedula) {
       this.deleteEmpleado(cedula);
     },
@@ -48,6 +48,9 @@ export default {
       this.insertEmpleado(this.empleado);
     }
   },
+  created() {
+      this.fetchEmpleado();
+   },
   computed: mapGetters(["allEmpleados"]),
 };
 </script>
@@ -63,7 +66,7 @@ tr:nth-of-type(odd) {
   background: #eee;
 }
 .th {
-  background: #971cd9;
+  background: #356859;
   color: white;
   font-weight: bold;
 }

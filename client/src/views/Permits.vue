@@ -11,13 +11,13 @@
     <v-tabs-items v-model="tab">
       <v-tab-item>
         <v-card flat>
-          <Permits />
+          <newPermit />
         </v-card>
       </v-tab-item>
       <v-tab-item>
         <v-card flat>
           <v-card-text>
-            <Permits2 />
+            <allPermits />
           </v-card-text>
         </v-card>
       </v-tab-item>
@@ -26,8 +26,8 @@
 </template>
 
 <script>
-import Permits from "../components/Permit.component.vue";
-import Permits2 from "../components/Permit2.component.vue";
+import newPermit from "../components/Permit_new.component.vue";
+import allPermits from "../components/Permit_all.component.vue";
 export default {
   data() {
     return {
@@ -39,13 +39,16 @@ export default {
     };
   },
   components: {
-    Permits,
-    Permits2
+    newPermit,
+    allPermits
   }
 };
 </script>
 
 <style>
+.border-container{
+  padding: 0em 2em 0em 2em;
+}
 /* Helper classes */
 .basil {
   background-color: #fffbe6 !important;
