@@ -38,7 +38,7 @@ export async function nuevoEmpleado(req, res) {
 }
 
 export async function todosEmpleados(req, res) {
-    await mysqlConnection.query(`SELECT a.cedula, a.nombre, a.p_apellido, a.s_apellido, a.correo, a.fecha_contrato, a.tipo_empleado, b.salario_hora 
+    await mysqlConnection.query(`SELECT a.cedula, a.nombre, a.p_apellido, a.s_apellido, a.correo, a.fecha_contrato, a.tipo_empleado, b.salario_hora, b.jornada
                                 FROM empleados a inner join salarios b on a.cedula = b.cedula_empleado where a.activo = true and a.tipo_empleado > 1;`, (err, rows, fields) => {
         if (!err && rows.length > 0) {
             res.json(rows)

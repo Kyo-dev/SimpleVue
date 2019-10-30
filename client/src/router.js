@@ -38,6 +38,14 @@ let router = new Router({
       }
     },
     {
+      path: '/permisos',
+      name: 'permisos',
+      component: () => import(/* webpackChunkName: "employee" */ './views/Permits.vue'),
+      meta: {
+        requiresAuth: true
+      }
+    },
+    {
       path: '/404Page',
       name: '404page',
       component: () => import(/* webpackChunkName: "login" */ './views/404Page.vue')

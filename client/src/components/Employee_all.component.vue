@@ -13,6 +13,7 @@
           <th class="th">Fecha de contrato</th>
           <th class="th">Correo electronico</th>
           <th class="th">Salario por hora</th>
+          <th class="th">Jornada laboral</th>
           <th class="th">BORRAR</th>
         </tr>
       </thead>
@@ -25,6 +26,7 @@
           <td class="td">{{item.fecha_contrato}}</td>
           <td class="td">{{item.correo}}</td>
           <td class="td">{{item.salario_hora}}</td>
+          <td class="td">{{item.jornada}}</td>
           <td class="td" @click="delEmpleado(item.cedula)">
             DELETE
             <v-icon small color="error" class="icons">delete</v-icon>
@@ -70,6 +72,7 @@ tr:nth-of-type(odd) {
   padding: 6px;
   border: 1px solid #ccc;
   text-align: left;
+  text-align: center;
 }
 .icons {
   cursor: pointer;

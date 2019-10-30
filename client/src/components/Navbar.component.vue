@@ -11,6 +11,9 @@
             <span v-if="isLoggedIn">
               <router-link to="/bonos">Bonos</router-link> | 
             </span>
+            <span v-if="isLoggedIn">
+              <router-link to="/permisos">Permisos</router-link> | 
+            </span>
       <v-spacer></v-spacer>
           <span v-if="isLoggedIn">
             <a @click="logout">Logout</a>
