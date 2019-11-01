@@ -51,11 +51,13 @@ export async function todosEmpleados(req, res) {
 
 export async function empleadoDNI(req, res) {
     const { _cedula } = req.params
-    await mysqlConnection.query(`SELECT a.cedula, a.nombre, a.p_apellido, a.s_apellido, a.correo, c.numero, a.fecha_contrato, a.tipo_empleado, b.salario_hora, b.jornada
-                                FROM empleados a 
-                                INNER JOIN salarios b on a.cedula = b.cedula_empleado
-                                INNER JOIN telefonos c on a.cedula = c.cedula_empleado
-                                WHERE a.activo = true AND cedula = ?;`, [_cedula], (err, rows, fields) => {
+    await mysqlConnection.query(`
+    SELECT a.cedula, a.nombre, a.p_apellido, a.s_apellido, a.correo, a.fecha_contrato, 
+           a.tipo_empleado, b.salario_hora, b.jornada, c.numero, c.numero, c.tipo_telefono
+    FROM empleados a 
+    INNER JOIN salarios b on a.cedula = b.cedula_empleado
+    INNER JOIN telefonos c on a.cedula = c.cedula_empleado
+    WHERE a.activo = true AND cedula = ?;`, [_cedula], (err, rows, fields) => {
         if (!err && rows.length > 0) {
             res.json(rows[0])
         } else {

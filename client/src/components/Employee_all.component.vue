@@ -15,6 +15,7 @@
           <th class="th">Salario por hora</th>
           <th class="th">Jornada laboral</th>
           <th class="th">BORRAR</th>
+          <th class="th">Actualizar</th>
         </tr>
       </thead>
       <tbody>
@@ -31,6 +32,10 @@
             DELETE
             <v-icon small color="error" class="icons">delete</v-icon>
           </td>
+          <td class="td" @click="getOneEmpleado(item.cedula)">
+            actualizar
+            <v-icon small color="error" class="icons">delete</v-icon>
+          </td>
         </tr>
       </tbody>
     </table>
@@ -38,20 +43,50 @@
 </template>
 <script>
 import { mapGetters, mapActions } from "vuex";
+import Empleado from "../model/empleado.model";
 export default {
+  data() {
+    return {
+      empleado: new Empleado(),
+      empleado: []
+    };
+  },
   methods: {
-    ...mapActions(["fetchEmpleado", "deleteEmpleado"]),
+    ...mapActions([
+      "fetchEmpleado",
+      "deleteEmpleado",
+      "updateEmpleado",
+      "getEmpleado"
+    ]),
     delEmpleado(cedula) {
       this.deleteEmpleado(cedula);
     },
-    postEmpleado(empleado) {
-      this.insertEmpleado(this.empleado);
+    getOneEmpleado(cedula) {
+      fetch(`http://localhost:4000/api/usuarios/empleados/${cedula}`)
+        .then(res => res.json())
+        .then(data => {
+          this.empleado = new Empleado(
+            data.cedula,
+            data.nombre,
+            data.p_apellido,
+            data.s_apellido,
+            data.correo,
+            data.fecha_contrato,
+            data.tipo_empleado,
+            data.salario_hora,
+            data.jornada,
+            data.numero,
+            data.tipo_telefono
+          );
+          const employee = data
+          console.log(data);
+        });
     }
   },
   created() {
-      this.fetchEmpleado();
-   },
-  computed: mapGetters(["allEmpleados"]),
+    this.fetchEmpleado();
+  },
+  computed: mapGetters(["allEmpleados"])
 };
 </script>
 <style>
