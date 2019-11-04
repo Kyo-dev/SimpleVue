@@ -13,6 +13,7 @@ export async function nuevoPermiso(req, res){
         if(!err){
             if(rows.length > 0){
                 console.log("mensaje 01")
+                console.log(rows)
                 mysqlConnection.query(query, [_cedula, _fecha, _descripcion, _costoSalarial], (err, rows, fields)=>{
                     if(!err){
                         res.json({Status: 'Nuevo permiso registrado'})
@@ -43,12 +44,12 @@ export async function todosPermisos(req, res){
         }
     })  
 }
-export async function permisoDNI(req, res){
-    const {_dni} = req.params
-    await mysqlConnection.query(`Select a.id, a.cedula_empleado, b.nombre, b.p_apellido, a.descripcion, a.costo_salarial, a.fecha from permisos a
-                                inner join empleados b on a.cedula_empleado = b.cedula where activo = true and cedula = ?`, [_dni], (err, rows, fields)=>{
+export async function permisoID(req, res){
+    const {_id} = req.params
+    await mysqlConnection.query(`Select a.id, a.cedula_empleado, b.nombre, b.p_apellido, a.descripcion, a.costo_salarial, substr(a.fecha, 1, 10) as fecha from permisos a
+                                inner join empleados b on a.cedula_empleado = b.cedula where a.activo = true and a.id = ?`, [_id], (err, rows, fields)=>{
         if (!err && rows.length > 0) {
-            res.json(rows)
+            res.json(rows[0])
         } else {
             console.log(err);
             res.json({ "Message": err })

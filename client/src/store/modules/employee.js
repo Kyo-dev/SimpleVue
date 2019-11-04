@@ -1,11 +1,13 @@
 import axios from 'axios'
 
 const state = {
-    empleados: []
+    empleados: [],
+    emplado: {}
 }
 
 const getters = {
-    allEmpleados: state => state.empleados
+    allEmpleados: state => state.empleados,
+    oneEmpleado: state => state.empleado
 }
 
 const actions = {
@@ -57,7 +59,7 @@ const actions = {
             _tipo_telefono: empleado.tipo_telefono
         }
         const response = await axios.put(
-            `http://localhost:4000/api/usuarios/empleados/${empleado._cedula}`, empleado
+            `http://localhost:4000/api/usuarios/empleados/${empleado._cedula}`, data
         )
         console.log("AXIOS")
         console.log(empleado)
@@ -72,7 +74,12 @@ const actions = {
 
 const mutations = {
     setEmpleado: (state, empleados) => (state.empleados = empleados),
-    oneEmpleado: (state, empleados) => (state.empleados = empleados),
+    oneEmpleado(state, empleado){
+        state.empleado = empleado
+    },
+    // (state, cedula) => {
+    //     state.empleado = state.empleados.filter(empleado => empleado.cedula !== cedula)
+    // },
     newEmpleado: (state, empleado) => state.empleados.unshift(empleado),
     removeEmpleado: (state, cedula) => (state.empleados = state.empleados.filter(empleado => empleado.cedula !== cedula)),
     updEmpleado: (state, updEmpleado) => {

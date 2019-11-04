@@ -62,26 +62,32 @@ export default {
       this.deleteEmpleado(cedula);
     },
     getOneEmpleado(cedula) {
-      fetch(`http://localhost:4000/api/usuarios/empleados/${cedula}`)
-        .then(res => res.json())
-        .then(data => {
-          this.empleado = new Empleado(
-            data.cedula,
-            data.nombre,
-            data.p_apellido,
-            data.s_apellido,
-            data.correo,
-            data.fecha_contrato,
-            data.tipo_empleado,
-            data.salario_hora,
-            data.jornada,
-            data.numero,
-            data.tipo_telefono
-          );
-          const employee = data
-          console.log(data);
-        });
-    }
+      this.getEmpleado(cedula)
+      
+      // fetch(`http://localhost:4000/api/usuarios/empleados/${cedula}`)
+      //   .then(res => res.json())
+      //   .then(data => {
+      //     this.empleado = new Empleado(
+            // data.cedula,
+            // data.nombre,
+            // data.p_apellido,
+            // data.s_apellido,
+            // data.correo,
+            // data.fecha_contrato,
+            // data.tipo_empleado,
+            // data.salario_hora,
+            // data.jornada,
+            // data.numero,
+            // data.tipo_telefono
+          // );
+          // console.log('Data')
+          // console.log(data);
+
+
+
+        }
+        // );
+    // }
   },
   created() {
     this.fetchEmpleado();
