@@ -143,7 +143,7 @@ export default {
     };
   },
   methods: {
-    ...mapGetters(["allPermisos", "onePermiso"]),
+    ...mapGetters(["", "onePermiso"]),
     ...mapActions([
       "fetchPermisos",
       "getPermiso",

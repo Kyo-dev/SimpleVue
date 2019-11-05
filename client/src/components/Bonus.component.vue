@@ -141,7 +141,7 @@ export default {
     };
   },
   methods: {
-    ...mapGetters(["allBonos"]),
+    ...mapGetters([""]),
     ...mapActions(["fetchBonos", "insertBono"]),
     postBono(bono) {
       this.insertBono(this.bono);
