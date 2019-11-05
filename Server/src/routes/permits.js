@@ -6,6 +6,6 @@ router.post('/permisos', nuevoPermiso)
 router.get('/permisos', todosPermisos)
 router.get('/permisos/:_id', permisoID)
 router.put('/permisos/:_id', actualizarPermiso)
-router.delete('/permisos', borrarPermiso)
+router.delete('/permisos/:_id', borrarPermiso)
 
 export default router

@@ -98,7 +98,7 @@
 </template>
 <script>
 import { mapGetters, mapActions } from "vuex";
-import Empleado from "../model/empleado.model";
+import Empleado from "../model/employee.model";
 export default {
   data() {
     return {

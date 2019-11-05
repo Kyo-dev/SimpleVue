@@ -25,7 +25,7 @@ const actions = {
     }, 
     async insertPermiso({commit}, permiso){
         const data = {
-            _cedula: permiso.cedula,
+            _cedula: permiso.cedula_empleado,
 	        _fecha: permiso.fecha,
             _descripcion: permiso.descripcion,
             _costoSalarial: permiso.costo_salarial
@@ -35,6 +35,12 @@ const actions = {
         )
         commit('newPermiso', response.data);
         console.log(response.data)
+    },
+    async deletedPermiso({commit}, id){
+        const response = await axios.delete(
+            `http://localhost:4000/api/usuarios/permisos/${id}`
+        )
+        commit('removePermiso', response.data)
     }
 }
 const mutations = {
@@ -46,6 +52,9 @@ const mutations = {
     },
     newPermiso(state, permiso) {
         state.permisos.unshift(permiso)
+    },
+    removePermiso(state, permiso){
+        state.permiso = state.permisos.filter(permiso => permiso.id !== id)
     }
 }
 

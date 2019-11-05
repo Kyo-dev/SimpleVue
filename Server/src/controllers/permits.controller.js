@@ -34,7 +34,7 @@ export async function nuevoPermiso(req, res){
 }
 
 export async function todosPermisos(req, res){
-    await mysqlConnection.query(`Select a.id, a.cedula_empleado, b.nombre, b.p_apellido, a.descripcion, a.costo_salarial, a.fecha from permisos a
+    await mysqlConnection.query(`Select a.id, a.cedula_empleado, b.nombre, b.p_apellido, a.descripcion, a.costo_salarial, substr(a.fecha, 1, 10) as fecha from permisos a
     inner join empleados b on a.cedula_empleado = b.cedula where a.activo = true`, (err, rows, fields)=>{
         if (!err && rows.length > 0) {
             res.json(rows)
@@ -57,7 +57,7 @@ export async function permisoID(req, res){
     })
 }
 export async function borrarPermiso(req, res){
-    const {_id} = req.body
+    const {_id} = req.params
     const query = `
         SET @_id = ?;
         CALL eliminarPermiso(@_id)
