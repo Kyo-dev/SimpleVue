@@ -36,10 +36,9 @@ export async function nuevoPermiso(req, res){
 export async function todosPermisos(req, res){
     await mysqlConnection.query(`Select a.id, a.cedula_empleado, b.nombre, b.p_apellido, a.descripcion, a.costo_salarial, substr(a.fecha, 1, 10) as fecha from permisos a
     inner join empleados b on a.cedula_empleado = b.cedula where a.activo = true`, (err, rows, fields)=>{
-        if (!err && rows.length > 0) {
-            res.json(rows)
+        if (!err  && JSON.stringify(rows).length > 0 ) {
+                res.json(rows)
         } else {
-            console.log(err);
             res.json({ "Message": err })
         }
     })  
@@ -69,20 +68,21 @@ export async function borrarPermiso(req, res){
 
 export async function actualizarPermiso(req, res){
     const {_id} = req.params
-    const {_date, _description, _cost} = req.body
+    const {_fecha, _descripcion, _costoSalarial} = req.body
     const query = `
         SET @_id = ?;
-        SET @_date = ?;
-        SET @_description = ?;
-        SET @_cost = ?;
-        CALL actualizarPermiso (@_id, @_date, @_description, @_cost)
+        SET @_fecha = ?;
+        SET @_descripcion = ?;
+        SET @_costoSalarial = ?;
+        CALL actualizarPermiso (@_id, @_fecha, @_descripcion, @_costoSalarial)
     `
-    await mysqlConnection.query(query, [_id, _date, _description, _cost], (err, rows, fields)=>{
+    await mysqlConnection.query(query, [_id, _fecha, _descripcion, _costoSalarial], (err, rows, fields)=>{
         if(!err){
             res.json(rows[0])
             console.log('Permiso actualizado')
         } else {
             console.log("No se pudo actualizar el permiso")
+            console.log(JSON.stringify(rows[0]))
             res.json({"Message": err})        
         }
     })

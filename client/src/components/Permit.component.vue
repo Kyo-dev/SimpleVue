@@ -43,11 +43,10 @@
                       @click="postPermiso"
                       class="btn-1"
                     >Nuevo Permiso</v-btn>
-                    <v-btn color="warning" @click="reset">Borrar formulario</v-btn>
                   </template>
-                  <template v-else>
-                    <v-btn :disabled="!valid" color="success" @click="POST_Activitie">Actualizar</v-btn>
-                  </template>
+                    <v-btn color="warning" :disabled="!valid" @click="reset">Borrar formulario</v-btn>
+                  <template v-if="edit === true"></template>
+                  <v-btn color="success" :disabled="!valid" @click="updatePermiso">Actualizar</v-btn>
                 </v-form>
               </v-flex>
               <v-spacer></v-spacer>
@@ -92,11 +91,11 @@
                       <td class="td">{{item.fecha}}</td>
                       <td class="td">{{item.descripcion}}</td>
                       <td class="td">{{item.costo_salarial}}</td>
-                      <td class="td" @click="deletePermiso(item.id)">
+                      <td class="td icons" @click="deletePermiso(item.id)">
                         DELETE
                         <v-icon small color="error" class="icons">delete</v-icon>
                       </td>
-                      <td class="td" @click="getOnePermiso(item.id)">
+                      <td class="td icons" @click="getOnePermiso(item.id)">
                         actualizar
                         <v-icon small color="error" class="icons">delete</v-icon>
                       </td>
@@ -119,7 +118,7 @@ export default {
     return {
       tab: [],
       items: ["Nuevo permiso", "Todos los permisos"],
-      valid: true,
+      valid: false,
       min: new Date().toISOString().substr(0, 10),
       permiso: new Permiso(),
       permiso: [],
@@ -148,23 +147,32 @@ export default {
       "fetchPermisos",
       "getPermiso",
       "insertPermiso",
-      "deletedPermiso"
+      "deletedPermiso",
+      "updPermiso"
     ]),
     postPermiso(permiso) {
-      if (this.edit === false) {
-        this.insertPermiso(this.permiso);
-        this.fetchPermisos();
-      } else {
-      }
+      this.insertPermiso(this.permiso);
+      this.permiso = new Permiso();
+      this.reset();
+      this.fetchPermisos();
     },
-    deletePermiso(id){
+    updatePermiso(permiso) {
+      this.updPermiso(this.permiso);
+      this.fetchPermisos();
+      this.reset();
+      this.edit = false;
+    },
+    deletePermiso(id) {
       this.deletedPermiso(id);
       this.fetchPermisos();
     },
     getOnePermiso(id) {
-      this.permiso = new Permiso();
-      this.getPermiso(id);
-      this.permiso = this.onePermiso();
+      if (this.edit === false) {
+        this.edit = true;
+        this.permiso = new Permiso();
+        this.getPermiso(id);
+        this.permiso = this.onePermiso();
+      }
       // console.log(this.onePermiso());
     },
     validate() {
@@ -174,6 +182,8 @@ export default {
     },
     reset() {
       this.$refs.form.reset();
+      this.permiso = new Permiso();
+      this.edit = false
     }
   },
   created() {

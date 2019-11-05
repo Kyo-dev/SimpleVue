@@ -11,7 +11,6 @@ const actions = {
         const response = await axios.get(
             'http://localhost:4000/api/usuarios/bonos'
         )
-        console.log(response.data)
         commit('setBonos', response.data)
     },
     async insertBono({commit}, bono){
@@ -24,7 +23,6 @@ const actions = {
         const response = await axios.post(
             'http://localhost:4000/api/usuarios/bonos', data
         )
-        console.log(response.data)
         commit('newBono', response.data)
     },
     async updateBono({commit}, bono){

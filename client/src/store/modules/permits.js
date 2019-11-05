@@ -21,7 +21,6 @@ const actions = {
             `http://localhost:4000/api/usuarios/permisos/${id}`
             )
             commit('onePermiso', response.data)
-            console.log(response.data)
     }, 
     async insertPermiso({commit}, permiso){
         const data = {
@@ -34,7 +33,20 @@ const actions = {
             `http://localhost:4000/api/usuarios/permisos` , data
         )
         commit('newPermiso', response.data);
-        console.log(response.data)
+    },
+    async updPermiso({commit}, permiso){
+        const data = {
+            // _cedula: permiso.cedula_empleado,
+            _id: permiso.id,
+	        _fecha: permiso.fecha,
+            _descripcion: permiso.descripcion,
+            _costoSalarial: permiso.costo_salarial
+        }
+        console.log(data)
+        const response = await axios.put(
+            `http://localhost:4000/api/usuarios/permisos/${permiso.id}` , data
+        )
+        commit('updatedPermiso', response.data)
     },
     async deletedPermiso({commit}, id){
         const response = await axios.delete(
@@ -53,8 +65,17 @@ const mutations = {
     newPermiso(state, permiso) {
         state.permisos.unshift(permiso)
     },
-    removePermiso(state, permiso){
-        state.permiso = state.permisos.filter(permiso => permiso.id !== id)
+    removePermiso(state, removePermiso){
+        const index = state.permisos.findIndex(permiso => permiso.id === removePermiso.id)
+        if (index !== -1) {
+            state.permisos.splice(index, 1, removePermiso)
+        }
+    },
+    updatedPermiso: (state, updatedPermiso) =>{ 
+        const index = state.permisos.findIndex(permiso => permiso.id === updatedPermiso.id)
+        if (index !== -1) {
+            state.permisos.splice(index, 1, updatedPermiso)
+        }
     }
 }
 
