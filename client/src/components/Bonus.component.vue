@@ -89,11 +89,11 @@
                       <td class="td">{{item.motivo}}</td>
                       <td class="td">{{item.fecha}}</td>
                       <td class="td">{{item.cantidad}}</td>
-                      <td class="td" @click="deletePermiso(item.cedula)">
+                      <td class="td" @click="deleteBono(item.id)">
                         DELETE
                         <v-icon small color="error" class="icons">delete</v-icon>
                       </td>
-                      <td class="td" @click="getOnePermiso(item.id)">
+                      <td class="td" @click="getOneBono(item.id)">
                         actualizar
                         <v-icon small color="error" class="icons">delete</v-icon>
                       </td>
@@ -141,11 +141,22 @@ export default {
     };
   },
   methods: {
-    ...mapGetters([""]),
-    ...mapActions(["fetchBonos", "insertBono"]),
+    ...mapGetters(["oneBono"]),
+    ...mapActions(["fetchBonos", "insertBono","getBono"]),
     postBono(bono) {
       this.insertBono(this.bono);
+      this.bono = new Bono()
+      this.reset()
+      this.fetchBonos()
     },
+    getOneBono(id){
+      this.getBono(id)
+      this.bono = this.oneBono();
+      console.log('soy oneBono')
+      console.log(this.oneBono())
+      // this.bono = this.oneBono()
+    },
+    deleteBono(){},
     validate() {
       if (this.$refs.form.validate()) {
         this.snackbar = true;

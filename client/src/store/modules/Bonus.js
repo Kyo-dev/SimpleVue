@@ -1,19 +1,27 @@
 import axios from 'axios'
 
 const state = {
-    bonos : []
+    bonos: [],
+    bono: {}
 }
 const getters = {
-    allBonos: state => state.bonos
+    allBonos: state => state.bonos,
+    oneBono: state => state.bono
 }
 const actions = {
-    async fetchBonos ({commit}){
+    async fetchBonos({ commit }) {
         const response = await axios.get(
             'http://localhost:4000/api/usuarios/bonos'
         )
         commit('setBonos', response.data)
     },
-    async insertBono({commit}, bono){
+    async getBono({ commit }, id) {
+        const response = await axios.get(
+            `http://localhost:4000/api/usuarios/bonos/${id}`
+        )
+        commit('oneBono', response.data)
+    },
+    async insertBono({ commit }, bono) {
         const data = {
             _cedula: bono.cedula,
             _motivo: bono.motivo,
@@ -21,11 +29,11 @@ const actions = {
             _fecha: bono.fecha
         }
         const response = await axios.post(
-            'http://localhost:4000/api/usuarios/bonos', data
+            `http://localhost:4000/api/usuarios/bonos`, data
         )
         commit('newBono', response.data)
     },
-    async updateBono({commit}, bono){
+    async updateBono({ commit }, bono) {
         const data = {
             _cedula: bono.cedula,
             _motivo: bono.motivo,
@@ -40,10 +48,13 @@ const actions = {
 }
 const mutations = {
     setBonos: (state, bonos) => (state.bonos = bonos),
+    oneBono(state, bono) { 
+        state.bono = bono 
+    },
     newBono: (state, bono) => state.bonos.unshift(bono),
     updBono: (state, updBono) => {
         const index = state.bonos.findIndex(bono => bono.id === updBono.id)
-        if(index !== -1){
+        if (index !== -1) {
             state.bonos.splice(index, 1, updBono)
         }
     }
@@ -54,4 +65,4 @@ export default {
     getters,
     actions,
     mutations
-  };
+};
