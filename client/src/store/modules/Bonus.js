@@ -34,7 +34,8 @@ const actions = {
         commit('newBono', response.data)
     },
     async updBono({ commit }, bono) {
-        const data = {
+        const data = []
+        data = {
             _cedula: bono.cedula_empleado,
             _id: bono.id,
             _motivo: bono.motivo,

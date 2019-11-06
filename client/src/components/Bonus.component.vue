@@ -156,42 +156,41 @@ export default {
       "deletedBono"
     ]),
     postBono(bono) {
-      this.insertBono(this.bono);
-      this.bono = new Bono();
-      this.reset();
-      this.fetchBonos();
+      this.insertBono(this.bono)
+      this.bono = new Bono()
+      this.reset()
+      this.fetchBonos()
     },
     getOneBono(id) {
       if (this.edit === false) {
-        this.edit = true;
-        this.bono = new Bono();
-        this.getBono(id);
-        this.bono = this.oneBono();
+        this.getBono(id)
+        this.bono = this.oneBono()
       }
     },
     deleteBono(id) {
-      this.deletedBono(id);
-      this.bono = new Bono();
-      this.fetchBonos();
+      this.deletedBono(id)
+      this.bono = new Bono()
+      this.fetchBonos()
     },
     updateBono(bono) {
-      this.updBono(this.bono);
-      this.bono = new Bono();
-      this.fetchBonos();
-      this.reset();
-      this.edit = false;
+      this.updBono(this.bono)
+      this.fetchBonos()
+      this.reset()
+      this.edit = false
     },
     validate() {
       if (this.$refs.form.validate()) {
-        this.snackbar = true;
+        this.snackbar = true
       }
     },
     reset() {
-      this.$refs.form.reset();
+      this.$refs.form.reset()
+      this.bono = new Bono()
     }
   },
   created() {
-    this.fetchBonos();
+    this.fetchBonos() 
+    this.bono = new Bono()
   },
   computed: mapGetters(["allBonos"])
 };

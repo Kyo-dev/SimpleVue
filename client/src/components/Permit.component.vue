@@ -158,7 +158,6 @@ export default {
     },
     updatePermiso(permiso) {
       this.updPermiso(this.permiso)
-      this.permiso = new Permiso()
       this.fetchPermisos()
       this.reset()
       this.edit = false
@@ -170,12 +169,9 @@ export default {
     },
     getOnePermiso(id) {
       if (this.edit === false) {
-        this.edit = true
-        this.permiso = new Permiso()
         this.getPermiso(id)
         this.permiso = this.onePermiso()
       }
-      // console.log(this.onePermiso());
     },
     validate() {
       if (this.$refs.form.validate()) {
@@ -185,11 +181,10 @@ export default {
     reset() {
       this.$refs.form.reset()
       this.permiso = new Permiso()
-      this.edit = false
     }
   },
   created() {
-    this.fetchPermisos();
+    this.fetchPermisos()
   },
   computed: mapGetters(["allPermisos"])
 };
