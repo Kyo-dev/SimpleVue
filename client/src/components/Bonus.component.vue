@@ -16,7 +16,7 @@
               <v-flex xs12 md4>
                 <v-form ref="form" v-model="valid">
                   <v-text-field
-                    v-model="bono.cedula"
+                    v-model="bono.cedula_empleado"
                     :counter="9"
                     label="Cédula"
                     :rules="cedulaRules"
@@ -43,8 +43,10 @@
                       @click="postBono"
                       class="btn-1"
                     >Nuevo Bono</v-btn>
-                    <v-btn color="warning" @click="reset">Borrar formulario</v-btn>
                   </template>
+                  <v-btn color="warning" :disabled="!valid" @click="reset">Borrar formulario</v-btn>
+                  <template v-if="edit === true"></template>
+                  <v-btn color="success" :disabled="!valid" @click="updateBono">Actualizar</v-btn>
                 </v-form>
               </v-flex>
               <v-spacer></v-spacer>
@@ -79,6 +81,8 @@
                       <th class="th">Motivo</th>
                       <th class="th">Fecha</th>
                       <th class="th">Cantidad</th>
+                      <th class="th">Apellido</th>
+                      <th class="th">Nombre</th>
                       <th class="th">BORRAR</th>
                       <th class="th">Actualizar</th>
                     </tr>
@@ -89,7 +93,9 @@
                       <td class="td">{{item.motivo}}</td>
                       <td class="td">{{item.fecha}}</td>
                       <td class="td">{{item.cantidad}}</td>
-                      <td class="td" @click="deleteBono(item.id)">
+                      <td class="td">{{item.p_apellido}}</td>
+                      <td class="td">{{item.nombre}}</td>
+                      <td class="td" @dblclick="deleteBono(item.id)">
                         DELETE
                         <v-icon small color="error" class="icons">delete</v-icon>
                       </td>
@@ -111,7 +117,7 @@
 
 <script>
 import { mapGetters, mapActions } from "vuex";
-import Bono from '../model/bonus.model'
+import Bono from "../model/bonus.model";
 export default {
   data() {
     return {
@@ -141,22 +147,40 @@ export default {
     };
   },
   methods: {
-    ...mapGetters(["oneBono"]),
-    ...mapActions(["fetchBonos", "insertBono","getBono"]),
+    ...mapGetters(["", "oneBono"]),
+    ...mapActions([
+      "fetchBonos",
+      "insertBono",
+      "getBono",
+      "updBono",
+      "deletedBono"
+    ]),
     postBono(bono) {
       this.insertBono(this.bono);
-      this.bono = new Bono()
-      this.reset()
-      this.fetchBonos()
+      this.bono = new Bono();
+      this.reset();
+      this.fetchBonos();
     },
-    getOneBono(id){
-      this.getBono(id)
-      this.bono = this.oneBono();
-      console.log('soy oneBono')
-      console.log(this.oneBono())
-      // this.bono = this.oneBono()
+    getOneBono(id) {
+      if (this.edit === false) {
+        this.edit = true;
+        this.bono = new Bono();
+        this.getBono(id);
+        this.bono = this.oneBono();
+      }
     },
-    deleteBono(){},
+    deleteBono(id) {
+      this.deletedBono(id);
+      this.bono = new Bono();
+      this.fetchBonos();
+    },
+    updateBono(bono) {
+      this.updBono(this.bono);
+      this.bono = new Bono();
+      this.fetchBonos();
+      this.reset();
+      this.edit = false;
+    },
     validate() {
       if (this.$refs.form.validate()) {
         this.snackbar = true;

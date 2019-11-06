@@ -36,7 +36,7 @@ const actions = {
     },
     async updPermiso({commit}, permiso){
         const data = {
-            // _cedula: permiso.cedula_empleado,
+            _cedula: permiso.cedula_empleado,
             _id: permiso.id,
 	        _fecha: permiso.fecha,
             _descripcion: permiso.descripcion,

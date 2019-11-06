@@ -1,4 +1,4 @@
-export default class Bonus{
+export default class Bono{
     constructor(cedula, motivo, cantidad, fecha){
         (this.cedula = cedula),
         (this.motivo = motivo),

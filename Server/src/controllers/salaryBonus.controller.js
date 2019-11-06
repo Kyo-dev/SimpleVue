@@ -42,7 +42,7 @@ export async function todosBonos(req, res){
 
 export async function bonoID(req, res){
     const {_id} = req.params
-    await mysqlConnection.query(`select a.cedula_empleado as cedula, a.motivo, a.cantidad, substr(a.fecha, 1, 10) as fecha, b.nombre, b.p_apellido from bonos a
+    await mysqlConnection.query(`select a.id, a.cedula_empleado, a.motivo, a.cantidad, substr(a.fecha, 1, 10) as fecha, b.nombre, b.p_apellido from bonos a
     inner join empleados b on a.cedula_empleado = b.cedula where b.activo = true and a.id = ?`, [_id], (err, rows, fields)=>{
         !err ? res.json(rows[0]) : res.json({"Message": err})
     })
@@ -59,7 +59,7 @@ export async function actualizarBono(req, res){
         CALL actualizarBono(@_id, @_motivo, @_cantidad, @_fecha)
     `
     await mysqlConnection.query(query, [_id, _motivo, _cantidad, _fecha], (err, rows, fields)=>{
-        !err ? res.json({Status: "OK"}) : res.json({"Message": err})
+        !err ? res.json(rows[0]) : res.json({"Message": err})
     })
 }
 
