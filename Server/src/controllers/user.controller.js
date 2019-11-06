@@ -38,7 +38,7 @@ export async function nuevoEmpleado(req, res) {
 }
 
 export async function todosEmpleados(req, res) {
-    await mysqlConnection.query(`SELECT a.cedula, a.nombre, a.p_apellido, a.s_apellido, a.correo, a.fecha_contrato, a.tipo_empleado, b.salario_hora, b.jornada
+    await mysqlConnection.query(`SELECT a.cedula, a.nombre, a.p_apellido, a.s_apellido, a.correo, substr(a.fecha_contrato, 1, 10) as fecha_contrato, a.tipo_empleado, b.salario_hora, b.jornada
                                 FROM empleados a inner join salarios b on a.cedula = b.cedula_empleado where a.activo = true and a.tipo_empleado > 1;`, (err, rows, fields) => {
         if (!err && rows.length > 0) {
             res.json(rows)
@@ -52,7 +52,7 @@ export async function todosEmpleados(req, res) {
 export async function empleadoDNI(req, res) {
     const { _cedula } = req.params
     await mysqlConnection.query(`
-    SELECT a.cedula, a.nombre, a.p_apellido, a.s_apellido, a.correo, a.fecha_contrato, 
+    SELECT a.cedula, a.nombre, a.p_apellido, a.s_apellido, a.correo, substr(a.fecha_contrato, 1, 10) as fecha_contrato,
            a.tipo_empleado, b.salario_hora, b.jornada, c.numero, c.numero, c.tipo_telefono
     FROM empleados a 
     INNER JOIN salarios b on a.cedula = b.cedula_empleado
@@ -100,7 +100,8 @@ export async function actualizarEmpleado(req, res) {
 }
 
 export async function nuevoDespido(req, res) {
-    const { _cedula, _descripcion } = req.body
+    const {_cedula} = req.params
+    const {_descripcion } = req.body
     const query = `
         SET @_cedula = ?;
         SET @_descripcion = ?;

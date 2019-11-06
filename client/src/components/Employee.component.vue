@@ -101,6 +101,7 @@
                     <br />
                     <v-btn :disabled="!valid" color="success" @click="postEmpleado">Nuevo empleado</v-btn>
                     <v-btn color="warning" @click="reset">Borrar formulario</v-btn>
+                    <v-btn color="success"  @click="updateEmpleado">Actualizar</v-btn>
                   </template>
                 </v-sheet>
               </v-flex>
@@ -141,7 +142,7 @@
                     <td class="td">{{item.correo}}</td>
                     <td class="td">{{item.salario_hora}}</td>
                     <td class="td">{{item.jornada}}</td>
-                    <td class="td" @click="delEmpleado(item.cedula)">
+                    <td class="td" @click="deleteEmpleado(item.cedula)">
                       DELETE
                       <v-icon small color="error" class="icons">delete</v-icon>
                     </td>
@@ -224,35 +225,43 @@ export default {
     ...mapActions([
       "fetchEmpleado",
       "insertEmpleado",
-      "deleteEmpleado",
-      "updateEmpleado",
+      "deletedEmpleado",
+      "updEmpleado",
       "getEmpleado"
     ]),
     postEmpleado(empleado) {
-      this.insertEmpleado(this.empleado);
-      this.empleado = new Empleado();
+      this.insertEmpleado(this.empleado)
+      this.empleado = new Empleado()
     },
     validate() {
       if (this.$refs.form.validate()) {
         this.snackbar = true;
       }
     },
-    delEmpleado(cedula) {
-      this.deleteEmpleado(cedula);
+    deleteEmpleado(cedula) {
+      this.deletedEmpleado(cedula)
+      this.empleado = new Empleado()
+      this.fetchEmpleado()
     },
     getOneEmpleado(cedula) {
-      this.getEmpleado(cedula);
+      if(this.edit === false){
+        this.getEmpleado(cedula)
+        this.empleado = this.oneEmpleado()
+      }
+    },
+    updateEmpleado(empleado){
+      this.updEmpleado(this.empleado)
+      this.fetchEmpleado()
+      this.reset()
+      this.edit = false
     },
     reset() {
-      this.$refs.form.reset();
-      // store.getters.one
-      // this.empleado = this.oneEmpleado()
-      this.empleado = this.oneEmpleado();
-      console.log(this.empleado);
+      this.$refs.form.reset()
+      this.empleado = new Empleado()
     }
   },
   created() {
-    this.fetchEmpleado();
+    this.fetchEmpleado()
   },
   computed: mapGetters(["allEmpleados"])
 };

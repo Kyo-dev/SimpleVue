@@ -2,7 +2,7 @@ import axios from 'axios'
 
 const state = {
     empleados: [],
-    emplado: {}
+    empleado: {}
 }
 
 const getters = {
@@ -21,6 +21,7 @@ const actions = {
         const response = await axios.get(
             `http://localhost:4000/api/usuarios/empleados/${cedula}`
         )
+        console.log('HOLA')
         console.log(response.data)
         commit('oneEmpleado', response.data)
     },
@@ -44,7 +45,7 @@ const actions = {
         commit('newEmpleado', response.data);
         console.log(response.data)
     },
-    async updateEmpleado({ commit }, empleado) {
+    async updEmpleado({ commit }, empleado) {
         const data = {
             _cedula: empleado.cedula,
             _nombre: empleado.nombre,
@@ -59,16 +60,15 @@ const actions = {
             _tipo_telefono: empleado.tipo_telefono
         }
         const response = await axios.put(
-            `http://localhost:4000/api/usuarios/empleados/${empleado._cedula}`, data
+            `http://localhost:4000/api/usuarios/empleados/${empleado.cedula}`, data
         )
-        console.log("AXIOS")
-        console.log(empleado)
-        commit('updEmpleado', response.data)
+        commit('updatedEmpleado', response.data)
     },
-    async deleteEmpleado({ commit }, cedula) {
-        console.log('SOY EL DELETE' + cedula)
-        await axios.delete(`http://localhost:4000/api/usuarios/empleados/${cedula}`)
-        commit('removeEmpleado', cedula);
+    async deletedEmpleado({ commit }, cedula) {
+        const response = await axios.delete(
+            `http://localhost:4000/api/usuarios/empleados/${cedula}`
+            )
+        commit('removeEmpleado', response.data);
     }
 }
 
@@ -77,15 +77,17 @@ const mutations = {
     oneEmpleado(state, empleado){
         state.empleado = empleado
     },
-    // (state, cedula) => {
-    //     state.empleado = state.empleados.filter(empleado => empleado.cedula !== cedula)
-    // },
     newEmpleado: (state, empleado) => state.empleados.unshift(empleado),
-    removeEmpleado: (state, cedula) => (state.empleados = state.empleados.filter(empleado => empleado.cedula !== cedula)),
-    updEmpleado: (state, updEmpleado) => {
-        const index = state.empleados.findIndex(empleado => empleado.cedula === updEmpleado.cedula)
+    removeEmpleado: (state, removeEmpleado) => {
+        const index = state.empleados.findIndex(empleado => empleado.cedula === removeEmpleado.cedula)
         if (index !== -1) {
-            state.empleados.splice(index, 1, updEmpleado)
+            state.empleados.splice(index, 1, removeEmpleado)
+        }
+    },
+    updatedEmpleado: (state, updatedEmpleado) => {
+        const index = state.empleados.findIndex(empleado => empleado.cedula === updatedEmpleado.cedula)
+        if (index !== -1) {
+            state.empleados.splice(index, 1, updatedEmpleado)
         }
     }
 }

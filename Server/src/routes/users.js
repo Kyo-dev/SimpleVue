@@ -5,7 +5,7 @@ import { todosEmpleados, empleadoDNI, nuevoEmpleado, actualizarEmpleado , crearA
 router.post('/empleados', nuevoEmpleado)
 router.get('/empleados', todosEmpleados)
 router.get('/empleados/:_cedula', empleadoDNI)
-router.delete('/empleados', nuevoDespido)
+router.delete('/empleados/:_cedula', nuevoDespido)
 router.put('/empleados/:_cedula', actualizarEmpleado)
 router.post('/nuevo-adm', crearAdm)
 router.post('/login',loginAdm )
