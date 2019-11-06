@@ -5,7 +5,7 @@ import jwt from 'jsonwebtoken'
 
 //SECTION EMPLEADOS
 export async function nuevoEmpleado(req, res) {
-    const {_cedula, _nombre, _p_apellido, _s_apellido, _correo, _fecha_contrato, _tipo_empleado, _salario_hora, _jornada, _numero, _tipo_telefono} = req.body
+    const { _cedula, _nombre, _p_apellido, _s_apellido, _correo, _fecha_contrato, _tipo_empleado, _salario_hora, _jornada, _numero, _tipo_telefono } = req.body
     const query = `
         SET @_cedula = ?;
         SET @_nombre = ?;
@@ -40,10 +40,9 @@ export async function nuevoEmpleado(req, res) {
 export async function todosEmpleados(req, res) {
     await mysqlConnection.query(`SELECT a.cedula, a.nombre, a.p_apellido, a.s_apellido, a.correo, substr(a.fecha_contrato, 1, 10) as fecha_contrato, a.tipo_empleado, b.salario_hora, b.jornada
                                 FROM empleados a inner join salarios b on a.cedula = b.cedula_empleado where a.activo = true and a.tipo_empleado > 1;`, (err, rows, fields) => {
-        if (!err && rows.length > 0) {
+        if (!err && JSON.stringify(rows).length > 0) {
             res.json(rows)
         } else {
-            console.log(err);
             res.json({ "Message": err })
         }
     })
@@ -68,8 +67,8 @@ export async function empleadoDNI(req, res) {
 }
 
 export async function actualizarEmpleado(req, res) {
-    const {_cedula} = req.params
-    const { _nombre, _p_apellido, _s_apellido, _correo, _fecha_contrato, _tipo_empleado, _salario_hora, _jornada, _numero, _tipo_telefono} = req.body
+    const { _cedula } = req.params
+    const { _nombre, _p_apellido, _s_apellido, _correo, _fecha_contrato, _tipo_empleado, _salario_hora, _jornada, _numero, _tipo_telefono } = req.body
     const query = `
         SET @_cedula = ?;
         SET @_nombre = ?;
@@ -84,24 +83,24 @@ export async function actualizarEmpleado(req, res) {
         SET @_tipo_telefono = ?;
         CALL actualizarEmpleado(@_cedula, @_nombre, @_p_apellido, @_s_apellido, @_correo, @_fecha_contrato, @_tipo_empleado, @_salario_hora, @_jornada, @_numero, @_tipo_telefono);
     `
-    await mysqlConnection.query('select cedula from empleados where cedula = ?', [_cedula], (err, rows, fields)=>{
-        if(!err && rows.length > 0){
-            mysqlConnection.query(query, [_cedula, _nombre, _p_apellido, _s_apellido, _correo, _fecha_contrato, _tipo_empleado, _salario_hora, _jornada, _numero, _tipo_telefono], (err, rows, fields)=>{
-                if(!err){
-                    !err ? res.json({Status: "OK"}) : res.json({Status: err})
-                }else{
-                    res.json({Status: err})
+    await mysqlConnection.query('select cedula from empleados where cedula = ?', [_cedula], (err, rows, fields) => {
+        if (!err && rows.length > 0) {
+            mysqlConnection.query(query, [_cedula, _nombre, _p_apellido, _s_apellido, _correo, _fecha_contrato, _tipo_empleado, _salario_hora, _jornada, _numero, _tipo_telefono], (err, rows, fields) => {
+                if (!err) {
+                    !err ? res.json({ Status: "OK" }) : res.json({ Status: err })
+                } else {
+                    res.json({ Status: err })
                 }
             })
-        }else {
-            res.json({Status: err})
+        } else {
+            res.json({ Status: err })
         }
     })
 }
 
 export async function nuevoDespido(req, res) {
-    const {_cedula} = req.params
-    const {_descripcion } = req.body
+    const { _cedula } = req.params
+    const { _descripcion } = req.body
     const query = `
         SET @_cedula = ?;
         SET @_descripcion = ?;
@@ -110,9 +109,9 @@ export async function nuevoDespido(req, res) {
     await mysqlConnection.query('SELECT cedula FROM empleados WHERE cedula = ? AND activo = true;', [_cedula], (err, rows, fields) => {
         if (rows.length > 0) {
             console.log('01')
-            mysqlConnection.query(query, [_cedula, _descripcion], (err, rows, fields)=>{
+            mysqlConnection.query(query, [_cedula, _descripcion], (err, rows, fields) => {
                 console.log('02')
-                !err ? res.json({Status: "OK"}) : res.json({"Message": err})
+                !err ? res.json({ Status: "OK" }) : res.json({ "Message": err })
             })
         } else {
             console.log('Usuario invalido');
@@ -124,7 +123,7 @@ export async function nuevoDespido(req, res) {
 
 //SECTION ADM
 export async function crearAdm(req, res) {
-    let {_correo, _clave, _fecha} = req.body
+    let { _correo, _clave, _fecha } = req.body
     const query = `
         SET @_correo = ?;
         SET @_clave = ?;
@@ -143,13 +142,13 @@ export async function crearAdm(req, res) {
                     // console.log(rows)
                     if (!err) {
                         console.log('correct')
-                        res.json({Status: "OK"})
+                        res.json({ Status: "OK" })
                     } else {
                         res.json({ "mensaje": "errors" })
                     }
                 })
             })
-        }else{
+        } else {
             res.json({ "mensaje": "error 2" })
         }
     })
@@ -174,7 +173,7 @@ export async function loginAdm(req, res) {
                             console.log('MENSAJE 04')
                             const token = jwt.sign({
                                 email: _correo,
-                                
+
                             },
                                 process.env.SECRET_KEY = config.secret,
                                 {
@@ -205,7 +204,7 @@ export async function loginAdm(req, res) {
     })
 
 }
-//!SECTION 
+//!SECTION
 
     // "_correo": "Charlotte@icloud.com",
     // "_clave": "charlotte"

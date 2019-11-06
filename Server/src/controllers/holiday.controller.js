@@ -12,7 +12,7 @@ export async function nuevasVacaciones(req, res) {
         const data = JSON.stringify(rows[0])
         console.log("data")
         console.log(data.substring(10, data.length - 1))
-        if(data.substring(10, data.length - 1) == 0 ){
+        if (data.substring(10, data.length - 1) == 0) {
             console.log("CONSOLA")
             mysqlConnection.query(query, [_cedula, _fecha_salida, _fecha_entrada], (err, rows, fields) => {
                 console.log(_cedula)
@@ -20,8 +20,8 @@ export async function nuevasVacaciones(req, res) {
                 console.log(_fecha_entrada)
                 !err ? res.json({ Status: "OK" }) : res.json({ Status: err })
             })
-        }else{
-            res.json({Message: "El usuario ya tiene vacaciones programadas"})
+        } else {
+            res.json({ Message: "El usuario ya tiene vacaciones programadas" })
         }
     })
 }
@@ -32,24 +32,32 @@ export async function obtenerVacaciones(req, res) {
         inner join empleados b on a.cedula_empleado = b.cedula where a.activo = true;
     `
     await mysqlConnection.query(query, (err, rows, fields) => {
-        !err ? res.json(rows) : res.json({ Status: err })
+        if (!err && JSON.stringify(rows).length > 0) {
+            res.json(rows)
+        } else {
+            res.json({ "Message": err })
+        }
     })
 }
 
 export async function obtenerVacacionesEmpleado(req, res) {
-    const {_cedula} = req.params
+    const { _cedula } = req.params
     const query = `
     select a.id, b.cedula, b.nombre, b.p_apellido, a.fecha_salida, a.fecha_entrada from vacaciones a
     inner join empleados b on a.cedula_empleado = b.cedula where a.activo = true and b.cedula = ${_cedula};
     `
     await mysqlConnection.query(query, (err, rows, fields) => {
-        !err ? res.json(rows) : res.json({ Status: err })
+        if (!err && JSON.stringify(rows).length > 0) {
+            res.json(rows)
+        } else {
+            res.json({ "Message": err })
+        }
     })
 }
 
 export async function actualizarVacaciones(req, res) {
-    const {_id} = req.params
-    const {_fecha_salida, _fecha_entrada } = req.body
+    const { _id } = req.params
+    const { _fecha_salida, _fecha_entrada } = req.body
     const query = `
         SET @_id = ?;
         SET @_fecha_salida = ?;
