@@ -32,7 +32,7 @@ let router = new Router({
     {
       path: '/bonos',
       name: 'bonos',
-      component: () => import(/* webpackChunkName: "one_employee" */ './views/Bonus.vue'),
+      component: () => import(/* webpackChunkName: "bonus" */ './views/Bonus.vue'),
       meta: {
         requiresAuth: true
       }
@@ -40,7 +40,15 @@ let router = new Router({
     {
       path: '/permisos',
       name: 'permisos',
-      component: () => import(/* webpackChunkName: "employee" */ './views/Permits.vue'),
+      component: () => import(/* webpackChunkName: "permits" */ './views/Permits.vue'),
+      meta: {
+        requiresAuth: true
+      }
+    },
+    {
+      path: '/incremento-salarial',
+      name: 'incrementoSalarial',
+      component: () => import(/* webpackChunkName: "incremento" */ './views/SalaryIncrease.vue'),
       meta: {
         requiresAuth: true
       }

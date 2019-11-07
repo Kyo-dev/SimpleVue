@@ -21,7 +21,7 @@ export async function nuevoAumento(req, res) {
 }
 
 export async function todosAumentos(req, res) {
-    await mysqlConnection.query(`select a.id, a.cedula_empleado, c.salario_hora, a.cantidad, a.fecha, b.nombre, b.p_apellido, b.activo from aumento_salarial a
+    await mysqlConnection.query(`select a.id, a.cedula_empleado, c.salario_hora, c.jornada, a.cantidad, substr(a.fecha, 1, 10) as fecha, b.nombre, b.p_apellido, b.activo from aumento_salarial a
     inner join empleados b on a.cedula_empleado = b.cedula
     inner join salarios c on c.cedula_empleado = b.cedula where a.activo = true`, (err, rows, fields) => {
         if (!err && JSON.stringify(rows).length > 0) {

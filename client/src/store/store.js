@@ -5,6 +5,7 @@ import Auth from './modules/auth'
 import Employee from './modules/employee'
 import Bonos from './modules/bonus'
 import Permisos from './modules/permits'
+import Salary from './modules/salary'
 
 Vue.use(Vuex)
 
@@ -13,7 +14,8 @@ export default new Vuex.Store({
     Auth, 
     Employee,
     Bonos,
-    Permisos
+    Permisos,
+    Salary
   },
   // state: {
 

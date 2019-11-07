@@ -1,7 +1,7 @@
 <template>
   <v-card color="basil">
     <v-card-title class="text-center justify-center py-6">
-      <h1 class="font-weight-bold display-3 basil--text" color="primary">Permisos</h1>
+      <h1 class="font-weight-bold display-3 basil--text" color="primary">Salarios</h1>
     </v-card-title>
     <v-tabs v-model="tab" background-color="transparent" color="basil" grow>
       <v-tabs v-model="tab" background-color="transparent" color="basil" grow>
@@ -16,44 +16,36 @@
               <v-flex xs12 md4>
                 <v-form ref="form" v-model="valid">
                   <v-text-field
-                    v-model="permiso.cedula_empleado"
+                    v-model="salary.cedula_empleado"
                     :counter="9"
                     label="Cédula"
                     :rules="cedulaRules"
                     required
                   ></v-text-field>
                   <v-text-field
-                    v-model="permiso.descripcion"
-                    :counter="50"
-                    label="Motivo del permiso"
-                    :rules="descripcionRules"
-                    required
-                  ></v-text-field>
-                  <v-text-field
-                    v-model="permiso.costo_salarial"
-                    :counter="50"
-                    label="Costo salarial"
-                    :rules="costoRules"
+                    v-model="salary.cantidad"
+                    label="Cantidad"
+                    :rules="cantidadRules"
                     required
                   ></v-text-field>
                   <template v-if="edit===false">
                     <v-btn
                       :disabled="!valid"
                       color="success"
-                      @click="postPermiso"
+                      @click="postIncremento"
                       class="btn-1"
                     >Nuevo Permiso</v-btn>
                   </template>
-                    <v-btn color="warning" :disabled="!valid" @click="reset">Borrar formulario</v-btn>
+                  <v-btn color="warning" :disabled="!valid" @click="reset">Borrar formulario</v-btn>
                   <template v-if="edit === true"></template>
-                  <v-btn color="success" :disabled="!valid" @click="updatePermiso">Actualizar</v-btn>
+                  <v-btn color="success" :disabled="!valid" @click="updateSalario">Actualizar</v-btn>
                 </v-form>
               </v-flex>
               <v-spacer></v-spacer>
               <v-flex xs12 md6>
                 <v-card>
                   <v-date-picker
-                    v-model="permiso.fecha"
+                    v-model="salary.fecha"
                     full-width
                     locale="es"
                     :min="min"
@@ -69,6 +61,13 @@
       <v-tab-item>
         <v-card flat>
           <v-card-text>
+            <h1>hola 2</h1>
+          </v-card-text>
+        </v-card>
+      </v-tab-item>
+      <v-tab-item>
+        <v-card flat>
+          <v-card-text>
             <v-container>
               <div>
                 <v-spacer></v-spacer>
@@ -78,24 +77,28 @@
                   <thead>
                     <tr>
                       <th class="th">Cedula</th>
+                      <th class="th">Apellido</th>
+                      <th class="th">Nombre</th>
+                      <th class="th">Salario hora</th>
+                      <th class="th">Jornada laboral</th>
                       <th class="th">Fecha</th>
-                      <th class="th">Descripcion</th>
-                      <th class="th">Costo Salarial</th>
                       <th class="th">BORRAR</th>
                       <th class="th">Actualizar</th>
                     </tr>
                   </thead>
                   <tbody>
-                    <tr v-for="item of allPermisos" :key="item.id">
+                    <tr v-for="item of allSalarios" :key="item.id">
                       <td class="td">{{item.cedula_empleado}}</td>
+                      <td class="td">{{item.p_apellido}}</td>
+                      <td class="td">{{item.nombre}}</td>
+                      <td class="td">{{item.salario_hora}}</td>
+                      <td class="td">{{item.jornada}}</td>
                       <td class="td">{{item.fecha}}</td>
-                      <td class="td">{{item.descripcion}}</td>
-                      <td class="td">{{item.costo_salarial}}</td>
-                      <td class="td icons" @dblclick="deletePermiso(item.id)">
+                      <td class="td icons" @dblclick="deleteAumento(item.id)">
                         DELETE
                         <v-icon small color="error" class="icons">delete</v-icon>
                       </td>
-                      <td class="td icons" @click="getOnePermiso(item.id)">
+                      <td class="td icons" @click="getOneAumento(item.id)">
                         actualizar
                         <v-icon small color="error" class="icons">delete</v-icon>
                       </td>
@@ -110,83 +113,51 @@
     </v-tabs-items>
   </v-card>
 </template>
+
 <script>
 import { mapGetters, mapActions } from "vuex";
-import Permiso from "../model/permits.model";
+import Salary from "../model/salary.model";
 export default {
   data() {
     return {
       tab: [],
-      items: ["Nuevo permiso", "Todos los permisos"],
+      items: ["Incremento", "Decremento", "Todos"],
+      salary: new Salary(),
+      salary: [],
       valid: false,
-      min: new Date().toISOString().substr(0, 10),
-      permiso: new Permiso(),
-      permiso: [],
       edit: false,
-      actEdit: "",
+      min: new Date().toISOString().substr(0, 10),
       cedulaRules: [
         v => /^\d+$/.test(v) || "Solo se admiten números positivos",
         v => !!v || "Por favor ingrese la cédula del empleado",
         v => (v && v.length == 9) || "La cédula debe ser de 9 caracteres"
       ],
-      descripcionRules: [
-        v => !!v || "Por favor describa el motivo del permiso",
-        v => (v && v.length <= 200) || "El motivo excede la cantidad"
-      ],
-      costoRules: [
-        v => !!v || "Por favor especifique el costo"
-        // v =>
-        //   /^(\d{1}\.)?(\d+\.?)+(,\d{2})?$/.test(v) ||
-        //   "La cantidad debe ser un valor numérico positivo"
+      cantidadRules: [
+        v => !!v || "Por favor especifique el costo",
+        v =>
+          /^(\d{1}\.)?(\d+\.?)+(,\d{2})?$/.test(v) ||
+          "La cantidad debe ser un valor numérico positivo"
       ]
     };
   },
   methods: {
-    ...mapGetters(["", "onePermiso"]),
+    ...mapGetters(["", ""]),
     ...mapActions([
-      "fetchPermisos",
-      "getPermiso",
-      "insertPermiso",
-      "deletedPermiso",
-      "updPermiso"
+        "fetchSalary",
     ]),
-    postPermiso(permiso) {
-      this.insertPermiso(this.permiso)
-      this.permiso = new Permiso()
-      this.reset()
-      this.fetchPermisos()
-    },
-    updatePermiso(permiso) {
-      this.updPermiso(this.permiso)
-      this.fetchPermisos()
-      this.reset()
-      this.edit = false
-    },
-    deletePermiso(id) {
-      this.deletedPermiso(id)
-      this.permiso = new Permiso()
-      this.fetchPermisos()
-    },
-    getOnePermiso(id) {
-      if (this.edit === false) {
-        this.getPermiso(id)
-        this.permiso = this.onePermiso()
-      }
-    },
-    validate() {
-      if (this.$refs.form.validate()) {
-        this.snackbar = true
-      }
-    },
+    postIncremento() {},
+    updateSalario() {},
+    deleteAumento() {}, 
+    getOneAumento() {},
     reset() {
-      this.$refs.form.reset()
-      this.permiso = new Permiso()
+      this.$refs.form.reset();
+      this.salary = new Salary();
     }
   },
-  created() {
-    this.fetchPermisos()
+  created(){
+      this.fetchSalary()
   },
-  computed: mapGetters(["allPermisos"])
+  computed: mapGetters(["allSalarios"])
 };
 </script>
 
