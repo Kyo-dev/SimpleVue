@@ -34,7 +34,7 @@
                       color="success"
                       @click="postIncremento"
                       class="btn-1"
-                    >Nuevo Permiso</v-btn>
+                    >Nuevo aumento</v-btn>
                   </template>
                   <v-btn color="warning" :disabled="!valid" @click="reset">Borrar formulario</v-btn>
                   <template v-if="edit === true"></template>
@@ -61,7 +61,7 @@
       <v-tab-item>
         <v-card flat>
           <v-card-text>
-            <h1>hola 2</h1>
+            <h1>Preguntar si se puede hacer rebajas en el salario</h1>
           </v-card-text>
         </v-card>
       </v-tab-item>
@@ -92,11 +92,11 @@
                       <td class="td">{{item.nombre}}</td>
                       <td class="td">{{item.cantidad}}</td>
                       <td class="td">{{item.fecha}}</td>
-                      <td class="td icons" @dblclick="deleteAumento(item.id)">
+                      <td class="td icons" @dblclick="deleteAumento(item)">
                         DELETE
                         <v-icon small color="error" class="icons">delete</v-icon>
                       </td>
-                      <td class="td icons" @click="getOneAumento(item.id)">
+                      <td class="td icons" @click="getOneSalario(item.id, item.cedula_empleado)">
                         actualizar
                         <v-icon small color="error" class="icons">delete</v-icon>
                       </td>
@@ -139,19 +139,30 @@ export default {
     };
   },
   methods: {
-    ...mapGetters(["", ""]),
+    ...mapGetters(["", "oneSalario"]),
     ...mapActions([
         "fetchSalario",
-        "insertAumento"
+        "insertAumento",
+        "getSalario",
+        "deletedSalario"
     ]),
     postIncremento(salario) {
       this.insertAumento(this.salario)
-      this.fetchSalario()
       this.reset()
+      this.fetchSalario()
     },
     updateSalario() {},
-    deleteAumento() {}, 
-    getOneAumento() {},
+    deleteAumento(salario) {
+      this.deletedSalario(salario)
+      this.salario = new Salario()
+      this.fetchSalario()
+    }, 
+    getOneSalario(id) {
+      if(this.edit === false){
+        this.getSalario(id)
+        this.salario = this.oneSalario()
+      }
+    },
     reset() {
       this.$refs.form.reset()
       this.salario = new Salario()

@@ -39,23 +39,24 @@ export async function todosAumentos(req, res) {
     })
 }
 
-export async function aumentoCedula(req, res) {
-    const { _cedula } = req.params
-    await mysqlConnection.query(`select a.id, a.cedula_empleado, c.salario_hora, a.cantidad, a.fecha, b.nombre, b.p_apellido, b.activo from aumento_salarial a
+export async function aumentoID(req, res) {
+    const { _id } = req.params
+    await mysqlConnection.query(`select a.id, a.cedula_empleado, c.salario_hora, a.cantidad, substr(a.fecha, 1, 10) as fecha, b.nombre, b.p_apellido, b.activo from aumento_salarial a
     inner join empleados b on a.cedula_empleado = b.cedula
-    inner join salarios c on c.cedula_empleado = b.cedula where a.activo = true and a.cedula_empleado = ?`, [_cedula], (err, rows, fields) => {
-        !err ? res.json(rows) : res.json({ Status: err })
+    inner join salarios c on c.cedula_empleado = b.cedula where a.activo = true and a.id = ?`, [_id], (err, rows, fields) => {
+        !err ? res.json(rows[0]) : res.json({ Status: err })
     })
 }
 
 export async function borrarAumento(req, res) {
-    const { _id, _cedula } = req.body
+    const {_id} = req.params
+    const {_cedula} = req.body
     const query = `
         SET @_id = ?;
         SET @_cedula = ?;
         CALL eliminarAumento(@_id, @_cedula)
     `
     await mysqlConnection.query(query, [_id, _cedula], (err, rows, fields) => {
-        !err ? res.json({ Status: "OK" }) : res.json({ Status: err })
+        !err ? res.json(rows[0]) : res.json({ Status: err })
     })
 }

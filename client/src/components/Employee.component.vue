@@ -101,7 +101,7 @@
                     <br />
                     <v-btn :disabled="!valid" color="success" @click="postEmpleado">Nuevo empleado</v-btn>
                     <v-btn color="warning" @click="reset">Borrar formulario</v-btn>
-                    <v-btn color="success"  @click="updateEmpleado">Actualizar</v-btn>
+                    <v-btn color="success" @click="updateEmpleado">Actualizar</v-btn>
                   </template>
                 </v-sheet>
               </v-flex>
@@ -176,19 +176,22 @@ export default {
       actEdit: "",
       cedulaRules: [
         v => !!v || "Por favor ingrese la cédula del empleado",
-        v => (v && v.length == 9) || "La cédula debe ser de 9 caracteres",
-        v => /^\d+$/.test(v) || "Solo se admiten números positivos"
+        v => /^\d+$/.test(v) || "Solo se admiten números positivos",
+        v => (v && v.length == 9) || "La cédula debe ser de 9 caracteres"
       ],
       nombreRules: [
         v => !!v || "Por favor ingrese el nombre del nuevo empleado",
+        v => /^[a-zA-Z ]+$/.test(v) || "Solo puede usar letras",
         v => (v && v.length <= 50) || "El nombre es muy grande"
       ],
       p_apellidoRules: [
         v => !!v || "Por favor ingrese el primer apellido",
+        v => /^[a-zA-Z ]+$/.test(v) || "Solo puede usar letras",
         v => (v && v.length <= 50) || "El primer apellido es muy grande"
       ],
       s_apellidoRules: [
         v => !!v || "Por favor ingrese el primer apellido",
+        v => /^[a-zA-Z ]+$/.test(v) || "Solo puede usar letras",
         v => (v && v.length <= 50) || "El segundo apellido es muy grande"
       ],
       correoRules: [
@@ -201,6 +204,7 @@ export default {
       cargoRules: [v => !!v || "Por favor seleccione un cargo"],
       salarioRules: [
         v => !!v || "Por favor ingrese el salario por hora del nuevo empleado",
+        v => /^\d+$/.test(v) || "Solo se admiten números positivos",
         v =>
           /^(\d{1}\.)?(\d+\.?)+(,\d{2})?$/.test(v) ||
           "El salario debe llevar 2 decimales, ejemplo 1234.56"
@@ -213,8 +217,9 @@ export default {
         v => /^\d+$/.test(v) || "Solo se admiten números positivos"
       ],
       numeroRules: [
-        v => !!v || "Por favor ingrese el numero del empleado",
-        v => (v && v.length == 8) || "La numero debe ser de 8 caracteres"
+        v => !!v || "Por favor ingrese el número del empleado",
+        v => /^\d+$/.test(v) || "Solo se admiten números positivos",
+        v => (v && v.length == 8) || "La número debe ser de 8 digitos"
       ],
       telefonoRules: [v => !!v || "Por favor selecciones un tipo de telefono"]
     };
@@ -230,9 +235,9 @@ export default {
       "getEmpleado"
     ]),
     postEmpleado(empleado) {
-      this.insertEmpleado(this.empleado)
-      this.empleado = new Empleado()
-      this.reset()
+      this.insertEmpleado(this.empleado);
+      this.empleado = new Empleado();
+      this.reset();
     },
     validate() {
       if (this.$refs.form.validate()) {
@@ -240,29 +245,29 @@ export default {
       }
     },
     deleteEmpleado(cedula) {
-      this.deletedEmpleado(cedula)
-      this.empleado = new Empleado()
-      this.fetchEmpleado()
+      this.deletedEmpleado(cedula);
+      this.empleado = new Empleado();
+      this.fetchEmpleado();
     },
     getOneEmpleado(cedula) {
-      if(this.edit === false){
-        this.getEmpleado(cedula)
-        this.empleado = this.oneEmpleado()
+      if (this.edit === false) {
+        this.getEmpleado(cedula);
+        this.empleado = this.oneEmpleado();
       }
     },
-    updateEmpleado(empleado){
-      this.updEmpleado(this.empleado)
-      this.fetchEmpleado()
-      this.reset()
-      this.edit = false
+    updateEmpleado(empleado) {
+      this.updEmpleado(this.empleado);
+      this.fetchEmpleado();
+      this.reset();
+      this.edit = false;
     },
     reset() {
-      this.$refs.form.reset()
-      this.empleado = new Empleado()
+      this.$refs.form.reset();
+      this.empleado = new Empleado();
     }
   },
   created() {
-    this.fetchEmpleado()
+    this.fetchEmpleado();
   },
   computed: mapGetters(["allEmpleados"])
 };
