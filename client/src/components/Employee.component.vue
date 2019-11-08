@@ -80,7 +80,7 @@
               <!-- SECTION Right -->
               <v-spacer></v-spacer>
               <v-flex xs12 md6>
-                <v-sheet height="500">
+                <v-sheet>
                   <p>Cargo del empleado</p>
                   <v-radio-group v-model="empleado.tipo_empleado" row>
                     <v-radio label="Doctor" value="2" color="primary" :rules="cargoRules"></v-radio>
