@@ -232,6 +232,7 @@ export default {
     postEmpleado(empleado) {
       this.insertEmpleado(this.empleado)
       this.empleado = new Empleado()
+      this.reset()
     },
     validate() {
       if (this.$refs.form.validate()) {

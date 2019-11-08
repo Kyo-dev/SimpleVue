@@ -16,14 +16,14 @@
               <v-flex xs12 md4>
                 <v-form ref="form" v-model="valid">
                   <v-text-field
-                    v-model="salary.cedula_empleado"
+                    v-model="salario.cedula_empleado"
                     :counter="9"
                     label="Cédula"
                     :rules="cedulaRules"
                     required
                   ></v-text-field>
                   <v-text-field
-                    v-model="salary.cantidad"
+                    v-model="salario.cantidad"
                     label="Cantidad"
                     :rules="cantidadRules"
                     required
@@ -45,7 +45,7 @@
               <v-flex xs12 md6>
                 <v-card>
                   <v-date-picker
-                    v-model="salary.fecha"
+                    v-model="salario.fecha"
                     full-width
                     locale="es"
                     :min="min"
@@ -79,8 +79,7 @@
                       <th class="th">Cedula</th>
                       <th class="th">Apellido</th>
                       <th class="th">Nombre</th>
-                      <th class="th">Salario hora</th>
-                      <th class="th">Jornada laboral</th>
+                      <th class="th">Valor por hora</th>
                       <th class="th">Fecha</th>
                       <th class="th">BORRAR</th>
                       <th class="th">Actualizar</th>
@@ -91,8 +90,7 @@
                       <td class="td">{{item.cedula_empleado}}</td>
                       <td class="td">{{item.p_apellido}}</td>
                       <td class="td">{{item.nombre}}</td>
-                      <td class="td">{{item.salario_hora}}</td>
-                      <td class="td">{{item.jornada}}</td>
+                      <td class="td">{{item.cantidad}}</td>
                       <td class="td">{{item.fecha}}</td>
                       <td class="td icons" @dblclick="deleteAumento(item.id)">
                         DELETE
@@ -116,14 +114,14 @@
 
 <script>
 import { mapGetters, mapActions } from "vuex";
-import Salary from "../model/salary.model";
+import Salario from "../model/salary.model";
 export default {
   data() {
     return {
       tab: [],
       items: ["Incremento", "Decremento", "Todos"],
-      salary: new Salary(),
-      salary: [],
+      salario: new Salario(),
+      salario: [],
       valid: false,
       edit: false,
       min: new Date().toISOString().substr(0, 10),
@@ -143,19 +141,24 @@ export default {
   methods: {
     ...mapGetters(["", ""]),
     ...mapActions([
-        "fetchSalary",
+        "fetchSalario",
+        "insertAumento"
     ]),
-    postIncremento() {},
+    postIncremento(salario) {
+      this.insertAumento(this.salario)
+      this.fetchSalario()
+      this.reset()
+    },
     updateSalario() {},
     deleteAumento() {}, 
     getOneAumento() {},
     reset() {
-      this.$refs.form.reset();
-      this.salary = new Salary();
+      this.$refs.form.reset()
+      this.salario = new Salario()
     }
   },
   created(){
-      this.fetchSalary()
+      this.fetchSalario()
   },
   computed: mapGetters(["allSalarios"])
 };

@@ -58,14 +58,14 @@ USE `rrhh_db`$$
 CREATE DEFINER=`root`@`localhost` PROCEDURE `nuevoAumento`(
 	in _cedula varchar(9),
     in _fecha datetime,
-    in _aumento_salarial decimal(10,2)
+    in _cantidad decimal(10,2)
 )
 BEGIN
 IF (SELECT cedula FROM empleados WHERE cedula = _cedula AND activo = true) then
 		insert into aumento_salarial(cedula_empleado, fecha, cantidad)
-        values(_cedula, _fecha, _aumento_salarial);
+        values(_cedula, _fecha, _cantidad);
         update salarios
-        set salario_hora = salario_hora + _aumento_salarial
+        set salario_hora = salario_hora + _cantidad
         where cedula_empleado = _cedula;
     end if;
 END$$

@@ -12,23 +12,18 @@ export async function nuevoPermiso(req, res){
     await mysqlConnection.query('Select cedula from empleados where cedula = ? and activo = true', [_cedula], (err, rows, fields)=>{
         if(!err){
             if(rows.length > 0){
-                console.log("mensaje 01")
-                console.log(rows)
                 mysqlConnection.query(query, [_cedula, _fecha, _descripcion, _costoSalarial], (err, rows, fields)=>{
                     if(!err){
                         res.json({Status: 'Nuevo permiso registrado'})
                     } else {
-                        console.log("Error en los datos")
-                        res.json({"Message": err})        
+                        res.json({"Message": "Error en los datos"})        
                     }
                 })
             } else{
-                console.log("Cedula invalida")
-                res.json({"Message": err})
+                res.json({"Message": "Cedula invalida"})
             }
         } else {
-            console.log(err)
-            res.json({"Message": err})
+            res.json({"Message": "Usuario no encontrado"})
         }
     })
 }

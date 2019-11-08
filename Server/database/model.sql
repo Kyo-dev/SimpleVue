@@ -1,6 +1,22 @@
 create database rrhh_db;
 use rrhh_db;
 SET GLOBAL event_scheduler = ON;
+
+create table farmacia (
+	id tinyint auto_increment,
+    nombre varchar(50) not null,
+    hora_apertura varchar (10) not null,
+    hora_cierre varchar(10) not null,
+    ccss_sem decimal(6,2) not null,
+    ccss_ivm decimal(6,2) not null,
+    lpt_aportepbp decimal(6,2) not null,
+    lpt_fondo_laboral decimal(6,2) not null,
+    lpt_fondo_pensiones decimal(6,2) not null,
+    lpt_aportetbp decimal(6,2) not null,
+    ins decimal(6.2) not null,
+    activo boolean default true not null,
+    constraint pk_farmacia primary key(id)
+);
 create table tipo_empleados(
 	id tinyint auto_increment not null,
     nombre_cargo varchar(50) not null,
@@ -101,6 +117,7 @@ create table salarios(
     cedula_empleado varchar(9) not null,
 	salario_hora decimal(10,2) not null,
     jornada decimal(4.2) not null,
+    retencion decimal(10,2) default 0 not null,
     activo boolean default true not null,
 	constraint fk_salario_empleados foreign key(cedula_empleado) references empleados(cedula),
     constraint pk_salario primary key(id)

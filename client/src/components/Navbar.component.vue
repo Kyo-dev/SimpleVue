@@ -15,7 +15,7 @@
               <router-link to="/permisos">Permisos</router-link> | 
             </span>
             <span v-if="isLoggedIn">
-              <router-link to="/incremento-salarial">Salario</router-link> | 
+              <router-link to="/incremento-salarial">Salarios</router-link> | 
             </span>
       <v-spacer></v-spacer>
           <span v-if="isLoggedIn">
