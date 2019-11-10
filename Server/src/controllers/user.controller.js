@@ -38,8 +38,10 @@ export async function nuevoEmpleado(req, res) {
 }
 
 export async function todosEmpleados(req, res) {
-    await mysqlConnection.query(`SELECT a.cedula, a.nombre, a.p_apellido, a.s_apellido, a.correo, substr(a.fecha_contrato, 1, 10) as fecha_contrato, a.tipo_empleado, b.salario_hora, b.jornada
-                                FROM empleados a inner join salarios b on a.cedula = b.cedula_empleado where a.activo = true and a.tipo_empleado > 1;`, (err, rows, fields) => {
+    await mysqlConnection.query(`SELECT a.cedula, a.nombre, a.p_apellido, a.s_apellido, a.correo, substr(a.fecha_contrato, 1, 10) as fecha_contrato, a.tipo_empleado, b.salario_hora, b.jornada, c.numero
+                                FROM empleados a inner join salarios b on a.cedula = b.cedula_empleado
+                                inner join telefonos c on a.cedula = c.cedula_empleado
+                                where a.activo = true and a.tipo_empleado > 1;`, (err, rows, fields) => {
         if (!err && JSON.stringify(rows).length > 0) {
             res.json(rows)
         } else {

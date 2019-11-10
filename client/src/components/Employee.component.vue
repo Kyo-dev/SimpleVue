@@ -126,6 +126,7 @@
                     <th class="th">Segundo apellido</th>
                     <th class="th">Fecha de contrato</th>
                     <th class="th">Correo electronico</th>
+                    <th class="th">Teléfono</th>
                     <th class="th">Salario por hora</th>
                     <th class="th">Jornada laboral</th>
                     <th class="th">BORRAR</th>
@@ -140,6 +141,7 @@
                     <td class="td">{{item.s_apellido}}</td>
                     <td class="td">{{item.fecha_contrato}}</td>
                     <td class="td">{{item.correo}}</td>
+                    <td class="td">{{item.numero}}</td>
                     <td class="td">{{item.salario_hora}}</td>
                     <td class="td">{{item.jornada}}</td>
                     <td class="td" @click="deleteEmpleado(item.cedula)">
@@ -235,39 +237,40 @@ export default {
       "getEmpleado"
     ]),
     postEmpleado(empleado) {
-      this.insertEmpleado(this.empleado);
-      this.empleado = new Empleado();
-      this.reset();
+      this.insertEmpleado(this.empleado)
+      this.empleado = new Empleado()
+      this.reset()
     },
     validate() {
       if (this.$refs.form.validate()) {
-        this.snackbar = true;
+        this.snackbar = true
       }
     },
     deleteEmpleado(cedula) {
-      this.deletedEmpleado(cedula);
-      this.empleado = new Empleado();
-      this.fetchEmpleado();
+      this.deletedEmpleado(cedula)
+      this.empleado = new Empleado()
+      this.fetchEmpleado()
     },
     getOneEmpleado(cedula) {
       if (this.edit === false) {
-        this.getEmpleado(cedula);
-        this.empleado = this.oneEmpleado();
+        this.getEmpleado(cedula)
+        this.empleado = this.oneEmpleado()
       }
     },
     updateEmpleado(empleado) {
-      this.updEmpleado(this.empleado);
-      this.fetchEmpleado();
-      this.reset();
-      this.edit = false;
+      this.updEmpleado(this.empleado)
+      this.fetchEmpleado()
+      this.reset()
+      this.edit = false
     },
     reset() {
       this.$refs.form.reset();
-      this.empleado = new Empleado();
+      this.empleado = new Empleado()
+      this.fetchEmpleado()
     }
   },
   created() {
-    this.fetchEmpleado();
+    this.fetchEmpleado()
   },
   computed: mapGetters(["allEmpleados"])
 };

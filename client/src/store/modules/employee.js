@@ -21,8 +21,6 @@ const actions = {
         const response = await axios.get(
             `http://localhost:4000/api/usuarios/empleados/${cedula}`
         )
-        console.log('HOLA')
-        console.log(response.data)
         commit('oneEmpleado', response.data)
     },
     async insertEmpleado({ commit }, empleado) {
