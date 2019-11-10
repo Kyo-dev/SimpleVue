@@ -42,7 +42,6 @@ const actions = {
             _descripcion: permiso.descripcion,
             _costoSalarial: permiso.costo_salarial
         }
-        console.log(data)
         const response = await axios.put(
             `http://localhost:4000/api/usuarios/permisos/${permiso.id}` , data
         )

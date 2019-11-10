@@ -54,6 +54,14 @@ let router = new Router({
       }
     },
     {
+      path: '/horas-extra',
+      name: 'horasExtra',
+      component: () => import(/* webpackChunkName: "overtime" */ './views/Overtime.vue'),
+      meta: {
+        requiresAuth: true
+      }
+    },
+    {
       path: '/404Page',
       name: '404page',
       component: () => import(/* webpackChunkName: "login" */ './views/404Page.vue')

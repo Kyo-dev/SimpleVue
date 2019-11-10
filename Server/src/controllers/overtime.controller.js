@@ -10,7 +10,7 @@ export async function nuevaHorasExtra(req, res) {
         CALL nuevaHoraExtra(@_cedula, @_cantidad_horas, @_motivo, @_fecha);
     `
     await mysqlConnection.query('SELECT cedula FROM empleados WHERE cedula = ?', [_cedula], (err, rows, fields) => {
-        if (!err && rows.length > 0) {
+        if (!err && JSON.stringify(rows).length > 0) {
             mysqlConnection.query(query, [_cedula, _cantidad_horas, _motivo, _fecha], (err, rows, fields) => {
                 !err ? res.json({ Status: "OK" }) : res.json({ "Message": err })
             })
@@ -19,29 +19,26 @@ export async function nuevaHorasExtra(req, res) {
         }
     })
 }
-export async function horasExtraEmpleado(req, res) {
-    const { _cedula } = req.params
-    const query = `
-        SELECT a.id, a.cedula_empleado, b.p_apellido, b.nombre, a.cantidad_horas, a.motivo, a.fecha 
-        FROM horas_extra a
-        INNER JOIN empleados b
-        ON a.cedula_empleado = b.cedula
-        WHERE a.activo = true and
-        a.cedula_empleado = ${_cedula};
-    `
-    await mysqlConnection.query('SELECT cedula FROM empleados WHERE cedula = ?', [_cedula], (err, rows, fields) => {
+export async function horasExtraID(req, res) {
+    const { _id } = req.params
+    await mysqlConnection.query(`SELECT a.id, a.cedula_empleado, b.p_apellido, b.nombre, a.cantidad_horas, a.motivo,  substr(a.fecha, 1, 10) as fecha
+    FROM horas_extra a
+    INNER JOIN empleados b
+    ON a.cedula_empleado = b.cedula
+    WHERE a.activo = true and
+    a.id = ?;`, [_id], (err, rows, fields) => {
         if (!err && rows.length > 0) {
-            mysqlConnection.query(query, [_cedula], (err, rows, fields) => {
-                !err ? res.json(rows) : res.json({ "Message": err })
-            })
+            res.json(rows[0])
         } else {
+            console.log(err);
             res.json({ "Message": err })
         }
     })
 }
+
 export async function todasHorasExtra(req, res) {
     const query = `
-        SELECT a.id, a.cedula_empleado, b.p_apellido, b.nombre, a.cantidad_horas, a.motivo, a.fecha 
+        SELECT a.id, a.cedula_empleado, b.p_apellido, b.nombre, a.cantidad_horas, a.motivo, substr(a.fecha, 1, 10) as fecha
         FROM horas_extra a
         INNER JOIN empleados b
         ON a.cedula_empleado = b.cedula

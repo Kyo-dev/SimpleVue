@@ -172,7 +172,6 @@ end if;
 END$$
 
 DELIMITER ;
-CALL nuevaHoraExtra('802220222', 2, 'Probando el sp', '2018-02-25');
 
 
 USE `rrhh_db`;
