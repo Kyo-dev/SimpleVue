@@ -385,7 +385,6 @@ END$$
 
 DELIMITER ;
 
-
 USE `rrhh_db`;
 DROP procedure IF EXISTS `actualizarVacaciones`;
 
@@ -393,17 +392,22 @@ DELIMITER $$
 USE `rrhh_db`$$
 CREATE PROCEDURE `actualizarVacaciones` (
 	in _id integer,
+    in _cedula varchar(9),
     in _fecha_salida datetime,
     in _fecha_entrada datetime
 )
 BEGIN
+IF (SELECT cedula FROM empleados WHERE cedula = _cedula AND activo = true) then
 	update vacaciones
     set  fecha_salida = _fecha_salida,
 		 fecha_entrada = _fecha_entrada
     where id = _id;
+end if;
 END$$
 
 DELIMITER ;
+
+
 
 
 USE `rrhh_db`;
