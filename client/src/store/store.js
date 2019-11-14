@@ -7,6 +7,7 @@ import Bonos from './modules/bonus'
 import Permisos from './modules/permits'
 import Salary from './modules/salary'
 import Overtime from './modules/overtime'
+import Holiday from './modules/holiday'
 
 Vue.use(Vuex)
 
@@ -17,7 +18,8 @@ export default new Vuex.Store({
     Bonos,
     Permisos,
     Salary,
-    Overtime
+    Overtime,
+    Holiday
   },
   // state: {
 

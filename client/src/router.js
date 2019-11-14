@@ -62,6 +62,14 @@ let router = new Router({
       }
     },
     {
+      path: '/vacaciones',
+      name: 'vacaciones',
+      component: () => import(/* webpackChunkName: "holiday" */ './views/Holiday.vue'),
+      meta: {
+        requiresAuth: true
+      }
+    },
+    {
       path: '/404Page',
       name: '404page',
       component: () => import(/* webpackChunkName: "login" */ './views/404Page.vue')

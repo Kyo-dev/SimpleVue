@@ -20,6 +20,9 @@
             <span v-if="isLoggedIn">
               <router-link to="/horas-extra">Horas extra</router-link> | 
             </span>
+            <span v-if="isLoggedIn">
+              <router-link to="/vacaciones">vacaciones</router-link> | 
+            </span>
       <v-spacer></v-spacer>
           <span v-if="isLoggedIn">
             <a @click="logout">Logout</a>
