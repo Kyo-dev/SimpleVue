@@ -60,12 +60,7 @@ const mutations = {
         state.bono = bono 
     },
     newBono: (state, bono) => state.bonos.unshift(bono),
-    revomeBono: (state, revomeBono) =>{
-        const index = state.bonos.findIndex(bono => bono.id === revomeBono.id)
-        if (index !== -1) {
-            state.bonos.splice(index, 1, revomeBono)
-        }
-    },
+    removeEmpleado:(state, id) => state.bonos = state.bonos.filter(act => act.id !== id),
     updatedBono: (state, updatedBono) => {
         const index = state.bonos.findIndex(bono => bono.id === updatedBono.id)
         if (index !== -1) {

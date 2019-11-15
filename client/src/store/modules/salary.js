@@ -56,7 +56,7 @@ const actions = {
             `http://localhost:4000/api/usuarios/salarios/${salario.id}`, data
         )
         console.log(response.data)
-        commit('removeSalario', response.data)
+        commit('removeConducta', response.data)
     }
 }
 
@@ -64,12 +64,7 @@ const mutations = {
     setSalario: (state, salarios) => state.salarios = salarios,
     newAumento: (state, salario) => state.salarios.unshift(salario),
     oneSalario: (state, salario) => state.salario = salario,
-    removeSalario: (state, removeSalario) => {
-        const index = state.salarios.findIndex(salario => salario.id === removeSalario.id)
-        if (index !== -1) {
-            state.salarios.splice(index, 1, removeSalario)
-        }
-    }
+    removeConducta:(state, id) => state.salarios = state.salarios.filter(act => act.id !== id)
 }
 
 export default {

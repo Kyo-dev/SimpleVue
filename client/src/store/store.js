@@ -8,6 +8,7 @@ import Permisos from './modules/permits'
 import Salary from './modules/salary'
 import Overtime from './modules/overtime'
 import Holiday from './modules/holiday'
+import Misconduct from './modules/misconduct'
 
 Vue.use(Vuex)
 
@@ -19,15 +20,7 @@ export default new Vuex.Store({
     Permisos,
     Salary,
     Overtime,
-    Holiday
+    Holiday,
+    Misconduct
   },
-  // state: {
-
-  // },
-  // mutations: {
-
-  // },
-  // actions: {
-
-  // }
 })

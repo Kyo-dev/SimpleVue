@@ -21,11 +21,14 @@
               <router-link to="/horas-extra">Horas extra</router-link> | 
             </span>
             <span v-if="isLoggedIn">
-              <router-link to="/vacaciones">vacaciones</router-link> | 
+              <router-link to="/vacaciones">Vacaciones</router-link> | 
+            </span>
+            <span v-if="isLoggedIn">
+              <router-link to="/disciplina">Registro disciplinario</router-link> | 
             </span>
       <v-spacer></v-spacer>
           <span v-if="isLoggedIn">
-            <a @click="logout">Logout</a>
+            <a @click="logout">Salir</a>
           </span>
           </v-toolbar>
         <router-view/>

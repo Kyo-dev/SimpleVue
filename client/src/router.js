@@ -70,6 +70,14 @@ let router = new Router({
       }
     },
     {
+      path: '/disciplina',
+      name: 'disciplina',
+      component: () => import(/* webpackChunkName: "misconduct" */ './views/Misconduct.vue'),
+      meta: {
+        requiresAuth: true
+      }
+    },
+    {
       path: '/404Page',
       name: '404page',
       component: () => import(/* webpackChunkName: "login" */ './views/404Page.vue')

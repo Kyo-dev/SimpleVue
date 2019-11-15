@@ -64,12 +64,7 @@ const mutations = {
     newPermiso(state, permiso) {
         state.permisos.unshift(permiso)
     },
-    removePermiso(state, removePermiso){
-        const index = state.permisos.findIndex(permiso => permiso.id === removePermiso.id)
-        if (index !== -1) {
-            state.permisos.splice(index, 1, removePermiso)
-        }
-    },
+    removePermiso:(state, id) => state.permisos = state.permisos.filter(act => act.id !== id),
     updatedPermiso: (state, updatedPermiso) =>{ 
         const index = state.permisos.findIndex(permiso => permiso.id === updatedPermiso.id)
         if (index !== -1) {

@@ -76,12 +76,7 @@ const mutations = {
         state.empleado = empleado
     },
     newEmpleado: (state, empleado) => state.empleados.unshift(empleado),
-    removeEmpleado: (state, removeEmpleado) => {
-        const index = state.empleados.findIndex(empleado => empleado.cedula === removeEmpleado.cedula)
-        if (index !== -1) {
-            state.empleados.splice(index, 1, removeEmpleado)
-        }
-    },
+    removeEmpleado:(state, id) => state.empleados = state.empleados.filter(act => act.id !== id),
     updatedEmpleado: (state, updatedEmpleado) => {
         const index = state.empleados.findIndex(empleado => empleado.cedula === updatedEmpleado.cedula)
         if (index !== -1) {

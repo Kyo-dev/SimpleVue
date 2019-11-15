@@ -32,17 +32,21 @@ const actions = {
         )
         commit('oneVacacion', response.data)
     },
-    async updVacaciones({commit}, vacaciones){
+    async updVacaciones({commit}, objvacaciones){
         const data = {
-            _id: vacaciones.id,
-            _cedula: vacaciones.cedula_empleado,
-            _fecha_salida: vacaciones.fecha_salida,
-            _fecha_entrada: vacaciones.fecha_entrada
+            _id: objvacaciones.id,
+            _cedula: objvacaciones.cedula_empleado,
+            _fecha_salida: objvacaciones.fecha_salida,
+            _fecha_entrada: objvacaciones.fecha_entrada
         }
         const response = await axios.put(
-            `http://localhost:4000/api/usuarios/vacaciones/${vacaciones.id}`, data
+            `http://localhost:4000/api/usuarios/vacaciones/${objvacaciones.id}`, data
         )
         commit('updatedVacaciones', response.data)
+    },
+    async deletedVacaciones({commit}, id){
+        await axios.delete(`http://localhost:4000/api/usuarios/vacaciones/${id}`)
+        commit('removeVacaciones', id)
     }
 }
 const mutations = {
@@ -55,10 +59,11 @@ const mutations = {
     newVacaciones(state, vacacion) {
         state.vacaciones.unshift(vacacion)
     },
-    updatedVacaciones: (state, updatedVacaciones) =>{ 
-        const index = state.vacaciones.findIndex(vacacion => vacacion.id === updatedVacaciones.id)
+    removeVacaciones:(state, id) => state.vacaciones = state.vacaciones.filter(act => act.id !== id),
+    updatedVacaciones: (state, objvacaciones) =>{ 
+        const index = state.vacaciones.findIndex(v => v.id === objvacaciones.id)
         if (index !== -1) {
-            state.vacaciones.splice(index, 1, updatedVacaciones)
+            state.vacaciones.splice(index, 1, objvacaciones)
         }
     }
 }

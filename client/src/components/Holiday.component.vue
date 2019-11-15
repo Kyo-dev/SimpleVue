@@ -95,7 +95,7 @@
 
                       <td class="td icons">
                         DELETE
-                        <v-icon small color="error" class="icons">delete</v-icon>
+                        <v-icon small color="error" @click="borrarVacacioenes(item.id)" class="icons">delete</v-icon>
                       </td>
                       <td class="td icons" @click="vacacionesID(item.id)" >
                         actualizar
@@ -132,7 +132,7 @@ export default {
   },
   methods: {
     ...mapGetters(["", "oneVacacion"]),
-    ...mapActions(["fetchVacaciones", "insertarVacaciones", "obtenerVacacionesID", "updVacaciones"]),
+    ...mapActions(["fetchVacaciones", "insertarVacaciones", "obtenerVacacionesID", "updVacaciones", "deletedVacaciones"]),
     nuevasVacaciones(vacaciones) {
       this.insertarVacaciones(this.vacaciones)
       console.log(this.vacaciones)
@@ -153,7 +153,11 @@ export default {
       this.reset()
       this.edit = false
     },
-    borrarVacacioenes() {},
+    borrarVacacioenes(id) {
+      this.deletedVacaciones(id)
+      this.vacaciones = new Vacaciones()
+      this.fetchVacaciones()
+    },
     reset() {
       this.$refs.form.reset()
       this.vacaciones = new Vacaciones()

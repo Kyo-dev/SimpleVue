@@ -66,12 +66,7 @@ const mutations = {
             state.horasExtra.splice(index, 1, updatedHoraExtra)
         }
     },
-    removeHoraExtra: (state, removeHoraExtra) => {
-        const index = state.horasExtra.findIndex(horaExtra => horaExtra.id === removeHoraExtra.id)
-        if (index !== 1) {
-            state.horasExtra.splice(index, 1, removeHoraExtra)
-        }
-    }
+    removeHoraExtra:(state, id) => state.horasExtra = state.horasExtra.filter(act => act.id !== id),
 }
 
 export default {
