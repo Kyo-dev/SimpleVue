@@ -63,6 +63,10 @@
                     :rules="jornadaRules"
                     required
                   ></v-text-field>
+                  <v-radio-group v-model="empleado.tipo_telefono" row>
+                    <v-radio label="Casa" value="1" color="primary" :rules="telefonoRules"></v-radio>
+                    <v-radio label="Celular" value="2" color="primary" :rules="telefonoRules"></v-radio>
+                  </v-radio-group>
                   <v-text-field
                     v-model="empleado.numero"
                     label="Número telefónico"
@@ -70,10 +74,6 @@
                     :rules="numeroRules"
                     required
                   ></v-text-field>
-                  <v-radio-group v-model="empleado.tipo_telefono" row>
-                    <v-radio label="Casa" value="1" color="primary" :rules="telefonoRules"></v-radio>
-                    <v-radio label="Celular" value="2" color="primary" :rules="telefonoRules"></v-radio>
-                  </v-radio-group>
                 </v-form>
                 <!-- !SECTION  -->
               </v-flex>

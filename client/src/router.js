@@ -78,6 +78,14 @@ let router = new Router({
       }
     },
     {
+      path: '/tareas',
+      name: 'tareas',
+      component: () => import(/* webpackChunkName: "task" */ './views/Task.vue'),
+      meta: {
+        requiresAuth: true
+      }
+    },
+    {
       path: '/404Page',
       name: '404page',
       component: () => import(/* webpackChunkName: "login" */ './views/404Page.vue')

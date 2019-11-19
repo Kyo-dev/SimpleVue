@@ -158,8 +158,8 @@ export default {
     postBono(bono) {
       this.insertBono(this.bono)
       this.bono = new Bono()
-      this.reset()
       this.fetchBonos()
+      this.reset()
     },
     getOneBono(id) {
       if (this.edit === false) {

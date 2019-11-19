@@ -24,7 +24,10 @@
               <router-link to="/vacaciones">Vacaciones</router-link> | 
             </span>
             <span v-if="isLoggedIn">
-              <router-link to="/disciplina">Registro disciplinario</router-link> | 
+              <router-link to="/disciplina">Conductas</router-link> | 
+            </span>
+            <span v-if="isLoggedIn">
+              <router-link to="/tareas">Tareas</router-link> | 
             </span>
       <v-spacer></v-spacer>
           <span v-if="isLoggedIn">
