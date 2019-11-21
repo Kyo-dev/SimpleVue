@@ -318,14 +318,17 @@ USE `rrhh_db`$$
 CREATE DEFINER=`root`@`localhost` PROCEDURE `actualizarTarea`(
 	in _id integer,
 	in _titulo varchar(30),
-    in _descripcion varchar(300)
+    in _descripcion varchar(300),
+    in _id_tipo_empleado integer
 )
 BEGIN
 	UPDATE tareas
     SET titulo = _titulo,
 		descripcion = _descripcion
     WHERE id = _id;
-    
+    UPDATE cargo_tareas
+    SET  id_tipo_empleado = _id_tipo_empleado
+    WHERE id_tarea = _id;    
 END$$
 
 DELIMITER ;

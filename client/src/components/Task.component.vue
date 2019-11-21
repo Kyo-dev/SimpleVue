@@ -30,7 +30,7 @@
                   <v-text-field
                     v-model="tarea.descripcion"
                     :counter="50"
-                    label="Motivo del permiso"
+                    label="Descripcion de la tarea"
                     :rules="descripcionRules"
                     required
                   ></v-text-field>
@@ -41,7 +41,7 @@
                       color="success"
                       @click="postTarea"
                       class="btn-1"
-                    >Nuevo Permiso</v-btn>
+                    >Nueva tarea</v-btn>
                   </template>
                   <v-btn color="warning" :disabled="!valid" @click="reset">Borrar formulario</v-btn>
                   <template v-if="edit === true"></template>
@@ -69,7 +69,7 @@
                       <v-btn
                         color="primary"
                         class="btn-upd-del"
-                        @click="updateTarea"
+                        @click="obtenerUnaTarea(item.id)"
                         outlined
                       >Actualizar</v-btn>
                       <v-btn
@@ -98,7 +98,7 @@
                     <v-btn
                       color="primary"
                       class="btn-upd-del"
-                      @click="updateTarea"
+                      @click="obtenerUnaTarea(item.id)"
                       outlined
                     >Actualizar</v-btn>
                     <v-btn
@@ -127,7 +127,7 @@
                       <v-btn
                         color="primary"
                         class="btn-upd-del"
-                        @click="updateTarea"
+                        @click="obtenerUnaTarea(item.id)"
                         outlined
                       >Actualizar</v-btn>
                       <v-btn
@@ -181,20 +181,32 @@ export default {
     };
   },
   methods: {
-    ...mapGetters(["", ""]),
+    ...mapGetters(["", "oneTarea"]),
     ...mapActions([
+      "obtenerTarea",
       "fetchTareasDoctor",
       "fetchTareasDependiente",
       "fetchTareasMensajero",
       "insertTarea",
-      "deletedTarea"
+      "deletedTarea",
+      "actualizarTarea"
     ]),
     postTarea(tarea) {
       this.insertTarea(this.tarea);
       this.reset();
       this.tarea = new Tarea();
+      this.fetchTareasDoctor();
+      this.fetchTareasDependiente();
+      this.fetchTareasMensajero();
     },
-    updateTarea() {},
+    updateTarea(tarea) {
+      this.actualizarTarea(this.tarea);
+      this.fetchTareasDoctor();
+      this.fetchTareasDependiente();
+      this.fetchTareasMensajero();
+      this.reset();
+      this.tarea = new Tarea();
+    },
     deleteTarea(id) {
       this.deletedTarea(id);
       this.fetchTareasDoctor();
@@ -202,6 +214,13 @@ export default {
       this.fetchTareasMensajero();
       this.tarea = new Tarea();
     },
+    obtenerUnaTarea(id) {
+      if (this.edit === false) {
+        this.obtenerTarea(id);
+        this.tarea = this.oneTarea();
+      }
+    },
+
     reset() {
       this.$refs.form.reset();
       this.tarea = new Tarea();
