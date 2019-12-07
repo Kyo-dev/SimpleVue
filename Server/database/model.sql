@@ -70,7 +70,7 @@ create table telefonos(
 );
 create table tareas(
 	id int auto_increment not null,
-    titulo varchar(30) not null,
+    titulo varchar(50) not null,
     descripcion varchar(300) not null,
     activo boolean default true,
     constraint pk_tareas primary key (id)

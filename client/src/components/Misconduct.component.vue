@@ -24,7 +24,7 @@
                   ></v-text-field>
                   <v-text-field
                     v-model="disciplina.descripcion"
-                    :counter="200"
+                    :counter="300"
                     label="Motivo de registro disciplinario"
                     :rules="descripcionRules"
                     required
@@ -34,12 +34,12 @@
                       :disabled="!valid"
                       color="success"
                       @click="nuevaDisciplina"
-                      class="btn-1"
-                    >Nuevo Permiso</v-btn>
+                      class="btn-1 btn"
+                    >nuevo registro</v-btn>
                   </template>
-                  <v-btn color="warning" :disabled="!valid" @click="reset">Borrar formulario</v-btn>
+                  <v-btn class="btn" color="warning" :disabled="!valid" @click="reset">Borrar formulario</v-btn>
                   <template v-if="edit === true"></template>
-                  <v-btn color="success" :disabled="!valid" @click="updateDisciplina">Actualizar</v-btn>
+                  <v-btn class="btn" color="success" :disabled="!valid" @click="updateDisciplina">Actualizar</v-btn>
                 </v-form>
               </v-flex>
               <v-spacer></v-spacer>
@@ -208,5 +208,8 @@ tr:nth-of-type(odd) {
 }
 .icons {
   cursor: pointer;
+}
+.btn{
+  display: block;
 }
 </style>

@@ -24,14 +24,13 @@
                   ></v-text-field>
                   <v-text-field
                     v-model="bono.motivo"
-                    :counter="50"
+                    :counter="200"
                     label="Montivo del bono"
                     :rules="motivoRules"
                     required
                   ></v-text-field>
                   <v-text-field
                     v-model="bono.cantidad"
-                    :counter="50"
                     label="Cantidad"
                     :rules="cantidadRules"
                     required
@@ -41,12 +40,12 @@
                       :disabled="!valid"
                       color="success"
                       @click="postBono"
-                      class="btn-1"
+                      class="btn-1, btn"
                     >Nuevo Bono</v-btn>
                   </template>
-                  <v-btn color="warning" :disabled="!valid" @click="reset">Borrar formulario</v-btn>
+                  <v-btn class="btn" color="warning" :disabled="!valid" @click="reset">Borrar formulario</v-btn>
                   <template v-if="edit === true"></template>
-                  <v-btn color="success" :disabled="!valid" @click="updateBono">Actualizar</v-btn>
+                  <v-btn class="btn" color="success" :disabled="!valid" @click="updateBono">Actualizar</v-btn>
                 </v-form>
               </v-flex>
               <v-spacer></v-spacer>
@@ -230,5 +229,8 @@ tr:nth-of-type(odd) {
 }
 .icons {
   cursor: pointer;
+}
+.btn{
+  display: block
 }
 </style>

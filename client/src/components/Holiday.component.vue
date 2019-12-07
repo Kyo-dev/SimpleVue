@@ -24,12 +24,12 @@
                       :disabled="!valid"
                       color="success"
                       @click="nuevasVacaciones"
-                      class="btn-1"
-                    >Nuevo Permiso</v-btn>
+                      class="btn-1 btn"
+                    >nuevas vacacioens</v-btn>
                   </template>
-                  <v-btn color="warning" :disabled="!valid" @click="reset">Borrar formulario</v-btn>
+                  <v-btn class="btn" color="warning" :disabled="!valid" @click="reset">Borrar </v-btn>
                   <template v-if="edit === true"></template>
-                  <v-btn color="success" :disabled="!valid" @click="actualizarVacaciones">Actualizar</v-btn>
+                  <v-btn class="btn" color="success" :disabled="!valid" @click="actualizarVacaciones">Actualizar</v-btn>
                 </v-form>
               </v-col>
             </v-row>
@@ -204,5 +204,9 @@ tr:nth-of-type(odd) {
 }
 .icons {
   cursor: pointer;
+}
+.btn{
+  display:  inline;
+  margin: 0 0.5em;
 }
 </style>

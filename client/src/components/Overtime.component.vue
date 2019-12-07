@@ -24,14 +24,13 @@
                   ></v-text-field>
                   <v-text-field
                     v-model="obj_horasExtra.motivo"
-                    :counter="50"
+                    :counter="300"
                     label="Motivo de las horas extra"
                     :rules="motivoRules"
                     required
                   ></v-text-field>
                   <v-text-field
                     v-model="obj_horasExtra.cantidad_horas"
-                    :counter="50"
                     label="Cantidad de horas"
                     :rules="cantidadRules"
                     required
@@ -41,12 +40,12 @@
                       :disabled="!valid"
                       color="success"
                       @click="postHoraExtra"
-                      class="btn-1"
-                    >Nuevo Permiso</v-btn>
+                      class="btn-1 btn"
+                    >registrar horas extra</v-btn>
                   </template>
-                  <v-btn color="warning" :disabled="!valid" @click="reset">Borrar formulario</v-btn>
+                  <v-btn class="btn" color="warning" :disabled="!valid" @click="reset">Borrar formulario</v-btn>
                   <template v-if="edit === true"></template>
-                  <v-btn color="success" :disabled="!valid" @click="updateHoraExtra">Actualizar</v-btn>
+                  <v-btn class="btn" color="success" :disabled="!valid" @click="updateHoraExtra">Actualizar</v-btn>
                 </v-form>
               </v-flex>
               <v-spacer></v-spacer>
@@ -229,5 +228,8 @@ tr:nth-of-type(odd) {
 }
 .icons {
   cursor: pointer;
+}
+.btn{
+  display: block
 }
 </style>

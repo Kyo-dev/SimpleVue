@@ -33,12 +33,12 @@
                       :disabled="!valid"
                       color="success"
                       @click="postIncremento"
-                      class="btn-1"
+                      class="btn-1 btn"
                     >Nuevo aumento</v-btn>
                   </template>
-                  <v-btn color="warning" :disabled="!valid" @click="reset">Borrar formulario</v-btn>
+                  <v-btn class="btn" color="warning" :disabled="!valid" @click="reset">Borrar formulario</v-btn>
                   <template v-if="edit === true"></template>
-                  <v-btn color="success" :disabled="!valid" @click="updateSalario">Actualizar</v-btn>
+                  <v-btn class="btn" color="success" :disabled="!valid" @click="updateSalario">Actualizar</v-btn>
                 </v-form>
               </v-flex>
               <v-spacer></v-spacer>
@@ -119,7 +119,7 @@ export default {
   data() {
     return {
       tab: [],
-      items: ["Incremento", "Decremento", "Todos"],
+      items: ["Aumento salarial", "Rebaja salarial", "Información"],
       salario: new Salario(),
       salario: [],
       valid: false,
@@ -209,5 +209,8 @@ tr:nth-of-type(odd) {
 }
 .icons {
   cursor: pointer;
+}
+.btn{
+  display: block
 }
 </style>

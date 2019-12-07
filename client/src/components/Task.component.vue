@@ -29,7 +29,7 @@
                   ></v-text-field>
                   <v-text-field
                     v-model="tarea.descripcion"
-                    :counter="50"
+                    :counter="300"
                     label="Descripcion de la tarea"
                     :rules="descripcionRules"
                     required
@@ -40,12 +40,12 @@
                       :disabled="!valid"
                       color="success"
                       @click="postTarea"
-                      class="btn-1"
+                      class="btn-1 btn"
                     >Nueva tarea</v-btn>
                   </template>
-                  <v-btn color="warning" :disabled="!valid" @click="reset">Borrar formulario</v-btn>
+                  <v-btn class="btn" color="warning" :disabled="!valid" @click="reset">Borrar</v-btn>
                   <template v-if="edit === true"></template>
-                  <v-btn color="success" :disabled="!valid" @click="updateTarea">Actualizar</v-btn>
+                  <v-btn class="btn" color="success" :disabled="!valid" @click="updateTarea">Actualizar</v-btn>
                 </v-form>
               </v-flex>
               <v-spacer></v-spacer>
@@ -282,5 +282,9 @@ tr:nth-of-type(odd) {
   padding: 1em;
   margin: 0.9em;
   color: black !important;
+}
+.btn{
+  display: inline;
+  margin: 0.4em;
 }
 </style>
