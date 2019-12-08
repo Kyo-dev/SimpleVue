@@ -1,100 +1,30 @@
 <template>
- <div>
-   <form class="login" @submit.prevent="login">
-     <h1>Sign in</h1>
-     <label>Email</label>
-     <input required v-model="email" type="email" placeholder="Name"/>
-     <label>Password</label>
-     <input required v-model="password" type="password" placeholder="Password"/>
-     <hr/>
-     <button type="submit">Login</button>
-   </form>
- </div>
- <!-- 
-
-https://vuetifyjs.com/en/components/windows
-<template>
-  <v-card
-    class="mx-auto"
-    max-width="500"
-  >
-    <v-card-title class="title font-weight-regular justify-space-between">
-      <span>{{ currentTitle }}</span>
-      <v-avatar
-        color="primary lighten-2"
-        class="subheading white--text"
-        size="24"
-        v-text="step"
-      ></v-avatar>
-    </v-card-title>
-
-    <v-window v-model="step">
-      <v-window-item :value="1">
-        <v-card-text>
-          <v-text-field
-            label="Email"
-            value="john@vuetifyjs.com"
-          ></v-text-field>
-          <span class="caption grey--text text--darken-1">
-            This is the email you will use to login to your Vuetify account
-          </span>
-        </v-card-text>
-      </v-window-item>
-
-      <v-window-item :value="2">
-        <v-card-text>
-          <v-text-field
-            label="Password"
-            type="password"
-          ></v-text-field>
-          <v-text-field
-            label="Confirm Password"
-            type="password"
-          ></v-text-field>
-          <span class="caption grey--text text--darken-1">
-            Please enter a password for your account
-          </span>
-        </v-card-text>
-      </v-window-item>
-
-      <v-window-item :value="3">
-        <div class="pa-4 text-center">
-          <v-img
-            class="mb-4"
-            contain
-            height="128"
-            src="https://cdn.vuetifyjs.com/images/logos/v.svg"
-          ></v-img>
-          <h3 class="title font-weight-light mb-2">Welcome to Vuetify</h3>
-          <span class="caption grey--text">Thanks for signing up!</span>
-        </div>
-      </v-window-item>
-    </v-window>
-
-    <v-divider></v-divider>
-
-    <v-card-actions>
-      <v-btn
-        :disabled="step === 1"
-        text
-        @click="step--"
-      >
-        Back
-      </v-btn>
-      <div class="flex-grow-1"></div>
-      <v-btn
-        :disabled="step === 3"
-        color="primary"
-        depressed
-        @click="step++"
-      >
-        Next
-      </v-btn>
-    </v-card-actions>
-  </v-card>
-
-
-
+  <div>
+    <v-form class="login size-form" ref="form" @submit.prevent="login" v-model="valid">
+      <h1 class="font-weight-bold display-3 basil--text" color="primary">Iniciar Sesión</h1>
+      <v-text-field
+        :counter="200"
+        label="Correo electrónico"
+        :rules="correoRules"
+        required
+        v-model="email"
+        type="email"
+      ></v-text-field>
+      <v-text-field
+        required
+        :counter="100"
+        label="Contraseña"
+        :rules="claveRules"
+        v-model="password"
+        type="password"
+      ></v-text-field>
+      <div class="content-btn">
+        <v-btn class="btn" :disabled="!valid" color="success" type="submit">Iniciar sesión</v-btn>
+        <v-btn class="btn" color="warning" @click="reset">Borrar formulario</v-btn>
+      </div>
+    </v-form>
+  </div>
+  <!-- 
   -->
 </template>
 
@@ -107,18 +37,48 @@ class User {
 export default {
   data() {
     return {
-       email: "",
-       password: ""
+      valid: true,
+      email: "",
+      password: "",
+      correoRules: [
+        v => !!v || "Por favor ingrese su correo",
+        v =>
+          /[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/.test(
+            v
+          ) || "Error el escribir el correo"
+      ],
+      claveRules: [
+        v => !!v || "Por favor su contraseña",
+        v => (v && v.length >= 5) || "La clave debe ser más grande"
+      ]
     };
   },
   methods: {
-    login: function () {
-        let _correo = this.email 
-        let _clave = this.password
-        this.$store.dispatch('login', { _correo, _clave})
-       .then(() => this.$router.push('/'))
-       .catch(err => console.log(err))
-      }
+    login: function() {
+      let _correo = this.email;
+      let _clave = this.password;
+      this.$store
+        .dispatch("login", { _correo, _clave })
+        .then(() => this.$router.push("/"))
+        .catch(err => console.log(err));
+    },
+    reset() {
+      this.$refs.form.reset();
     }
+  }
 };
 </script>
+<style>
+.size-form {
+  margin: 4em 15rem;
+  display: flex;
+  flex-direction: column;
+}
+.btn {
+  margin: 1em 1.4em 0 0;
+  justify-content: center;
+  align-content: center;
+  height: auto;
+  width: auto;
+}
+</style>

@@ -19,6 +19,8 @@ const actions = {
         const response = await axios.get(
             `http://localhost:4000/api/usuarios/bonos/${id}`
         )
+        console.log('ONEBONO')
+        console.log(response.data)
         commit('oneBono', response.data)
     },
     async insertBono({ commit }, bono) {
@@ -56,9 +58,7 @@ const actions = {
 }
 const mutations = {
     setBonos: (state, bonos) => (state.bonos = bonos),
-    oneBono(state, bono) { 
-        state.bono = bono 
-    },
+    oneBono:(state, bono) => (state.bono = bono),
     newBono: (state, bono) => state.bonos.unshift(bono),
     removeEmpleado:(state, id) => state.bonos = state.bonos.filter(act => act.id !== id),
     updatedBono: (state, updatedBono) => {

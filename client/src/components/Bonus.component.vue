@@ -98,10 +98,7 @@
                         DELETE
                         <v-icon small color="error" class="icons">delete</v-icon>
                       </td>
-                      <td class="td" @click="getOneBono(item.id)">
-                        actualizar
-                        <v-icon small color="error" class="icons">delete</v-icon>
-                      </td>
+                       <v-btn class="btn" @click="getOneBono(item.id)">Act</v-btn>
                     </tr>
                   </tbody>
                 </table>
@@ -160,11 +157,13 @@ export default {
       this.fetchBonos()
       this.reset()
     },
-    getOneBono(id) {
-      if (this.edit === false) {
+    getOneBono(id) { 
+      console.log(`SOY EL ID ${id}`)
         this.getBono(id)
+        this.bono = new Bono()
         this.bono = this.oneBono()
-      }
+        console.log(`SOY EL THIS.BONO `)
+        console.log(this.bono)
     },
     deleteBono(id) {
       this.deletedBono(id)

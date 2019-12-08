@@ -211,6 +211,6 @@ tr:nth-of-type(odd) {
   cursor: pointer;
 }
 .btn{
-  display: block
+  display: block;
 }
 </style>
