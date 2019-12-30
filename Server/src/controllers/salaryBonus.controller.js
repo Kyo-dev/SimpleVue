@@ -9,10 +9,10 @@ export async function nuevoBono(req, res) {
         SET @_fecha = ?;
         CALL nuevoBono(@_cedula, @_motivo, @_cantidad, @_fecha) 
     `
-    await mysqlConnection.query('Select cedula from empleados where cedula = ? and activo = true', [_cedula], (err, rows, fields) => {
+    await mysqlConnection.query('Select cedula from empleados where cedula = ? and activo = true', [_cedula], (err, rows, fields)=>{
         if (!err) {
+            console.log(_cedula)
             if (rows.length > 0) {
-                console.log('entra')
                 mysqlConnection.query(query, [_cedula, _motivo, _cantidad, _fecha], (err, rows, fields) => {
                     if (!err) {
                         res.json({ Status: 'Nuevo bono registrado' })
@@ -22,20 +22,21 @@ export async function nuevoBono(req, res) {
                     }
                 })
             } else {
-                console.log("Cedula invalida")
+                console.log("1")
+                console.log(rows)
                 res.json({ "Message": err })
             }
 
         } else {
-            console.log("Cedula invalida")
+            console.log("0")
             res.json({ "Message": err })
         }
     })
 }
 
 export async function todosBonos(req, res) {
-    await mysqlConnection.query(`select a.id, a.cedula_empleado, a.motivo, a.cantidad, substr(a.fecha, 1, 10) as fecha, b.nombre, b.p_apellido, b.activo from bonos a
-    inner join empleados b on a.cedula_empleado = b.cedula and a.activo = true;`, (err, rows, fields) => {
+    await mysqlConnection.query(`select a.id, a.cedula, a.motivo, a.cantidad, substr(a.fecha, 1, 10) as fecha, b.nombre, b.p_apellido, b.activo from bonos a
+    inner join empleados b on a.cedula = b.cedula and a.activo = true;`, (err, rows, fields) => {
         if (!err && JSON.stringify(rows).length > 0) {
             res.json(rows)
         } else {
@@ -46,8 +47,8 @@ export async function todosBonos(req, res) {
 
 export async function bonoID(req, res) {
     const { _id } = req.params
-    await mysqlConnection.query(`select a.id, a.cedula_empleado, a.motivo, a.cantidad, substr(a.fecha, 1, 10) as fecha, b.nombre, b.p_apellido from bonos a
-    inner join empleados b on a.cedula_empleado = b.cedula where b.activo = true and a.id = ?`, [_id], (err, rows, fields) => {
+    await mysqlConnection.query(`select a.id, a.cedula, a.motivo, a.cantidad, substr(a.fecha, 1, 10) as fecha, b.nombre, b.p_apellido from bonos a
+    inner join empleados b on a.cedula = b.cedula where b.activo = true and a.id = ?`, [_id], (err, rows, fields) => {
         !err ? res.json(rows[0]) : res.json({ "Message": err })
     })
 }

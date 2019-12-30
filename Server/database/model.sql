@@ -61,11 +61,11 @@ create table tipo_telefonos(
 create table telefonos(
 	id int auto_increment,
     numero varchar(8) unique not null,
-    cedula_empleado varchar(9) not null,
+    cedula varchar(9) not null,
     tipo_telefono tinyint not null,
     activo boolean default true,
     constraint fk_telefonos_tipo_telefono foreign key(tipo_telefono) references tipo_telefonos(id),
-    constraint fk_telefonos_empleados foreign key(cedula_empleado) references empleados(cedula),
+    constraint fk_telefonos_empleados foreign key(cedula) references empleados(cedula),
     constraint pk_telefonos primary key (id)
 );
 create table tareas(
@@ -84,72 +84,72 @@ create table cargo_tareas(
 );
 create table permisos(
 	id int auto_increment,
-    cedula_empleado varchar(9) not null,
+    cedula varchar(9) not null,
     descripcion varchar(300) not null,
     costo_salarial decimal(10,2) not null,
     fecha datetime not null,
     activo boolean default true not null,
-    constraint fk_permisos_empleados foreign key(cedula_empleado) references empleados(cedula),
+    constraint fk_permisos_empleados foreign key(cedula) references empleados(cedula),
     constraint ch_costo_salarial check (costo_salarial <= 0),
     constraint pk_permisos primary key(id)
 );
 create table registro_disciplinario(
 	id int auto_increment,
-    cedula_empleado varchar(9) not null,
+    cedula varchar(9) not null,
     descripcion varchar(300) not null,
     fecha datetime default now() not null,
     activo boolean default true not null,
-    constraint fk_registro_disciplinario_empleados foreign key(cedula_empleado) references empleados(cedula),
+    constraint fk_registro_disciplinario_empleados foreign key(cedula) references empleados(cedula),
     constraint pk_registro_disciplinario primary key(id)
 );
 create table horas_extra(
 	id int auto_increment,
-    cedula_empleado varchar(9) not null,
+    cedula varchar(9) not null,
     cantidad_horas tinyint not null,
     motivo varchar(300) not null,
     fecha datetime default now() not null, 
     activo boolean default true not null,
-    constraint fk_horas_extra_empleados foreign key(cedula_empleado) references empleados(cedula),
+    constraint fk_horas_extra_empleados foreign key(cedula) references empleados(cedula),
     constraint pk_horas_extra primary key(id)
 );
 create table salarios(
 	id int auto_increment,
-    cedula_empleado varchar(9) not null,
+    cedula varchar(9) not null,
 	salario_hora decimal(10,2) not null,
     jornada decimal(4.2) not null,
     retencion decimal(10,2) default 0 not null,
     activo boolean default true not null,
-	constraint fk_salario_empleados foreign key(cedula_empleado) references empleados(cedula),
+	constraint fk_salario_empleados foreign key(cedula) references empleados(cedula),
     constraint pk_salario primary key(id)
 );
 create table aumento_salarial(
 	id int auto_increment,
-    cedula_empleado varchar(9) not null,
+    cedula varchar(9) not null,
     fecha datetime default now() not null,
     cantidad decimal(10,2) not null,
     activo boolean default true not null,
-    constraint fk_aumentos_empleados foreign key(cedula_empleado) references empleados(cedula),
+    constraint fk_aumentos_empleados foreign key(cedula) references empleados(cedula),
     constraint ch_aumento_salarial check(cantidad >= 0),
     constraint pk_aumento_salarial primary key(id)
 );
 create table bonos(
 	id int auto_increment,
-    cedula_empleado varchar(9) not null,
+    cedula varchar(9) not null,
     motivo varchar(200) not null,
     cantidad decimal(10,2) not null,
     fecha datetime not null, 
     activo boolean default true not null,
-    constraint fk_bonos_empleados foreign key(cedula_empleado) references empleados(cedula),
+    constraint fk_bonos_empleados foreign key(cedula) references empleados(cedula),
     constraint ch_bonos check (cantidad >= 0),
     constraint pk_bonos primary key(id)
 );
 create table vacaciones(
 	id int auto_increment,
-    cedula_empleado varchar(9) not null,
+    cedula varchar(9) not null,
     fecha_salida date not null,
     fecha_entrada date not null,
     activo boolean default true not null,
-    constraint fk_vacaciones foreign key(cedula_empleado) references empleados(cedula),
+    constraint fk_vacaciones foreign key(cedula) references empleados(cedula),
     constraint ch_vacaciones check(fecha_entrada <> fecha_salida),
     constraint pk_vacaciones primary key(id)
 );

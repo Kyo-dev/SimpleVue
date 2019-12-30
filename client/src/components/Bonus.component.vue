@@ -14,9 +14,10 @@
           <v-container class="border-container">
             <v-layout row wrap align-center>
               <v-flex xs12 md4>
-                <v-form ref="form" v-model="valid">
+                
+                <v-form ref="form" v-model="valid" v-if="!cambiarBono">
                   <v-text-field
-                    v-model="bono.cedula_empleado"
+                    v-model="bono.cedula"
                     :counter="9"
                     label="Cédula"
                     :rules="cedulaRules"
@@ -39,20 +40,66 @@
                     <v-btn
                       :disabled="!valid"
                       color="success"
-                      @click="postBono"
                       class="btn-1, btn"
+                      @click="enviarBono()"
                     >Nuevo Bono</v-btn>
                   </template>
-                  <v-btn class="btn" color="warning" :disabled="!valid" @click="reset">Borrar formulario</v-btn>
-                  <template v-if="edit === true"></template>
-                  <v-btn class="btn" color="success" :disabled="!valid" @click="updateBono">Actualizar</v-btn>
                 </v-form>
+
+                 <v-form ref="form" v-model="valid" v-if="cambiarBono">
+                   <h3>Editar bono</h3>
+                  <v-text-field
+                    v-model="bonoEditar.cedula"
+                    :counter="9"
+                    label="Cédula"
+                    :rules="cedulaRules"
+                    required
+                  ></v-text-field>
+                  <v-text-field
+                    v-model="bonoEditar.motivo"
+                    :counter="200"
+                    label="Montivo del bono"
+                    :rules="motivoRules"
+                    required
+                  ></v-text-field>
+                  <v-text-field
+                    v-model="bonoEditar.cantidad"
+                    label="Cantidad"
+                    :rules="cantidadRules"
+                    required
+                  ></v-text-field>
+                  <template v-if="edit===false">
+                    <v-btn
+                      color="success"
+                      class="btn-1, btn"
+                      @click="actualizarBono(bonoEditar)"
+                    >Editar Bono</v-btn>
+                    <v-btn
+                      color="success"
+                      class="btn-1, btn"
+                      @click="cambiarBono = false"
+                    >cancelar</v-btn>
+                  </template>
+                </v-form>
+
               </v-flex>
               <v-spacer></v-spacer>
-              <v-flex xs12 md6>
+              <v-flex xs12 md6 v-if="cambiarBono">
                 <v-card>
                   <v-date-picker
                     v-model="bono.fecha"
+                    full-width
+                    locale="es"
+                    :min="min"
+                    header-color="primary"
+                    color="primary"
+                  ></v-date-picker>
+                </v-card>
+              </v-flex>
+              <v-flex xs12 md6 v-if="!cambiarBono">
+                <v-card>
+                  <v-date-picker
+                    v-model="bonoEditar.fecha"
                     full-width
                     locale="es"
                     :min="min"
@@ -87,18 +134,27 @@
                     </tr>
                   </thead>
                   <tbody>
-                    <tr v-for="item of allBonos" :key="item.id">
-                      <td class="td">{{item.cedula_empleado}}</td>
-                      <td class="td">{{item.motivo}}</td>
-                      <td class="td">{{item.fecha}}</td>
-                      <td class="td">{{item.cantidad}}</td>
-                      <td class="td">{{item.p_apellido}}</td>
-                      <td class="td">{{item.nombre}}</td>
-                      <td class="td" @dblclick="deleteBono(item.id)">
-                        DELETE
-                        <v-icon small color="error" class="icons">delete</v-icon>
+                    <tr v-for="bono of bonos" :key="bono.id">
+                      <td class="td">{{bono.cedula}}</td>
+                      <td class="td">{{bono.motivo}}</td>
+                      <td class="td">{{bono.fecha}}</td>
+                      <td class="td">{{bono.cantidad}}</td>
+                      <td class="td">{{bono.p_apellido}}</td>
+                      <td class="td">{{bono.nombre}}</td>
+                      <td>
+                        <v-btn
+                          color="danger"
+                          class="btn-1, btn"
+                          @click="eliminarBono(bono.id)"
+                        >Borrar</v-btn>
                       </td>
-                       <v-btn class="btn" @click="getOneBono(item.id)">Act</v-btn>
+                      <td>
+                        <v-btn
+                          color="danger"
+                          class="btn-1, btn"
+                          @click="editarBono(bono.id)"
+                        >Edit</v-btn>
+                      </td>
                     </tr>
                   </tbody>
                 </table>
@@ -112,7 +168,7 @@
 </template>
 
 <script>
-import { mapGetters, mapActions } from "vuex";
+// import { mapGetters, mapActions } from "vuex";
 import Bono from "../model/bonus.model";
 export default {
   data() {
@@ -122,9 +178,11 @@ export default {
       valid: true,
       min: new Date().toISOString().substr(0, 10),
       bono: new Bono(),
-      bono: [],
+      bonos: [],
       edit: false,
       actEdit: "",
+      cambiarBono: false,
+      bonoEditar: {},
       cedulaRules: [
         v => !!v || "Por favor ingrese la cédula del empleado",
         v => (v && v.length == 9) || "La cédula debe ser de 9 caracteres",
@@ -142,55 +200,139 @@ export default {
       ]
     };
   },
+  // methods: {
+  //   ...mapGetters(["", "oneBono"]),
+  //   ...mapActions([
+  //     "fetchBonos",
+  //     "insertBono",
+  //     "getBono",
+  //     "updBono",
+  //     "deletedBono"
+  //   ]),
+  //   postBono(bono) {
+  //     this.insertBono(this.bono)
+  //     this.bono = new Bono()
+  //     this.fetchBonos()
+  //     this.reset()
+  //   },
+  //   getOneBono(id) {
+  //     console.log(`SOY EL ID ${id}`)
+  //       this.getBono(id)
+  //       this.bono = new Bono()
+  //       this.bono = this.oneBono()
+  //       console.log(`SOY EL THIS.BONO `)
+  //       console.log(this.bono)
+  //   },
+  //   deleteBono(id) {
+  //     this.deletedBono(id)
+  //     this.bono = new Bono()
+  //     this.fetchBonos()
+  //   },
+  //   updateBono(bono) {
+  //     this.updBono(this.bono)
+  //     this.fetchBonos()
+  //     this.reset()
+  //     this.edit = false
+  //   },
+  //   validate() {
+  //     if (this.$refs.form.validate()) {
+  //       this.snackbar = true
+  //     }
+  //   },
+  //   reset() {
+  //     this.$refs.form.reset()
+  //     this.bono = new Bono()
+  //   }
+  // },
+  // created() {
+  //   this.fetchBonos()
+  //   this.bono = new Bono()
+  // },
+  // computed: mapGetters(["allBonos"])
+
+  // SOLO VUE
+  created() {
+    this.obtenerBonos();
+  },
   methods: {
-    ...mapGetters(["", "oneBono"]),
-    ...mapActions([
-      "fetchBonos",
-      "insertBono",
-      "getBono",
-      "updBono",
-      "deletedBono"
-    ]),
-    postBono(bono) {
-      this.insertBono(this.bono)
-      this.bono = new Bono()
-      this.fetchBonos()
-      this.reset()
+    enviarBono() {
+      const data = {
+        _cedula: this.bono.cedula,
+        _motivo: this.bono.motivo,
+        _cantidad: this.bono.cantidad,
+        _fecha: this.bono.fecha
+      };
+      this.axios
+        .post(`/bonos`, data)
+        .then(res => {
+          this.bonos.push(res.data);
+          this.bono.cedula = "";
+          this.bono.motivo = "";
+          this.bono.cantidad = "";
+          this.bono.fecha = "";
+          this.obtenerBonos();
+        })
+        .catch(e => {
+          console.log(e.response);
+        });
     },
-    getOneBono(id) { 
-      console.log(`SOY EL ID ${id}`)
-        this.getBono(id)
-        this.bono = new Bono()
-        this.bono = this.oneBono()
-        console.log(`SOY EL THIS.BONO `)
-        console.log(this.bono)
+    obtenerBonos() {
+      this.axios
+        .get(`/bonos`)
+        .then(res => {
+          console.log(res);
+          this.bonos = res.data;
+        })
+        .catch(e => {
+          console.log(e.response);
+        });
     },
-    deleteBono(id) {
-      this.deletedBono(id)
-      this.bono = new Bono()
-      this.fetchBonos()
+
+    editarBono(id){
+      this.cambiarBono = true;
+      console.log(id)
+      this.axios.get(`/bonos/${id}`)
+        .then(res =>{
+      console.log(res.data)
+          this.bonoEditar = res.data
+        })
+        .catch(e =>{
+          console.log(e.response)
+        })
     },
-    updateBono(bono) {
-      this.updBono(this.bono)
-      this.fetchBonos()
-      this.reset()
-      this.edit = false
+    actualizarBono(item){
+      const data = {
+        _cedula: this.bonoEditar.cedula,
+        _motivo: this.bonoEditar.motivo,
+        _cantidad: this.bonoEditar.cantidad,
+        _fecha: this.bonoEditar.fecha
+      };
+      this.axios.put(`/bonos/${item.id}`, data)
+        .then(res => {
+          this.obtenerBonos()
+          this.cambiarBono = false;
+        })
+        .catch(e =>{
+          console.log(e.response)
+        })
     },
-    validate() {
-      if (this.$refs.form.validate()) {
-        this.snackbar = true
-      }
+    eliminarBono(id){
+      console.log(id);
+      this.axios.delete(`/bonos/${id}`)
+        .then(res =>{
+          // const index = this.bonos.findIndex(item => item.id === res.data.id)
+          // this.bonos.splice(index, 1)
+          this.obtenerBonos()
+        })
+        .catch(e =>{
+          console.log(e.response)
+        })
     },
     reset() {
-      this.$refs.form.reset()
-      this.bono = new Bono()
+      this.$refs.form.reset();
+      this.bono = new Bono();
     }
-  },
-  created() {
-    this.fetchBonos() 
-    this.bono = new Bono()
-  },
-  computed: mapGetters(["allBonos"])
+  }
 };
 </script>
 
@@ -229,7 +371,7 @@ tr:nth-of-type(odd) {
 .icons {
   cursor: pointer;
 }
-.btn{
-  display: block
+.btn {
+  display: block;
 }
 </style>

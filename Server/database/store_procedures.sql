@@ -20,9 +20,9 @@ begin
 	IF NOT EXISTS (select cedula from empleados where cedula = _cedula) THEN
 		insert into empleados (cedula, nombre, p_apellido, s_apellido, correo, fecha_contrato, tipo_empleado)
         values(_cedula, _nombre, _p_apellido, _s_apellido, _correo, _fecha_contrato, _tipo_empleado);
-        insert into salarios(cedula_empleado, salario_hora, jornada)
+        insert into salarios(cedula, salario_hora, jornada)
         values(_cedula, _salario_hora, _jornada);
-        insert into telefonos(numero, tipo_telefono, cedula_empleado)
+        insert into telefonos(numero, tipo_telefono, cedula)
         values(_numero, _tipo_telefono, _cedula);
     END IF;
 end$$
@@ -43,7 +43,7 @@ CREATE PROCEDURE `nuevoPermiso` (
 )
 BEGIN
 	IF (SELECT cedula FROM empleados WHERE cedula = _cedula AND activo = true) then
-		insert into permisos(cedula_empleado, fecha, descripcion, costo_salarial)
+		insert into permisos(cedula, fecha, descripcion, costo_salarial)
         values(_cedula, _fecha, _descripcion, _costoSalarial);
     end if;
 END$$
@@ -62,11 +62,11 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `nuevoAumento`(
 )
 BEGIN
 IF (SELECT cedula FROM empleados WHERE cedula = _cedula AND activo = true) then
-		insert into aumento_salarial(cedula_empleado, fecha, cantidad)
+		insert into aumento_salarial(cedula, fecha, cantidad)
         values(_cedula, _fecha, _cantidad);
         update salarios
         set salario_hora = salario_hora + _cantidad
-        where cedula_empleado = _cedula;
+        where cedula = _cedula;
     end if;
 END$$
 
@@ -85,7 +85,7 @@ CREATE PROCEDURE `nuevoRegistroDisciplinario` (
 )
 BEGIN
 IF (SELECT cedula FROM empleados WHERE cedula = _cedula AND activo = true) then
-		insert into registro_disciplinario(cedula_empleado, fecha, descripcion)
+		insert into registro_disciplinario(cedula, fecha, descripcion)
         values(_cedula, _fecha, _descripcion);
     end if;
 END$$
@@ -105,7 +105,7 @@ CREATE PROCEDURE `nuevoBono` (
 )
 BEGIN
 IF (SELECT cedula FROM empleados WHERE cedula = _cedula AND activo = true) then
-		insert into bonos(cedula_empleado, motivo, cantidad, fecha)
+		insert into bonos(cedula, motivo, cantidad, fecha)
         values(_cedula, _motivo, _cantidad, _fecha);
     end if;
 END$$
@@ -166,7 +166,7 @@ CREATE PROCEDURE `nuevaHoraExtra` (
 )
 BEGIN
 if (SELECT cedula FROM empleados WHERE cedula = _cedula AND activo = true) then
-	insert into horas_extra(cedula_empleado, cantidad_horas, motivo, fecha)
+	insert into horas_extra(cedula, cantidad_horas, motivo, fecha)
     values(_cedula, _cantidad_horas, _motivo, _fecha);
 end if;
 END$$
@@ -248,7 +248,7 @@ CREATE PROCEDURE `actualizarRegistroDisciplinario` (
 )
 BEGIN
 	update registro_disciplinario
-	set cedula_empleado = _cedula,
+	set cedula = _cedula,
         fecha = _fecha,
         descripcion = _descripcion
 	where id = _id;
@@ -286,7 +286,7 @@ CREATE PROCEDURE `actualizarAumento` (
 )
 BEGIN
 update aumento_salarial
-	set cedula_empleado = _cedula,
+	set cedula = _cedula,
         cantidad = _cantidad
 	where id = _id;
 END$$
@@ -364,7 +364,7 @@ CREATE PROCEDURE `nuevasVacaciones` (
 )
 BEGIN
 	if(_fecha_salida <> _fecha_entrada) then
-		insert into vacaciones (cedula_empleado, fecha_salida, fecha_entrada)
+		insert into vacaciones (cedula, fecha_salida, fecha_entrada)
         values (_cedula, _fecha_salida, _fecha_entrada);
     end if; 
 END$$
@@ -426,7 +426,7 @@ BEGIN
 	select @cantAumento := cantidad from aumento_salarial where id = _id;
     update salarios
     set salario_hora = salario_hora - @cantAumento
-    where cedula_empleado = _cedula;
+    where cedula = _cedula;
 	update aumento_salarial
     set activo = false
     where id = _id;
@@ -489,10 +489,10 @@ BEGIN
         set 
             salario_hora = _salario_hora,
             jornada = _jornada
-        where cedula_empleado = _cedula;
+        where cedula = _cedula;
         update telefonos
         set numero = _numero
-        where cedula_empleado = _cedula;
+        where cedula = _cedula;
 	end if;
 END$$
 
@@ -530,7 +530,7 @@ CREATE PROCEDURE `actualizarHorasExtra` (
 BEGIN
 	update horas_extra
     set
-		cedula_empleado = _cedula,
+		cedula = _cedula,
         cantidad_horas = _cantidad_horas,
         motivo = _motivo,
         fecha = _fecha
