@@ -87,7 +87,7 @@
               <v-flex xs12 md6 v-if="cambiarBono">
                 <v-card>
                   <v-date-picker
-                    v-model="bono.fecha"
+                    v-model="bonoEditar.fecha"
                     full-width
                     locale="es"
                     :min="min"
@@ -99,7 +99,7 @@
               <v-flex xs12 md6 v-if="!cambiarBono">
                 <v-card>
                   <v-date-picker
-                    v-model="bonoEditar.fecha"
+                    v-model="bono.fecha"
                     full-width
                     locale="es"
                     :min="min"
