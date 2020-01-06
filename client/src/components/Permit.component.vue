@@ -165,7 +165,7 @@
   </v-card>
 </template>
 <script>
-// import { mapGetters, mapActions } from "vuex";
+
 import Permiso from "../model/permits.model";
 export default {
   data() {
@@ -272,45 +272,6 @@ export default {
       this.permiso = new Permiso();
     }
   }
-
-  // methods: {
-  //   ...mapGetters(["", "onePermiso"]),
-  //   ...mapActions([
-  //     "fetchPermisos",
-  //     "getPermiso",
-  //     "insertPermiso",
-  //     "deletedPermiso",
-  //     "updPermiso"
-  //   ]),
-  //   postPermiso(permiso) {
-  //     this.insertPermiso(this.permiso)
-  //     this.permiso = new Permiso()
-  //     this.reset()
-  //     this.fetchPermisos()
-  //   },
-  //   updatePermiso(permiso) {
-  //     this.updPermiso(this.permiso)
-  //     this.fetchPermisos()
-  //     this.reset()
-  //     this.edit = false
-  //   },
-  //   deletePermiso(id) {
-  //     this.deletedPermiso(id)
-  //     this.permiso = new Permiso()
-  //     this.fetchPermisos()
-  //   },
-  //   getOnePermiso(id) {
-  //     if (this.edit === false) {
-  //       this.getPermiso(id)
-  //       this.permiso = this.onePermiso()
-  //     }
-  //   },
-  //   validate() {
-  //     if (this.$refs.form.validate()) {
-  //       this.snackbar = true
-  //     }
-  //   },
-  // },
 };
 </script>
 

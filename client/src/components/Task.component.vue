@@ -14,7 +14,7 @@
           <v-card flat>
             <v-layout row wrap align-center>
               <v-flex xs12 md4>
-                <v-form ref="form" v-model="valid">
+                <v-form ref="form" v-model="valid" v-if="!cambiarTarea">
                   <v-radio-group v-model="tarea.tipoTarea">
                     <v-radio label="Doctor" value="2" color="primary" :rules="tipoTareaRules"></v-radio>
                     <v-radio label="Dependiente" value="3" color="primary" :rules="tipoTareaRules"></v-radio>
@@ -39,13 +39,46 @@
                     <v-btn
                       :disabled="!valid"
                       color="success"
-                      @click="postTarea"
+                      @click="enviarTarea"
                       class="btn-1 btn"
-                    >Nueva tarea</v-btn>
+                    >Asignar tarea</v-btn>
                   </template>
-                  <v-btn class="btn" color="warning" :disabled="!valid" @click="reset">Borrar</v-btn>
+                  <v-btn class="btn" color="warning" :disabled="!valid" @click="Cancelar">Cancelar</v-btn>
                   <template v-if="edit === true"></template>
-                  <v-btn class="btn" color="success" :disabled="!valid" @click="updateTarea">Actualizar</v-btn>
+                </v-form>
+
+                <v-form ref="form" v-model="valid" v-if="cambiarTarea">
+                  <h3>Editar tarea</h3>
+                  <v-radio-group v-model="tareaEditar.tipoTarea">
+                    <v-radio label="Doctor" value="2" color="primary" :rules="tipoTareaRules"></v-radio>
+                    <v-radio label="Dependiente" value="3" color="primary" :rules="tipoTareaRules"></v-radio>
+                    <v-radio label="Mensajero" value="4" color="primary" :rules="tipoTareaRules"></v-radio>
+                  </v-radio-group>
+                  <v-text-field
+                    v-model="tareaEditar.titulo"
+                    :counter="50"
+                    label="Titulo"
+                    :rules="titleRules"
+                    required
+                  ></v-text-field>
+                  <v-text-field
+                    v-model="tareaEditar.descripcion"
+                    :counter="300"
+                    label="Descripcion de la tarea"
+                    :rules="descripcionRules"
+                    required
+                  ></v-text-field>
+
+                  <template v-if="edit===false">
+                    <v-btn
+                      :disabled="!valid"
+                      color="success"
+                      @click="actualizarTarea(tareaEditar)"
+                      class="btn-1 btn"
+                    >Editar tarea</v-btn>
+                  </template>
+                  <v-btn class="btn" color="warning" :disabled="!valid" @click="Cancelar">Cancelar</v-btn>
+                  <template v-if="edit === true"></template>
                 </v-form>
               </v-flex>
               <v-spacer></v-spacer>
@@ -61,7 +94,7 @@
           <v-card-text>
             <v-container>
               <v-timeline>
-                <v-timeline-item v-for="item of allTareasDoc" :key="item.id" color="primary" large>
+                <v-timeline-item v-for="item of tareasDoc" :key="item.id" color="primary" large>
                   <div v-if="item.id_tipo_empleado === 2">
                     <v-card class="elevation-2">
                       <v-card-title class="tarea-titulo">{{item.titulo}}</v-card-title>
@@ -69,13 +102,13 @@
                       <v-btn
                         color="primary"
                         class="btn-upd-del"
-                        @click="obtenerUnaTarea(item.id)"
+                        @click="editarTarea(item.id)"
                         outlined
                       >Actualizar</v-btn>
                       <v-btn
                         color="primary"
                         class="btn-upd-del"
-                        @click="deleteTarea(item.id)"
+                        @click="eliminarTarea(item.id)"
                         outlined
                       >Borrar</v-btn>
                     </v-card>
@@ -91,20 +124,20 @@
           <v-card-text>
             <v-container>
               <v-timeline>
-                <v-timeline-item v-for="item of allTareasDep" :key="item.id" color="primary" large>
+                <v-timeline-item v-for="item of tareasDep" :key="item.id" color="primary" large>
                   <v-card class="elevation-2">
                     <v-card-title class="tarea-titulo">{{item.titulo}}</v-card-title>
                     <v-card-text class="tarea-descripcion">{{item.descripcion}}</v-card-text>
                     <v-btn
                       color="primary"
                       class="btn-upd-del"
-                      @click="obtenerUnaTarea(item.id)"
+                      @click="editarTarea(item.id)"
                       outlined
                     >Actualizar</v-btn>
                     <v-btn
                       color="primary"
                       class="btn-upd-del"
-                      @click="deleteTarea(item.id)"
+                      @click="eliminarTarea(item.id)"
                       outlined
                     >Borrar</v-btn>
                   </v-card>
@@ -119,7 +152,7 @@
           <v-card-text>
             <v-container>
               <v-timeline>
-                <v-timeline-item v-for="item of allTareasMen" :key="item.id" color="primary" large>
+                <v-timeline-item v-for="item of tareasMen" :key="item.id" color="primary" large>
                   <div v-if="item.id_tipo_empleado === 4">
                     <v-card class="elevation-2">
                       <v-card-title class="tarea-titulo">{{item.titulo}}</v-card-title>
@@ -127,13 +160,13 @@
                       <v-btn
                         color="primary"
                         class="btn-upd-del"
-                        @click="obtenerUnaTarea(item.id)"
+                        @click="editarTarea(item.id)"
                         outlined
                       >Actualizar</v-btn>
                       <v-btn
                         color="primary"
                         class="btn-upd-del"
-                        @click="deleteTarea(item.id)"
+                        @click="eliminarTarea(item.id)"
                         outlined
                       >Borrar</v-btn>
                     </v-card>
@@ -149,11 +182,12 @@
 </template>
 
 <script>
-import { mapGetters, mapActions } from "vuex";
+// import { mapGetters, mapActions } from "vuex";
 import Tarea from "../model/task.model";
 export default {
   data() {
     return {
+      cambiarTarea: false,
       tab: [],
       items: [
         "Nueva tarea",
@@ -162,10 +196,11 @@ export default {
         "Tareas del mensajero"
       ],
       tarea: new Tarea(),
-      tarea: [],
+      tareas: [],
       edit: false,
       actEdit: "",
       valid: false,
+      tareaEditar: {},
       tareasDoc: [],
       tareasDep: [],
       tareasMen: [],
@@ -180,58 +215,152 @@ export default {
       tipoTareaRules: [v => !!v || "Por favor selecciones un tipo de telefono"]
     };
   },
-  methods: {
-    ...mapGetters(["", "oneTarea"]),
-    ...mapActions([
-      "obtenerTarea",
-      "fetchTareasDoctor",
-      "fetchTareasDependiente",
-      "fetchTareasMensajero",
-      "insertTarea",
-      "deletedTarea",
-      "actualizarTarea"
-    ]),
-    postTarea(tarea) {
-      this.insertTarea(this.tarea);
-      this.reset();
-      this.tarea = new Tarea();
-      this.fetchTareasDoctor();
-      this.fetchTareasDependiente();
-      this.fetchTareasMensajero();
-    },
-    updateTarea(tarea) {
-      this.actualizarTarea(this.tarea);
-      this.fetchTareasDoctor();
-      this.fetchTareasDependiente();
-      this.fetchTareasMensajero();
-      this.reset();
-      this.tarea = new Tarea();
-    },
-    deleteTarea(id) {
-      this.deletedTarea(id);
-      this.fetchTareasDoctor();
-      this.fetchTareasDependiente();
-      this.fetchTareasMensajero();
-      this.tarea = new Tarea();
-    },
-    obtenerUnaTarea(id) {
-      if (this.edit === false) {
-        this.obtenerTarea(id);
-        this.tarea = this.oneTarea();
-      }
-    },
-
-    reset() {
-      this.$refs.form.reset();
-      this.tarea = new Tarea();
-    }
-  },
   created() {
-    this.fetchTareasDoctor();
-    this.fetchTareasDependiente();
-    this.fetchTareasMensajero();
+    this.obtenerTareasDoc();
+    this.obtenerTareasDep();
+    this.obtenerTareasMen();
   },
-  computed: mapGetters(["allTareasDoc", "allTareasDep", "allTareasMen"])
+  methods: {
+    enviarTarea() {
+      const data = {
+        _id_tipo_empleado: this.tarea.tipoTarea,
+        _titulo: this.tarea.titulo,
+        _descripcion: this.tarea.descripcion
+      };
+      this.axios
+        .post("/tareas", data)
+        .then(res => {
+          this.tareas.push(res.data);
+          this.tarea.titulo = "";
+          this.tarea.descripcion = "";
+          this.obtenerTareasDoc();
+          this.obtenerTareasDep();
+          this.obtenerTareasMen();
+        })
+        .catch(e => {
+          console.log(e.response);
+        });
+    },
+    obtenerTareasDoc() {
+      this.axios
+        .get("/tareas-doctor")
+        .then(res => {
+          this.tareasDoc = res.data;
+        })
+        .catch(e => {
+          console.log(e.response);
+        });
+    },
+    obtenerTareasDep() {
+      this.axios
+        .get("/tareas-dependiente")
+        .then(res => {
+          this.tareasDep = res.data;
+        })
+        .catch(e => {
+          console.log(e.response);
+        });
+    },
+    obtenerTareasMen() {
+      this.axios
+        .get("/tareas-mensajero")
+        .then(res => {
+          this.tareasMen = res.data;
+        })
+        .catch(e => {
+          console.log(e.response);
+        });
+    },
+    editarTarea(id) {
+      this.cambiarTarea = true;
+      console.log(id);
+      this.axios
+        .get(`/tareas/${id}`)
+        .then(res => {
+          this.tareaEditar = res.data;
+        })
+        .catch(e => {
+          console.log(e.response);
+        });
+    },
+    actualizarTarea(item) {
+      const data = {
+        _id_tipo_empleado: this.tareaEditar.tipoTarea,
+        _titulo: this.tareaEditar.titulo,
+        _descripcion: this.tareaEditar.descripcion
+      };
+      this.axios
+        .put(`/tareas/${item.id}`, data)
+        .then(res => {
+          this.obtenerTareasDoc();
+          this.obtenerTareasDep();
+          this.obtenerTareasMen();
+          this.cambiarTarea = false;
+        })
+        .catch(e => {
+          console.log(e.response);
+        });
+    },
+    eliminarTarea(id) {
+      console.log(id);
+      this.axios
+        .delete(`/tareas/${id}`)
+        .then(res => {
+          this.obtenerTareasDoc();
+          this.obtenerTareasDep();
+          this.obtenerTareasMen();
+        })
+        .catch(e => {
+          console.log(e.response);
+        });
+    }
+  }
+  // methods: {
+  //   ...mapGetters(["", "oneTarea"]),
+  //   ...mapActions([
+  //     "obtenerTarea",
+  //     "fetchTareasDoctor",
+  //     "fetchTareasDependiente",
+  //     "fetchTareasMensajero",
+  //     "insertTarea",
+  //     "deletedTarea",
+  //     "actualizarTarea"
+  //   ]),
+  //   postTarea(tarea) {
+  //     this.insertTarea(this.tarea);
+  //     this.reset();
+  //     this.tarea = new Tarea();
+  //     this.fetchTareasDoctor();
+  //     this.fetchTareasDependiente();
+  //     this.fetchTareasMensajero();
+  //   },
+  //   updateTarea(tarea) {
+  //     this.actualizarTarea(this.tarea);
+  //     this.fetchTareasDoctor();
+  //     this.fetchTareasDependiente();
+  //     this.fetchTareasMensajero();
+  //     this.reset();
+  //     this.tarea = new Tarea();
+  //   },
+  //   deleteTarea(id) {
+  //     this.deletedTarea(id);
+  //     this.fetchTareasDoctor();
+  //     this.fetchTareasDependiente();
+  //     this.fetchTareasMensajero();
+  //     this.tarea = new Tarea();
+  //   },
+  //   obtenerUnaTarea(id) {
+  //     if (this.edit === false) {
+  //       this.obtenerTarea(id);
+  //       this.tarea = this.oneTarea();
+  //     }
+  //   },
+
+  //   reset() {
+  //     this.$refs.form.reset();
+  //     this.tarea = new Tarea();
+  //   }
+  // },
 };
 </script>
 <style>
@@ -283,7 +412,7 @@ tr:nth-of-type(odd) {
   margin: 0.9em;
   color: black !important;
 }
-.btn{
+.btn {
   display: inline;
   margin: 0.4em;
 }
