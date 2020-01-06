@@ -14,12 +14,15 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `nuevoEmpleado`(
     in _salario_hora decimal(10,2),
     in _jornada decimal(4.2), 
     in _numero varchar(8),
-    in _tipo_telefono tinyint
+    in _tipo_telefono tinyint,
+    in _farmacia tinyint,
+    in _direccion varchar(300),
+    in _fecha_nacimiento datetime
 )
 begin
 	IF NOT EXISTS (select cedula from empleados where cedula = _cedula) THEN
-		insert into empleados (cedula, nombre, p_apellido, s_apellido, correo, fecha_contrato, tipo_empleado)
-        values(_cedula, _nombre, _p_apellido, _s_apellido, _correo, _fecha_contrato, _tipo_empleado);
+		insert into empleados (cedula, nombre, p_apellido, s_apellido, correo, fecha_contrato, tipo_empleado, farmacia, direccion, fecha_nacimiento)
+        values(_cedula, _nombre, _p_apellido, _s_apellido, _correo, _fecha_contrato, _tipo_empleado, _farmacia, _direccion, _fecha_nacimiento);
         insert into salarios(cedula, salario_hora, jornada)
         values(_cedula, _salario_hora, _jornada);
         insert into telefonos(numero, tipo_telefono, cedula)
@@ -351,7 +354,6 @@ END$$
 DELIMITER ;
 
 
-
 USE `rrhh_db`;
 DROP procedure IF EXISTS `nuevasVacaciones`;
 
@@ -363,9 +365,18 @@ CREATE PROCEDURE `nuevasVacaciones` (
     in _fecha_entrada datetime
 )
 BEGIN
-	if(_fecha_salida <> _fecha_entrada) then
-		insert into vacaciones (cedula, fecha_salida, fecha_entrada)
-        values (_cedula, _fecha_salida, _fecha_entrada);
+	IF(select cedula from empleados where cedula = _cedula and activo = true) THEN
+		select @cantidad := cantidad_dias_disponibles from dias_disponibles where cedula = _cedula;
+		set @aux =  DATEDIFF(_fecha_salida, _fecha_entrada);
+		IF (@cantidad >= @aux ) THEN
+			insert into fechas_vacaciones (cedula, fecha_salida, fecha_entrada)
+			values (_cedula, _fecha_salida, _fecha_entrada);
+            UPDATE dias_disponibles 
+            SET cantidad_dias_disponibles = cantidad_dias_disponibles - @aux
+            WHERE cedula = _cedula;
+		else
+			select "No tiene tantos dias diponibles para vacacionar" as mensaje;
+        end if;
     end if; 
 END$$
 

@@ -14,9 +14,10 @@
           <v-card flat>
             <v-layout row wrap align-center>
               <v-flex xs12 md4>
-                <v-form ref="form" v-model="valid">
+                <!-- FORMULARIO PARA INSERTAR -->
+                <v-form ref="form" v-model="valid" v-if="!cambiarPermiso">
                   <v-text-field
-                    v-model="permiso.cedula_empleado"
+                    v-model="permiso.cedula"
                     :counter="9"
                     label="Cédula"
                     :rules="cedulaRules"
@@ -30,7 +31,7 @@
                     required
                   ></v-text-field>
                   <v-text-field
-                    v-model="permiso.costo_salarial"
+                    v-model="permiso.costoSalarial"
                     label="Costo salarial"
                     :rules="costoRules"
                     required
@@ -39,20 +40,68 @@
                     <v-btn
                       :disabled="!valid"
                       color="success"
-                      @click="postPermiso"
+                      @click="enviarPermiso"
                       class="btn-1 btn"
                     >Nuevo Permiso</v-btn>
                   </template>
-                    <v-btn class="btn" color="warning" :disabled="!valid" @click="reset">Borrar formulario</v-btn>
-                  <template v-if="edit === true"></template>
-                  <v-btn class="btn" color="success" :disabled="!valid" @click="updatePermiso">Actualizar</v-btn>
+                  <v-btn class="btn" color="warning" :disabled="!valid">Borrar formulario</v-btn>
+                </v-form>
+                <!-- FORMULARIO PARA EDITAR -->
+                <v-form ref="form" v-model="valid" v-if="cambiarPermiso">
+                  <h3>Editar permiso</h3>
+                  <v-text-field
+                    v-model="permisoEditar.cedula"
+                    :counter="9"
+                    label="Cédula"
+                    :rules="cedulaRules"
+                    required
+                  ></v-text-field>
+                  <v-text-field
+                    v-model="permisoEditar.descripcion"
+                    :counter="300"
+                    label="Motivo del permiso"
+                    :rules="descripcionRules"
+                    required
+                  ></v-text-field>
+                  <v-text-field
+                    v-model="permisoEditar.costoSalarial"
+                    label="Costo salarial"
+                    :rules="costoRules"
+                    required
+                  ></v-text-field>
+                  <template v-if="edit===false">
+                    <v-btn
+                      :disabled="!valid"
+                      color="success"
+                      @click="actualizarPermiso(permisoEditar)"
+                      class="btn-1 btn"
+                    >Editar Permiso</v-btn>
+                  </template>
+                  <v-btn
+                    class="btn"
+                    color="warning"
+                    :disabled="!valid"
+                    @click="reset"
+                  >Cancelar</v-btn>
                 </v-form>
               </v-flex>
               <v-spacer></v-spacer>
-              <v-flex xs12 md6>
+              <v-flex xs12 md6 v-if="!cambiarPermiso">
                 <v-card>
                   <v-date-picker
                     v-model="permiso.fecha"
+                    full-width
+                    locale="es"
+                    :min="min"
+                    header-color="primary"
+                    color="primary"
+                  ></v-date-picker>
+                </v-card>
+              </v-flex>
+              <v-flex xs12 md6 v-if="cambiarPermiso">
+                <v-card>
+                  <v-date-picker
+                    v-model="permisoEditar.fecha"
                     full-width
                     locale="es"
                     :min="min"
@@ -80,23 +129,29 @@
                       <th class="th">Fecha</th>
                       <th class="th">Descripcion</th>
                       <th class="th">Costo Salarial</th>
-                      <th class="th">BORRAR</th>
                       <th class="th">Actualizar</th>
+                      <th class="th">Borrar</th>
                     </tr>
                   </thead>
                   <tbody>
-                    <tr v-for="item of allPermisos" :key="item.id">
-                      <td class="td">{{item.cedula_empleado}}</td>
-                      <td class="td">{{item.fecha}}</td>
-                      <td class="td">{{item.descripcion}}</td>
-                      <td class="td">{{item.costo_salarial}}</td>
-                      <td class="td icons" @dblclick="deletePermiso(item.id)">
-                        DELETE
-                        <v-icon small color="error" class="icons">delete</v-icon>
+                    <tr v-for="permiso of permisos" :key="permiso.id">
+                      <td class="td">{{permiso.cedula}}</td>
+                      <td class="td">{{permiso.fecha}}</td>
+                      <td class="td">{{permiso.descripcion}}</td>
+                      <td class="td">{{permiso.costoSalarial}}</td>
+                      <td>
+                        <v-btn
+                          color="info"
+                          class="btn-1, btn"
+                          @click="editarPermiso(permiso.id)"
+                        >Actualizar</v-btn>
                       </td>
-                      <td class="td icons" @click="getOnePermiso(item.id)">
-                        actualizar
-                        <v-icon small color="error" class="icons">delete</v-icon>
+                      <td>
+                        <v-btn
+                          color="error"
+                          class="btn-1, btn"
+                          @click="eliminarPermiso(permiso.id)"
+                        >Borrar</v-btn>
                       </td>
                     </tr>
                   </tbody>
@@ -110,7 +165,7 @@
   </v-card>
 </template>
 <script>
-import { mapGetters, mapActions } from "vuex";
+// import { mapGetters, mapActions } from "vuex";
 import Permiso from "../model/permits.model";
 export default {
   data() {
@@ -120,9 +175,11 @@ export default {
       valid: false,
       min: new Date().toISOString().substr(0, 10),
       permiso: new Permiso(),
-      permiso: [],
+      permisos: [],
+      permisoEditar: {},
       edit: false,
       actEdit: "",
+      cambiarPermiso: false,
       cedulaRules: [
         v => /^\d+$/.test(v) || "Solo se admiten números positivos",
         v => !!v || "Por favor ingrese la cédula del empleado",
@@ -140,52 +197,120 @@ export default {
       ]
     };
   },
+  created() {
+    this.obtenerPermisos();
+  },
   methods: {
-    ...mapGetters(["", "onePermiso"]),
-    ...mapActions([
-      "fetchPermisos",
-      "getPermiso",
-      "insertPermiso",
-      "deletedPermiso",
-      "updPermiso"
-    ]),
-    postPermiso(permiso) {
-      this.insertPermiso(this.permiso)
-      this.permiso = new Permiso()
-      this.reset()
-      this.fetchPermisos()
+    enviarPermiso() {
+      const data = {
+        _cedula: this.permiso.cedula,
+        _fecha: this.permiso.fecha,
+        _descripcion: this.permiso.descripcion,
+        _costoSalarial: this.permiso.costoSalarial
+      };
+      this.axios
+        .post("/permisos", data)
+        .then(res => {
+          this.permisos.push(res.data);
+          this.permiso.cedula = "";
+          this.permiso.fecha = "";
+          this.permiso.descripcion = "";
+          this.permiso.costoSalarial = "";
+          this.obtenerPermisos();
+        })
+        .catch(e => {
+          console.log(e.response);
+        });
     },
-    updatePermiso(permiso) {
-      this.updPermiso(this.permiso)
-      this.fetchPermisos()
-      this.reset()
-      this.edit = false
+    obtenerPermisos() {
+      this.axios
+        .get("/permisos")
+        .then(res => {
+          console.log(res);
+          this.permisos = res.data;
+        })
+        .catch(e => {
+          console.log(e.response);
+        });
     },
-    deletePermiso(id) {
-      this.deletedPermiso(id)
-      this.permiso = new Permiso()
-      this.fetchPermisos()
+    editarPermiso(id){
+      this.cambiarPermiso = true
+      console.log(id)
+      this.axios.get(`/permisos/${id}`)
+        .then(res => {
+          console.log(res.data)
+          this.permisoEditar = res.data
+        })
+        .catch(e => {
+          console.log(e.response)
+        })
     },
-    getOnePermiso(id) {
-      if (this.edit === false) {
-        this.getPermiso(id)
-        this.permiso = this.onePermiso()
+    actualizarPermiso(item){
+      const data  = {
+        _fecha: this.permisoEditar.fecha,
+        _descripcion: this.permisoEditar.descripcion,
+        _costoSalarial: this.permisoEditar.costoSalarial
       }
+      this.axios.put(`/permisos/${item.id}`, data)
+        .then(res =>{
+          this.obtenerPermisos()
+          this.cambiarPermiso = false
+        })
     },
-    validate() {
-      if (this.$refs.form.validate()) {
-        this.snackbar = true
-      }
+    eliminarPermiso(id){
+      console.log(id)
+      this.axios.delete(`/permisos/${id}`)
+        .then(res =>{
+          this.obtenerPermisos()
+        })
+        .catch(e => {
+          console.log(e.permisos)
+        })
     },
     reset() {
-      this.$refs.form.reset()
-      this.permiso = new Permiso()
+      this.$refs.form.reset();
+      this.permiso = new Permiso();
     }
-  },
-  created() {
-    this.fetchPermisos()
-  },
-  computed: mapGetters(["allPermisos"])
+  }
+
+  // methods: {
+  //   ...mapGetters(["", "onePermiso"]),
+  //   ...mapActions([
+  //     "fetchPermisos",
+  //     "getPermiso",
+  //     "insertPermiso",
+  //     "deletedPermiso",
+  //     "updPermiso"
+  //   ]),
+  //   postPermiso(permiso) {
+  //     this.insertPermiso(this.permiso)
+  //     this.permiso = new Permiso()
+  //     this.reset()
+  //     this.fetchPermisos()
+  //   },
+  //   updatePermiso(permiso) {
+  //     this.updPermiso(this.permiso)
+  //     this.fetchPermisos()
+  //     this.reset()
+  //     this.edit = false
+  //   },
+  //   deletePermiso(id) {
+  //     this.deletedPermiso(id)
+  //     this.permiso = new Permiso()
+  //     this.fetchPermisos()
+  //   },
+  //   getOnePermiso(id) {
+  //     if (this.edit === false) {
+  //       this.getPermiso(id)
+  //       this.permiso = this.onePermiso()
+  //     }
+  //   },
+  //   validate() {
+  //     if (this.$refs.form.validate()) {
+  //       this.snackbar = true
+  //     }
+  //   },
+  // },
 };
 </script>
 
@@ -224,7 +349,7 @@ tr:nth-of-type(odd) {
 .icons {
   cursor: pointer;
 }
-.btn{
-  display: block
+.btn {
+  display: block;
 }
 </style>

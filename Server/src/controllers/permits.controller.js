@@ -29,8 +29,8 @@ export async function nuevoPermiso(req, res){
 }
 
 export async function todosPermisos(req, res){
-    await mysqlConnection.query(`Select a.id, a.cedula_empleado, b.nombre, b.p_apellido, a.descripcion, a.costo_salarial, substr(a.fecha, 1, 10) as fecha from permisos a
-    inner join empleados b on a.cedula_empleado = b.cedula where a.activo = true`, (err, rows, fields)=>{
+    await mysqlConnection.query(`Select a.id, a.cedula, b.nombre, b.p_apellido, a.descripcion, a.costo_salarial as costoSalarial, substr(a.fecha, 1, 10) as fecha from permisos a
+    inner join empleados b on a.cedula = b.cedula where a.activo = true`, (err, rows, fields)=>{
         if (!err  && JSON.stringify(rows).length > 0 ) {
                 res.json(rows)
         } else {
@@ -40,8 +40,8 @@ export async function todosPermisos(req, res){
 }
 export async function permisoID(req, res){
     const {_id} = req.params
-    await mysqlConnection.query(`Select a.id, a.cedula_empleado, b.nombre, b.p_apellido, a.descripcion, a.costo_salarial, substr(a.fecha, 1, 10) as fecha from permisos a
-                                inner join empleados b on a.cedula_empleado = b.cedula where a.activo = true and a.id = ?`, [_id], (err, rows, fields)=>{
+    await mysqlConnection.query(`Select a.id, a.cedula, b.nombre, b.p_apellido, a.descripcion, a.costo_salarial as costoSalarial, substr(a.fecha, 1, 10) as fecha from permisos a
+                                inner join empleados b on a.cedula = b.cedula where a.activo = true and a.id = ?`, [_id], (err, rows, fields)=>{
         if (!err && rows.length > 0) {
             res.json(rows[0])
         } else {

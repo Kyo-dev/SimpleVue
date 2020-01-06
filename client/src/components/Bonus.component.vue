@@ -168,7 +168,6 @@
 </template>
 
 <script>
-// import { mapGetters, mapActions } from "vuex";
 import Bono from "../model/bonus.model";
 export default {
   data() {
@@ -200,57 +199,6 @@ export default {
       ]
     };
   },
-  // methods: {
-  //   ...mapGetters(["", "oneBono"]),
-  //   ...mapActions([
-  //     "fetchBonos",
-  //     "insertBono",
-  //     "getBono",
-  //     "updBono",
-  //     "deletedBono"
-  //   ]),
-  //   postBono(bono) {
-  //     this.insertBono(this.bono)
-  //     this.bono = new Bono()
-  //     this.fetchBonos()
-  //     this.reset()
-  //   },
-  //   getOneBono(id) {
-  //     console.log(`SOY EL ID ${id}`)
-  //       this.getBono(id)
-  //       this.bono = new Bono()
-  //       this.bono = this.oneBono()
-  //       console.log(`SOY EL THIS.BONO `)
-  //       console.log(this.bono)
-  //   },
-  //   deleteBono(id) {
-  //     this.deletedBono(id)
-  //     this.bono = new Bono()
-  //     this.fetchBonos()
-  //   },
-  //   updateBono(bono) {
-  //     this.updBono(this.bono)
-  //     this.fetchBonos()
-  //     this.reset()
-  //     this.edit = false
-  //   },
-  //   validate() {
-  //     if (this.$refs.form.validate()) {
-  //       this.snackbar = true
-  //     }
-  //   },
-  //   reset() {
-  //     this.$refs.form.reset()
-  //     this.bono = new Bono()
-  //   }
-  // },
-  // created() {
-  //   this.fetchBonos()
-  //   this.bono = new Bono()
-  // },
-  // computed: mapGetters(["allBonos"])
-
-  // SOLO VUE
   created() {
     this.obtenerBonos();
   },
@@ -320,8 +268,6 @@ export default {
       console.log(id);
       this.axios.delete(`/bonos/${id}`)
         .then(res =>{
-          // const index = this.bonos.findIndex(item => item.id === res.data.id)
-          // this.bonos.splice(index, 1)
           this.obtenerBonos()
         })
         .catch(e =>{
