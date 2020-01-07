@@ -29,16 +29,16 @@ export async function nuevaDisciplina(req, res){
 
 
 export async function todasDisciplinas(req, res) {
-    await mysqlConnection.query(`Select a.id, a.cedula_empleado, b.nombre, b.p_apellido, a.descripcion, substr(a.fecha, 1, 10) as fecha  from registro_disciplinario a
-    inner join empleados b on a.cedula_empleado = b.cedula and a.activo = true`, (err, rows, fields)=>{
+    await mysqlConnection.query(`Select a.id, a.cedula, b.nombre, b.p_apellido, a.descripcion, substr(a.fecha, 1, 10) as fecha  from registro_disciplinario a
+    inner join empleados b on a.cedula = b.cedula and a.activo = true`, (err, rows, fields)=>{
         !err ? res.json(rows) : res.json({"Message": err})
     }) 
 }
 
 export async function disciplinaID(req, res) {
     const {_id} = req.params
-    await mysqlConnection.query(`Select a.id, a.cedula_empleado, b.nombre, b.p_apellido, a.descripcion, substr(a.fecha, 1, 10) as fecha  from registro_disciplinario a
-    inner join empleados b on a.cedula_empleado = b.cedula where a.id = ? and a.activo = true`, [_id],(err, rows, fields)=>{
+    await mysqlConnection.query(`Select a.id, a.cedula, b.nombre, b.p_apellido, a.descripcion, substr(a.fecha, 1, 10) as fecha  from registro_disciplinario a
+    inner join empleados b on a.cedula = b.cedula where a.id = ? and a.activo = true`, [_id],(err, rows, fields)=>{
         if (!err && rows.length > 0) {
             res.json(rows[0])
         } else {

@@ -14,9 +14,9 @@
           <v-card flat>
             <v-layout row wrap align-center>
               <v-flex xs12 md4>
-                <v-form ref="form" v-model="valid">
+                <v-form ref="form" v-model="valid" v-if="!cambiarConducta">
                   <v-text-field
-                    v-model="disciplina.cedula_empleado"
+                    v-model="disciplina.cedula"
                     :counter="9"
                     label="Cédula del empleado"
                     :rules="cedulaRules"
@@ -33,20 +33,58 @@
                     <v-btn
                       :disabled="!valid"
                       color="success"
-                      @click="nuevaDisciplina"
+                      @click="enviarConducta()"
                       class="btn-1 btn"
                     >nuevo registro</v-btn>
                   </template>
-                  <v-btn class="btn" color="warning" :disabled="!valid" @click="reset">Borrar formulario</v-btn>
-                  <template v-if="edit === true"></template>
-                  <v-btn class="btn" color="success" :disabled="!valid" @click="updateDisciplina">Actualizar</v-btn>
+                  <v-btn class="btn" color="warning" :disabled="!valid" @click="reset">Borrar</v-btn>
+                </v-form>
+
+                <v-form ref="form" v-model="valid" v-if="cambiarConducta">
+                  <h3>Editar</h3>
+                  <v-text-field
+                    v-model="disciplinaEditar.cedula"
+                    :counter="9"
+                    label="Cédula del empleado"
+                    :rules="cedulaRules"
+                    required
+                  ></v-text-field>
+                  <v-text-field
+                    v-model="disciplinaEditar.descripcion"
+                    :counter="300"
+                    label="Motivo de registro disciplinario"
+                    :rules="descripcionRules"
+                    required
+                  ></v-text-field>
+                  <template v-if="edit===false">
+                    <v-btn
+                      :disabled="!valid"
+                      color="success"
+                      @click="actualizarConducta(disciplinaEditar)"
+                      class="btn-1 btn"
+                    >Editar información</v-btn>
+                  </template>
+                  <v-btn class="btn" color="warning" :disabled="!valid" @click="cancelar()">Cancelar</v-btn>
                 </v-form>
               </v-flex>
               <v-spacer></v-spacer>
-              <v-flex xs12 md6>
+              <v-flex xs12 md6 v-if="!cambiarConducta" >
                 <v-card>
                   <v-date-picker
                     v-model="disciplina.fecha"
+                    full-width
+                    locale="es"
+                    :min="min"
+                    header-color="primary"
+                    color="primary"
+                  ></v-date-picker>
+                </v-card>
+              </v-flex>
+
+              <v-flex xs12 md6 v-if="cambiarConducta" >
+                <v-card>
+                  <v-date-picker
+                    v-model="disciplinaEditar.fecha"
                     full-width
                     locale="es"
                     :min="min"
@@ -71,25 +109,33 @@
                   <thead>
                     <tr>
                       <th class="th">Cedula</th>
+                      <th class="th">Nombre</th>
                       <th class="th">Fecha</th>
                       <th class="th">Descripcion</th>
-                      <th class="th">BORRAR</th>
                       <th class="th">Actualizar</th>
+                      <th class="th">Eliminar</th>
                     </tr>
                   </thead>
                   <tbody>
-                    <tr v-for="item of allConductas" :key="item.id">
-                      <td class="td">{{item.cedula_empleado}}</td>
-                      <td class="td">{{item.fecha}}</td>
-                      <td class="td">{{item.descripcion}}</td>
-                      <td class="td icons" @dblclick="deleteDisciplina(item.id)">
-                        DELETE
-                        <v-icon small color="error" class="icons">delete</v-icon>
+                    <tr v-for="disciplina  of disciplinas" :key="disciplina.id">
+                      <td class="td">{{disciplina.cedula}}</td>
+                      <td class="td">{{disciplina.nombre}}</td>
+                      <td class="td">{{disciplina.fecha}}</td>
+                      <td class="td">{{disciplina.descripcion}}</td>
+                      <td>
+                        <v-btn
+                          color="info"
+                          class="btn-1, btn"
+                          @click="editarConducta(disciplina.id)"
+                        >Actualizar</v-btn>
                       </td>
-                      <td class="td icons" @click="getOneDisciplina(item.id)">
-                        actualizar
-                        <v-icon small color="error" class="icons">delete</v-icon>
-                      </td>
+                      <th>
+                        <v-btn
+                          color="error"
+                          class="btn-1, btn"
+                          @click="eliminarConducta(disciplina.id)"
+                        >Eliminar</v-btn>
+                      </th>
                     </tr>
                   </tbody>
                 </table>
@@ -103,7 +149,6 @@
 </template>
 
 <script>
-import { mapGetters, mapActions } from "vuex";
 import Disciplina from "../model/misconduct.model";
 export default {
   data() {
@@ -111,10 +156,12 @@ export default {
       tab: [],
       items: ["Nuevo registro", "Todos los registros"],
       disciplina: new Disciplina(),
-      disciplina: [],
+      disciplinas: [],
+      disciplinaEditar: {},
       valid: false,
       min: new Date().toISOString().substr(0, 10),
       edit: false,
+      cambiarConducta: false, 
       cedulaRules: [
         v => /^\d+$/.test(v) || "Solo se admiten números positivos",
         v => !!v || "Por favor ingrese la cédula del empleado",
@@ -126,53 +173,118 @@ export default {
       ]
     };
   },
-  methods: {
-    ...mapGetters(["oneConducta"]),
-    ...mapActions([
-      "fetchConductas",
-      "insertarConducta",
-      "getOneConducta",
-      "updConducta",
-      "deletedConducta"
-    ]),
-    nuevaDisciplina(disciplina) {
-      this.insertarConducta(this.disciplina)(
-        (this.disciplina = new Disciplina())
-      );
-      this.reset();
-      this.fetchConductas();
-    },
-    updateDisciplina(disciplina) {
-      this.updConducta(this.disciplina);
-      this.fetchConductas();
-      this.reset();
-      this.edit = false;
-    },
-    getOneDisciplina(id) {
-      if (this.edit === false) {
-        this.getOneConducta(id);
-        this.disciplina = this.oneConducta();
-        console.log(this.disciplina);
-      }
-    },
-    deleteDisciplina(id) {
-      this.deletedConducta(id);
-      this.disciplina = new Disciplina();
-      this.fetchConductas();
-    },
-    reset() {
-      this.$refs.form.reset();
-      this.disciplina = new Disciplina();
-    }
-  },
   created() {
-    this.fetchConductas();
+    this.obtenerConductas();
   },
-  computed: mapGetters(["allConductas"])
+  methods: {
+    enviarConducta() {
+      const data = {
+        _cedula: this.disciplina.cedula,
+        _descripcion: this.disciplina.descripcion,
+        _fecha: this.disciplina.fecha
+      };
+      this.axios
+        .post("/disciplina", data)
+        .then(res => {
+          this.disciplinas.push(res.data);
+          this.disciplina.cedula = "";
+          this.disciplina.descripcion = "";
+          this.disciplina.fecha = "";
+          this.obtenerConductas();
+        })
+        .catch(e => {
+          console.log(e.response);
+        });
+    },
+    obtenerConductas() {
+      this.axios
+        .get("/disciplina")
+        .then(res => {
+          this.disciplinas = res.data;
+        })
+        .catch(e => {
+          console.log(e.response);
+        });
+    },
+    editarConducta(id){
+      this.cambiarConducta = true
+      console.log(id)
+      this.axios.get(`/disciplina/${id}`)
+        .then(res => {
+          this.disciplinaEditar = res.data
+        })
+        .catch(e => {
+          console.log(e.response)
+        })
+    },
+    actualizarConducta(item){
+      const data = {
+        _cedula: this.disciplinaEditar.cedula,
+        _descripcion: this.disciplinaEditar.descripcion,
+        _fecha: this.disciplinaEditar.fecha
+      }
+      this.axios.put(`/disciplina/${item.id}`, data)
+        .then(res => {
+          this.obtenerConductas()
+          this.cambiarConducta = false
+        })
+        .catch(e => {
+          console.log(e.response)
+        })
+    },
+    eliminarConducta(id){
+      console.log(id)
+      this.axios.delete(`/disciplina/${id}`)
+        .then(res =>{
+          this.obtenerConductas()
+        })
+        .catch(e => {
+          console.log(e.response)
+        })
+    }
+  }
+  // methods: {
+  //   ...mapGetters(["oneConducta"]),
+  //   ...mapActions([
+  //     "fetchConductas",
+  //     "insertarConducta",
+  //     "getOneConducta",
+  //     "updConducta",
+  //     "deletedConducta"
+  //   ]),
+  //   nuevaDisciplina(disciplina) {
+  //     this.insertarConducta(this.disciplina)(
+  //       (this.disciplina = new Disciplina())
+  //     );
+  //     this.reset();
+  //     this.fetchConductas();
+  //   },
+  //   updateDisciplina(disciplina) {
+  //     this.updConducta(this.disciplina);
+  //     this.fetchConductas();
+  //     this.reset();
+  //     this.edit = false;
+  //   },
+  //   getOneDisciplina(id) {
+  //     if (this.edit === false) {
+  //       this.getOneConducta(id);
+  //       this.disciplina = this.oneConducta();
+  //       console.log(this.disciplina);
+  //     }
+  //   },
+  //   deleteDisciplina(id) {
+  //     this.deletedConducta(id);
+  //     this.disciplina = new Disciplina();
+  //     this.fetchConductas();
+  //   },
+  //   reset() {
+  //     this.$refs.form.reset();
+  //     this.disciplina = new Disciplina();
+  //   }
+  // },
 };
 </script>
 
-</script>
 
 <style>
 .basil {
@@ -209,7 +321,7 @@ tr:nth-of-type(odd) {
 .icons {
   cursor: pointer;
 }
-.btn{
+.btn {
   display: block;
 }
 </style>
