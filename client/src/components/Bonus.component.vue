@@ -14,7 +14,6 @@
           <v-container class="border-container">
             <v-layout row wrap align-center>
               <v-flex xs12 md4>
-                
                 <v-form ref="form" v-model="valid" v-if="!cambiarBono">
                   <v-text-field
                     v-model="bono.cedula"
@@ -44,10 +43,13 @@
                       @click="enviarBono()"
                     >Nuevo Bono</v-btn>
                   </template>
+                  <template v-if="edit === false ">
+                    <v-btn  class="btn-1, btn" color="warning" @click="cancelar">Cancelar</v-btn>
+                  </template>
                 </v-form>
 
-                 <v-form ref="form" v-model="valid" v-if="cambiarBono">
-                   <h3>Editar bono</h3>
+                <v-form ref="form" v-model="valid" v-if="cambiarBono">
+                  <h3>Editar bono</h3>
                   <v-text-field
                     v-model="bonoEditar.cedula"
                     :counter="9"
@@ -74,14 +76,9 @@
                       class="btn-1, btn"
                       @click="actualizarBono(bonoEditar)"
                     >Editar Bono</v-btn>
-                    <v-btn
-                      color="success"
-                      class="btn-1, btn"
-                      @click="cambiarBono = false"
-                    >cancelar</v-btn>
                   </template>
+                    <v-btn  class="btn-1, btn" color="warning" @click="cancelar">Cancelar</v-btn>
                 </v-form>
-
               </v-flex>
               <v-spacer></v-spacer>
               <v-flex xs12 md6 v-if="cambiarBono">
@@ -149,11 +146,7 @@
                         >Borrar</v-btn>
                       </td>
                       <td>
-                        <v-btn
-                          color="danger"
-                          class="btn-1, btn"
-                          @click="editarBono(bono.id)"
-                        >Edit</v-btn>
+                        <v-btn color="danger" class="btn-1, btn" @click="editarBono(bono.id)">Edit</v-btn>
                       </td>
                     </tr>
                   </tbody>
@@ -174,14 +167,13 @@ export default {
     return {
       tab: [],
       items: ["Nuevo bono", "Todos los bonos"],
-      valid: true,
       min: new Date().toISOString().substr(0, 10),
       bono: new Bono(),
       bonos: [],
-      edit: false,
-      actEdit: "",
       cambiarBono: false,
       bonoEditar: {},
+      valid: true,
+      edit: false,
       cedulaRules: [
         v => !!v || "Por favor ingrese la cédula del empleado",
         v => (v && v.length == 9) || "La cédula debe ser de 9 caracteres",
@@ -214,10 +206,7 @@ export default {
         .post(`/bonos`, data)
         .then(res => {
           this.bonos.push(res.data);
-          this.bono.cedula = "";
-          this.bono.motivo = "";
-          this.bono.cantidad = "";
-          this.bono.fecha = "";
+          this.cancelar()
           this.obtenerBonos();
         })
         .catch(e => {
@@ -228,7 +217,6 @@ export default {
       this.axios
         .get(`/bonos`)
         .then(res => {
-          console.log(res);
           this.bonos = res.data;
         })
         .catch(e => {
@@ -236,47 +224,48 @@ export default {
         });
     },
 
-    editarBono(id){
+    editarBono(id) {
       this.cambiarBono = true;
-      console.log(id)
-      this.axios.get(`/bonos/${id}`)
-        .then(res =>{
-      console.log(res.data)
-          this.bonoEditar = res.data
+      this.axios
+        .get(`/bonos/${id}`)
+        .then(res => {
+          this.bonoEditar = res.data;
         })
-        .catch(e =>{
-          console.log(e.response)
-        })
+        .catch(e => {
+          console.log(e.response);
+        });
     },
-    actualizarBono(item){
+    actualizarBono(item) {
       const data = {
         _cedula: this.bonoEditar.cedula,
         _motivo: this.bonoEditar.motivo,
         _cantidad: this.bonoEditar.cantidad,
         _fecha: this.bonoEditar.fecha
       };
-      this.axios.put(`/bonos/${item.id}`, data)
+      this.axios
+        .put(`/bonos/${item.id}`, data)
         .then(res => {
-          this.obtenerBonos()
-          this.cambiarBono = false;
+          this.obtenerBonos();
+          this.cancelar()
         })
-        .catch(e =>{
-          console.log(e.response)
-        })
+        .catch(e => {
+          console.log(e.response);
+        });
     },
-    eliminarBono(id){
+    eliminarBono(id) {
       console.log(id);
-      this.axios.delete(`/bonos/${id}`)
-        .then(res =>{
-          this.obtenerBonos()
+      this.axios
+        .delete(`/bonos/${id}`)
+        .then(res => {
+          this.obtenerBonos();
         })
-        .catch(e =>{
-          console.log(e.response)
-        })
+        .catch(e => {
+          console.log(e.response);
+        });
     },
-    reset() {
-      this.$refs.form.reset();
-      this.bono = new Bono();
+    cancelar() {
+      this.$refs.form.reset()
+      this.cambiarBono = false
     }
   }
 };

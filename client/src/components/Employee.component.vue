@@ -99,7 +99,7 @@
                   </v-card>
                   <template v-if="edit ===false ">
                     <br />
-                    <v-btn :disabled="!valid" color="success" @click="postEmpleado">Nuevo empleado</v-btn>
+                    <v-btn  color="success" @click="postEmpleado">Nuevo empleado</v-btn>
                     <v-btn color="warning" @click="reset">Borrar formulario</v-btn>
                     <v-btn color="success" @click="updateEmpleado">Actualizar</v-btn>
                   </template>
@@ -172,9 +172,9 @@ export default {
       items: ["Nuevo empleado", "Todos los empleados"],
       min: new Date().toISOString().substr(0, 10),
       valid: true,
+      edit: false,
       empleado: new Empleado(),
       empleado: [],
-      edit: false,
       actEdit: "",
       cedulaRules: [
         v => !!v || "Por favor ingrese la cédula del empleado",

@@ -21,10 +21,10 @@ export async function nuevaHorasExtra(req, res) {
 }
 export async function horasExtraID(req, res) {
     const { _id } = req.params
-    await mysqlConnection.query(`SELECT a.id, a.cedula_empleado, b.p_apellido, b.nombre, a.cantidad_horas, a.motivo,  substr(a.fecha, 1, 10) as fecha
+    await mysqlConnection.query(`SELECT a.id, a.cedula, b.p_apellido, b.nombre, a.cantidad_horas, a.motivo,  substr(a.fecha, 1, 10) as fecha
     FROM horas_extra a
     INNER JOIN empleados b
-    ON a.cedula_empleado = b.cedula
+    ON a.cedula = b.cedula
     WHERE a.activo = true and
     a.id = ?;`, [_id], (err, rows, fields) => {
         if (!err && rows.length > 0) {
@@ -38,10 +38,10 @@ export async function horasExtraID(req, res) {
 
 export async function todasHorasExtra(req, res) {
     const query = `
-        SELECT a.id, a.cedula_empleado, b.p_apellido, b.nombre, a.cantidad_horas, a.motivo, substr(a.fecha, 1, 10) as fecha
+        SELECT a.id, a.cedula, b.p_apellido, b.nombre, a.cantidad_horas, a.motivo, substr(a.fecha, 1, 10) as fecha
         FROM horas_extra a
         INNER JOIN empleados b
-        ON a.cedula_empleado = b.cedula
+        ON a.cedula = b.cedula
         WHERE a.activo = true;
     `
     await mysqlConnection.query(query, (err, rows, fields) => {

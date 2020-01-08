@@ -37,7 +37,9 @@
                       class="btn-1 btn"
                     >nuevo registro</v-btn>
                   </template>
-                  <v-btn class="btn" color="warning" :disabled="!valid" @click="reset">Borrar</v-btn>
+                  <template v-if="edit === false ">
+                    <v-btn class="btn-1, btn" color="warning" @click="cancelar">Cancelar</v-btn>
+                  </template>
                 </v-form>
 
                 <v-form ref="form" v-model="valid" v-if="cambiarConducta">
@@ -64,11 +66,11 @@
                       class="btn-1 btn"
                     >Editar información</v-btn>
                   </template>
-                  <v-btn class="btn" color="warning" :disabled="!valid" @click="cancelar()">Cancelar</v-btn>
+                  <v-btn class="btn-1, btn" color="warning" @click="cancelar">Cancelar</v-btn>
                 </v-form>
               </v-flex>
               <v-spacer></v-spacer>
-              <v-flex xs12 md6 v-if="!cambiarConducta" >
+              <v-flex xs12 md6 v-if="!cambiarConducta">
                 <v-card>
                   <v-date-picker
                     v-model="disciplina.fecha"
@@ -81,7 +83,7 @@
                 </v-card>
               </v-flex>
 
-              <v-flex xs12 md6 v-if="cambiarConducta" >
+              <v-flex xs12 md6 v-if="cambiarConducta">
                 <v-card>
                   <v-date-picker
                     v-model="disciplinaEditar.fecha"
@@ -158,10 +160,10 @@ export default {
       disciplina: new Disciplina(),
       disciplinas: [],
       disciplinaEditar: {},
-      valid: false,
       min: new Date().toISOString().substr(0, 10),
+      cambiarConducta: false,
+      valid: true,
       edit: false,
-      cambiarConducta: false, 
       cedulaRules: [
         v => /^\d+$/.test(v) || "Solo se admiten números positivos",
         v => !!v || "Por favor ingrese la cédula del empleado",
@@ -187,9 +189,7 @@ export default {
         .post("/disciplina", data)
         .then(res => {
           this.disciplinas.push(res.data);
-          this.disciplina.cedula = "";
-          this.disciplina.descripcion = "";
-          this.disciplina.fecha = "";
+          this.cancelar();
           this.obtenerConductas();
         })
         .catch(e => {
@@ -200,88 +200,56 @@ export default {
       this.axios
         .get("/disciplina")
         .then(res => {
-          this.disciplinas = res.data;
+          this.disciplinas = res.data
         })
         .catch(e => {
-          console.log(e.response);
+          console.log(e.response)
         });
     },
-    editarConducta(id){
+    editarConducta(id) {
       this.cambiarConducta = true
       console.log(id)
-      this.axios.get(`/disciplina/${id}`)
+      this.axios
+        .get(`/disciplina/${id}`)
         .then(res => {
           this.disciplinaEditar = res.data
         })
         .catch(e => {
           console.log(e.response)
-        })
+        });
     },
-    actualizarConducta(item){
+    actualizarConducta(item) {
       const data = {
         _cedula: this.disciplinaEditar.cedula,
         _descripcion: this.disciplinaEditar.descripcion,
         _fecha: this.disciplinaEditar.fecha
-      }
-      this.axios.put(`/disciplina/${item.id}`, data)
+      };
+      this.axios
+        .put(`/disciplina/${item.id}`, data)
         .then(res => {
-          this.obtenerConductas()
-          this.cambiarConducta = false
+          this.obtenerConductas();
+          this.cancelar();
         })
         .catch(e => {
-          console.log(e.response)
-        })
+          console.log(e.response);
+        });
     },
-    eliminarConducta(id){
-      console.log(id)
-      this.axios.delete(`/disciplina/${id}`)
-        .then(res =>{
-          this.obtenerConductas()
+    eliminarConducta(id) {
+      console.log(id);
+      this.axios
+        .delete(`/disciplina/${id}`)
+        .then(res => {
+          this.obtenerConductas();
         })
         .catch(e => {
-          console.log(e.response)
-        })
+          console.log(e.response);
+        });
+    },
+    cancelar() {
+      this.$refs.form.reset();
+      this.cambiarConducta = false;
     }
   }
-  // methods: {
-  //   ...mapGetters(["oneConducta"]),
-  //   ...mapActions([
-  //     "fetchConductas",
-  //     "insertarConducta",
-  //     "getOneConducta",
-  //     "updConducta",
-  //     "deletedConducta"
-  //   ]),
-  //   nuevaDisciplina(disciplina) {
-  //     this.insertarConducta(this.disciplina)(
-  //       (this.disciplina = new Disciplina())
-  //     );
-  //     this.reset();
-  //     this.fetchConductas();
-  //   },
-  //   updateDisciplina(disciplina) {
-  //     this.updConducta(this.disciplina);
-  //     this.fetchConductas();
-  //     this.reset();
-  //     this.edit = false;
-  //   },
-  //   getOneDisciplina(id) {
-  //     if (this.edit === false) {
-  //       this.getOneConducta(id);
-  //       this.disciplina = this.oneConducta();
-  //       console.log(this.disciplina);
-  //     }
-  //   },
-  //   deleteDisciplina(id) {
-  //     this.deletedConducta(id);
-  //     this.disciplina = new Disciplina();
-  //     this.fetchConductas();
-  //   },
-  //   reset() {
-  //     this.$refs.form.reset();
-  //     this.disciplina = new Disciplina();
-  //   }
-  // },
 };
 </script>
 

@@ -43,8 +43,9 @@
                       class="btn-1 btn"
                     >Asignar tarea</v-btn>
                   </template>
-                  <v-btn class="btn" color="warning" :disabled="!valid" @click="Cancelar">Cancelar</v-btn>
-                  <template v-if="edit === true"></template>
+                  <template v-if="edit === false ">
+                    <v-btn class="btn-1, btn" color="warning" @click="cancelar">Cancelar</v-btn>
+                  </template>
                 </v-form>
 
                 <v-form ref="form" v-model="valid" v-if="cambiarTarea">
@@ -77,8 +78,7 @@
                       class="btn-1 btn"
                     >Editar tarea</v-btn>
                   </template>
-                  <v-btn class="btn" color="warning" :disabled="!valid" @click="Cancelar">Cancelar</v-btn>
-                  <template v-if="edit === true"></template>
+                  <v-btn class="btn-1, btn" color="warning" @click="cancelar">Cancelar</v-btn>
                 </v-form>
               </v-flex>
               <v-spacer></v-spacer>
@@ -197,13 +197,13 @@ export default {
       ],
       tarea: new Tarea(),
       tareas: [],
-      edit: false,
       actEdit: "",
-      valid: false,
       tareaEditar: {},
       tareasDoc: [],
       tareasDep: [],
       tareasMen: [],
+      valid: true,
+      edit: false,
       titleRules: [
         v => !!v || "Por favor escriba un breve titulo para la tarea",
         v => (v && v.length <= 200) || "El titulo excede la cantidad"
@@ -231,56 +231,55 @@ export default {
         .post("/tareas", data)
         .then(res => {
           this.tareas.push(res.data);
-          this.tarea.titulo = "";
-          this.tarea.descripcion = "";
-          this.obtenerTareasDoc();
-          this.obtenerTareasDep();
-          this.obtenerTareasMen();
+          this.cancelar()
+          this.obtenerTareasDoc()
+          this.obtenerTareasDep()
+          this.obtenerTareasMen()
         })
         .catch(e => {
-          console.log(e.response);
-        });
+          console.log(e.response)
+        })
     },
     obtenerTareasDoc() {
       this.axios
         .get("/tareas-doctor")
         .then(res => {
-          this.tareasDoc = res.data;
+          this.tareasDoc = res.data
         })
         .catch(e => {
-          console.log(e.response);
+          console.log(e.response)
         });
     },
     obtenerTareasDep() {
       this.axios
         .get("/tareas-dependiente")
         .then(res => {
-          this.tareasDep = res.data;
+          this.tareasDep = res.data
         })
         .catch(e => {
-          console.log(e.response);
+          console.log(e.response)
         });
     },
     obtenerTareasMen() {
       this.axios
         .get("/tareas-mensajero")
         .then(res => {
-          this.tareasMen = res.data;
+          this.tareasMen = res.data
         })
         .catch(e => {
-          console.log(e.response);
+          console.log(e.response)
         });
     },
     editarTarea(id) {
-      this.cambiarTarea = true;
+      this.cambiarTarea = true
       console.log(id);
       this.axios
         .get(`/tareas/${id}`)
         .then(res => {
-          this.tareaEditar = res.data;
+          this.tareaEditar = res.data
         })
         .catch(e => {
-          console.log(e.response);
+          console.log(e.response)
         });
     },
     actualizarTarea(item) {
@@ -292,13 +291,13 @@ export default {
       this.axios
         .put(`/tareas/${item.id}`, data)
         .then(res => {
-          this.obtenerTareasDoc();
-          this.obtenerTareasDep();
-          this.obtenerTareasMen();
-          this.cambiarTarea = false;
+          this.obtenerTareasDoc()
+          this.obtenerTareasDep()
+          this.obtenerTareasMen()
+          this.cancelar()
         })
         .catch(e => {
-          console.log(e.response);
+          console.log(e.response)
         });
     },
     eliminarTarea(id) {
@@ -306,61 +305,19 @@ export default {
       this.axios
         .delete(`/tareas/${id}`)
         .then(res => {
-          this.obtenerTareasDoc();
-          this.obtenerTareasDep();
-          this.obtenerTareasMen();
+          this.obtenerTareasDoc()
+          this.obtenerTareasDep()
+          this.obtenerTareasMen()
         })
         .catch(e => {
-          console.log(e.response);
+          console.log(e.response)
         });
+    },
+    cancelar() {
+      this.$refs.form.reset()
+      this.cambiarTarea = false
     }
   }
-  // methods: {
-  //   ...mapGetters(["", "oneTarea"]),
-  //   ...mapActions([
-  //     "obtenerTarea",
-  //     "fetchTareasDoctor",
-  //     "fetchTareasDependiente",
-  //     "fetchTareasMensajero",
-  //     "insertTarea",
-  //     "deletedTarea",
-  //     "actualizarTarea"
-  //   ]),
-  //   postTarea(tarea) {
-  //     this.insertTarea(this.tarea);
-  //     this.reset();
-  //     this.tarea = new Tarea();
-  //     this.fetchTareasDoctor();
-  //     this.fetchTareasDependiente();
-  //     this.fetchTareasMensajero();
-  //   },
-  //   updateTarea(tarea) {
-  //     this.actualizarTarea(this.tarea);
-  //     this.fetchTareasDoctor();
-  //     this.fetchTareasDependiente();
-  //     this.fetchTareasMensajero();
-  //     this.reset();
-  //     this.tarea = new Tarea();
-  //   },
-  //   deleteTarea(id) {
-  //     this.deletedTarea(id);
-  //     this.fetchTareasDoctor();
-  //     this.fetchTareasDependiente();
-  //     this.fetchTareasMensajero();
-  //     this.tarea = new Tarea();
-  //   },
-  //   obtenerUnaTarea(id) {
-  //     if (this.edit === false) {
-  //       this.obtenerTarea(id);
-  //       this.tarea = this.oneTarea();
-  //     }
-  //   },
-
-  //   reset() {
-  //     this.$refs.form.reset();
-  //     this.tarea = new Tarea();
-  //   }
-  // },
 };
 </script>
 <style>
