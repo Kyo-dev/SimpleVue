@@ -37,9 +37,9 @@
                       class="btn-1 btn"
                     >Nuevo aumento</v-btn>
                   </template>
-                  
-                  <template v-if="edit === true"></template>
-                  
+                  <template v-if="edit === false ">
+                    <v-btn  class="btn-1, btn" color="warning" @click="cancelar">Cancelar</v-btn>
+                  </template>                  
                 </v-form>
 
                 <v-form ref="form" v-model="valid" v-if="cambiarSalario">
@@ -65,7 +65,7 @@
                       class="btn-1 btn"
                     >Nuevo aumento</v-btn>
                   </template>
-                  
+                  <v-btn  class="btn-1, btn" color="warning" @click="cancelar">Cancelar</v-btn>
                   <template v-if="edit === true"></template>
                   
                 </v-form>
@@ -124,6 +124,7 @@
                       <th class="th">Nombre</th>
                       <th class="th">Aumento otorgado <br> por hora laboral</th>
                       <th class="th">Fecha</th>
+                      <th class="th">Salario por dia</th>
                       <th class="th">Actualizar</th>
                       <th class="th">Eliminar</th>
                     </tr>
@@ -135,6 +136,7 @@
                       <td class="td">{{item.nombre}}</td>
                       <td class="td">{{item.cantidad}}</td>
                       <td class="td">{{item.fecha}}</td>
+                      <td class="td">{{item.salario_dia}}</td>
                       <td>
                         <v-btn
                           color="info"
@@ -173,7 +175,7 @@ export default {
       min: new Date().toISOString().substr(0, 10),
       cambiarSalario: false,
       salarioEditar: {},
-      valid: false,
+      valid: true,
       edit: false,
       cedulaRules: [
         v => /^\d+$/.test(v) || "Solo se admiten números positivos",
@@ -202,6 +204,7 @@ export default {
         .post('/salarios', data)
         .then(res =>{
           this.salarios.push(res.data)
+          this.cancelar()
           this.obtenerSalarios()
         })
         .catch(e => {
@@ -230,6 +233,7 @@ export default {
         })
     },
     eliminarAumento(id, cedula){
+      console.log(id)
       const data = {_cedula: cedula}
       console.log(cedula)
       console.log(id)
@@ -241,6 +245,10 @@ export default {
         .catch(e => {
           console.log(e.response)
         })
+    },
+    cancelar() {
+      this.$refs.form.reset()
+      this.cambiarSalario = false
     }
   }
 };
