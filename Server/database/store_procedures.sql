@@ -434,6 +434,7 @@ CREATE PROCEDURE `eliminarAumento` (
     in _cedula varchar(9)
 )
 BEGIN
+IF (SELECT cedula FROM empleados WHERE cedula = _cedula AND activo = true) then
 	select @cantAumento := cantidad from aumento_salarial where id = _id;
     update salarios
     set salario_hora = salario_hora - @cantAumento
@@ -441,9 +442,11 @@ BEGIN
 	update aumento_salarial
     set activo = false
     where id = _id;
+      end if;
 END$$
 
 DELIMITER ;
+
 
 
 USE `rrhh_db`;

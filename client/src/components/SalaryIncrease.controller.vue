@@ -14,9 +14,10 @@
           <v-card flat>
             <v-layout row wrap align-center>
               <v-flex xs12 md4>
-                <v-form ref="form" v-model="valid">
+
+                <v-form ref="form" v-model="valid" v-if="!cambiarSalario">
                   <v-text-field
-                    v-model="salario.cedula_empleado"
+                    v-model="salario.cedula"
                     :counter="9"
                     label="Cédula"
                     :rules="cedulaRules"
@@ -24,7 +25,7 @@
                   ></v-text-field>
                   <v-text-field
                     v-model="salario.cantidad"
-                    label="Cantidad"
+                    label="Cantidad por hora"
                     :rules="cantidadRules"
                     required
                   ></v-text-field>
@@ -32,20 +33,62 @@
                     <v-btn
                       :disabled="!valid"
                       color="success"
-                      @click="postIncremento"
+                      @click="enviarAumento()"
                       class="btn-1 btn"
                     >Nuevo aumento</v-btn>
                   </template>
-                  <v-btn class="btn" color="warning" :disabled="!valid" @click="reset">Borrar formulario</v-btn>
+                  
                   <template v-if="edit === true"></template>
-                  <v-btn class="btn" color="success" :disabled="!valid" @click="updateSalario">Actualizar</v-btn>
+                  
                 </v-form>
+
+                <v-form ref="form" v-model="valid" v-if="cambiarSalario">
+                  <h3>Editar</h3>
+                  <v-text-field
+                    v-model="salarioEditar.cedula"
+                    :counter="9"
+                    label="Cédula"
+                    :rules="cedulaRules"
+                    required
+                  ></v-text-field>
+                  <v-text-field
+                    v-model="salarioEditar.cantidad"
+                    label="Cantidad por hora"
+                    :rules="cantidadRules"
+                    required
+                  ></v-text-field>
+                  <template v-if="edit===false">
+                    <v-btn
+                      :disabled="!valid"
+                      color="success"
+                      @click="actualizarSalario(salarioEditar)"
+                      class="btn-1 btn"
+                    >Nuevo aumento</v-btn>
+                  </template>
+                  
+                  <template v-if="edit === true"></template>
+                  
+                </v-form>
+
               </v-flex>
               <v-spacer></v-spacer>
-              <v-flex xs12 md6>
+              <v-flex xs12 md6 v-if="!cambiarSalario">
                 <v-card>
                   <v-date-picker
                     v-model="salario.fecha"
+                    full-width
+                    locale="es"
+                    :min="min"
+                    header-color="primary"
+                    color="primary"
+                  ></v-date-picker>
+                </v-card>
+              </v-flex>
+
+              <v-flex xs12 md6 v-if="cambiarSalario">
+                <v-card>
+                  <v-date-picker
+                    v-model="salarioEditar.fecha"
                     full-width
                     locale="es"
                     :min="min"
@@ -79,26 +122,32 @@
                       <th class="th">Cedula</th>
                       <th class="th">Apellido</th>
                       <th class="th">Nombre</th>
-                      <th class="th">Valor por hora</th>
+                      <th class="th">Aumento otorgado <br> por hora laboral</th>
                       <th class="th">Fecha</th>
-                      <th class="th">BORRAR</th>
                       <th class="th">Actualizar</th>
+                      <th class="th">Eliminar</th>
                     </tr>
                   </thead>
                   <tbody>
-                    <tr v-for="item of allSalarios" :key="item.id">
-                      <td class="td">{{item.cedula_empleado}}</td>
+                    <tr v-for="item of salarios" :key="item.id">
+                      <td class="td">{{item.cedula}}</td>
                       <td class="td">{{item.p_apellido}}</td>
                       <td class="td">{{item.nombre}}</td>
                       <td class="td">{{item.cantidad}}</td>
                       <td class="td">{{item.fecha}}</td>
-                      <td class="td icons" @dblclick="deleteAumento(item)">
-                        DELETE
-                        <v-icon small color="error" class="icons">delete</v-icon>
+                      <td>
+                        <v-btn
+                          color="info"
+                          class="btn-1, btn"
+                          @click="editarSalario(item.id)"
+                        >Actualizar</v-btn>
                       </td>
-                      <td class="td icons" @click="getOneSalario(item.id, item.cedula_empleado)">
-                        actualizar
-                        <v-icon small color="error" class="icons">delete</v-icon>
+                      <td>
+                        <v-btn
+                          color="error"
+                          class="btn-1, btn"
+                          @click="eliminarAumento(item.id, item.cedula)"
+                        >Eliminar</v-btn>
                       </td>
                     </tr>
                   </tbody>
@@ -113,7 +162,6 @@
 </template>
 
 <script>
-import { mapGetters, mapActions } from "vuex";
 import Salario from "../model/salary.model";
 export default {
   data() {
@@ -121,10 +169,12 @@ export default {
       tab: [],
       items: ["Aumento salarial", "Rebaja salarial", "Información"],
       salario: new Salario(),
-      salario: [],
+      salarios: [],
+      min: new Date().toISOString().substr(0, 10),
+      cambiarSalario: false,
+      salarioEditar: {},
       valid: false,
       edit: false,
-      min: new Date().toISOString().substr(0, 10),
       cedulaRules: [
         v => /^\d+$/.test(v) || "Solo se admiten números positivos",
         v => !!v || "Por favor ingrese la cédula del empleado",
@@ -138,40 +188,61 @@ export default {
       ]
     };
   },
+  created() {
+     this.obtenerSalarios()
+  },
   methods: {
-    ...mapGetters(["", "oneSalario"]),
-    ...mapActions([
-        "fetchSalario",
-        "insertAumento",
-        "getSalario",
-        "deletedSalario"
-    ]),
-    postIncremento(salario) {
-      this.insertAumento(this.salario)
-      this.reset()
-      this.fetchSalario()
-    },
-    updateSalario() {},
-    deleteAumento(salario) {
-      this.deletedSalario(salario)
-      this.salario = new Salario()
-      this.fetchSalario()
-    }, 
-    getOneSalario(id) {
-      if(this.edit === false){
-        this.getSalario(id)
-        this.salario = this.oneSalario()
+    enviarAumento(){
+      const data = {
+        _cedula: this.salario.cedula,
+        _cantidad: this.salario.cantidad,
+        _fecha: this.salario.fecha
       }
+      this.axios
+        .post('/salarios', data)
+        .then(res =>{
+          this.salarios.push(res.data)
+          this.obtenerSalarios()
+        })
+        .catch(e => {
+          console.log(e.response)
+        })
     },
-    reset() {
-      this.$refs.form.reset()
-      this.salario = new Salario()
+    obtenerSalarios(){
+      this.axios
+        .get('/salarios')
+        .then(res => {
+          this.salarios = res.data
+        })
+        .catch( e =>{
+          console.log(e.response)
+        })
+    },
+    editarSalario(id){
+      this.cambiarSalario = true;
+      this.axios
+        .get(`/salarios/${id}`)
+        .then(res => {
+          this.salarioEditar = res.data
+        })
+        .catch(e =>{
+          console.log(e.response)
+        })
+    },
+    eliminarAumento(id, cedula){
+      const data = {_cedula: cedula}
+      console.log(cedula)
+      console.log(id)
+      this.axios
+        .put(`/salarios/${id}`, data)
+        .then(res =>{
+          this.obtenerSalarios()
+        })
+        .catch(e => {
+          console.log(e.response)
+        })
     }
-  },
-  created(){
-      this.fetchSalario()
-  },
-  computed: mapGetters(["allSalarios"])
+  }
 };
 </script>
 

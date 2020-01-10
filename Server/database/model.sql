@@ -126,6 +126,8 @@ create table salarios(
     retencion decimal(10,2) default 0 not null,
     activo boolean default true not null,
 	constraint fk_salario_empleados foreign key(cedula) references empleados(cedula),
+    constraint ch_salario_hora check(salario_hora >= 0),
+    constraint ch_jornada check(jornada >= 0),
     constraint pk_salario primary key(id)
 );
 create table aumento_salarial(

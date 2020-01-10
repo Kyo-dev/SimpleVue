@@ -28,9 +28,9 @@ export async function nuevoAumento(req, res) {
     }
 
 export async function todosAumentos(req, res) {
-    await mysqlConnection.query(`select distinct a.cedula_empleado, b.p_apellido, b.nombre, a.id, a.cantidad, substr(a.fecha, 1, 10) as fecha, b.activo from aumento_salarial a
-    inner join empleados b on a.cedula_empleado = b.cedula
-    inner join salarios c on c.cedula_empleado = b.cedula where a.activo = true`, (err, rows, fields) => {
+    await mysqlConnection.query(`select distinct a.cedula, b.p_apellido, b.nombre, a.id, a.cantidad, substr(a.fecha, 1, 10) as fecha, b.activo from aumento_salarial a
+    inner join empleados b on a.cedula = b.cedula
+    inner join salarios c on c.cedula = b.cedula where a.activo = true`, (err, rows, fields) => {
         if (!err && JSON.stringify(rows).length > 0) {
             res.json(rows)
         } else {
@@ -41,9 +41,9 @@ export async function todosAumentos(req, res) {
 
 export async function aumentoID(req, res) {
     const { _id } = req.params
-    await mysqlConnection.query(`select a.id, a.cedula_empleado, c.salario_hora, a.cantidad, substr(a.fecha, 1, 10) as fecha, b.nombre, b.p_apellido, b.activo from aumento_salarial a
-    inner join empleados b on a.cedula_empleado = b.cedula
-    inner join salarios c on c.cedula_empleado = b.cedula where a.activo = true and a.id = ?`, [_id], (err, rows, fields) => {
+    await mysqlConnection.query(`select a.id, a.cedula, c.salario_hora, a.cantidad, substr(a.fecha, 1, 10) as fecha, b.nombre, b.p_apellido, b.activo from aumento_salarial a
+    inner join empleados b on a.cedula = b.cedula
+    inner join salarios c on c.cedula = b.cedula where a.activo = true and a.id = ?`, [_id], (err, rows, fields) => {
         !err ? res.json(rows[0]) : res.json({ Status: err })
     })
 }
