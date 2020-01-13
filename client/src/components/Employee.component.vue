@@ -14,8 +14,8 @@
           <v-container class="border-container">
             <!-- SECTION  Left -->
             <v-layout row wrap align-center>
-              <v-flex xs12 md4>
-                <v-form ref="form" v-model="valid">
+              <v-flex xs12 md5>
+                <v-form ref="form" v-model="valid" v-if="!cambiarEmpleado">
                   <v-text-field
                     v-model="empleado.cedula"
                     :counter="9"
@@ -52,6 +52,13 @@
                     required
                   ></v-text-field>
                   <v-text-field
+                    v-model="empleado.correo"
+                    :counter="200"
+                    label="Dirección"
+                    :rules="direccionRules"
+                    required
+                  ></v-text-field>
+                  <v-text-field
                     v-model="empleado.salario_hora"
                     label="Salario por hora"
                     :rules="salarioRules"
@@ -63,7 +70,78 @@
                     :rules="jornadaRules"
                     required
                   ></v-text-field>
-                  <v-radio-group v-model="empleado.tipo_telefono" row>
+                  
+                </v-form>
+
+                <v-form ref="form" v-model="valid" v-if="cambiarEmpleado">
+                  <h3>Editar Empleado</h3>
+                  <v-text-field
+                    v-model="personaEditar.cedula"
+                    :counter="9"
+                    label="Cédula"
+                    :rules="cedulaRules"
+                    required
+                  ></v-text-field>
+                  <v-text-field
+                    v-model="personaEditar.nombre"
+                    :counter="50"
+                    label="Nombre"
+                    :rules="nombreRules"
+                    required
+                  ></v-text-field>
+                  <v-text-field
+                    v-model="personaEditar.p_apellido"
+                    :counter="50"
+                    label="Primer apellido"
+                    :rules="p_apellidoRules"
+                    required
+                  ></v-text-field>
+                  <v-text-field
+                    v-model="personaEditar.s_apellido"
+                    :counter="50"
+                    label="Segundo apellido"
+                    :rules="s_apellidoRules"
+                    required
+                  ></v-text-field>
+                  <v-text-field
+                    v-model="personaEditar.correo"
+                    :counter="200"
+                    label="Correo electrónico"
+                    :rules="correoRules"
+                    required
+                  ></v-text-field>
+                  <v-text-field
+                    v-model="personaEditar.salario_hora"
+                    label="Salario por hora"
+                    :rules="salarioRules"
+                    required
+                  ></v-text-field>
+                  <v-text-field
+                    v-model="personaEditar.jornada"
+                    label="Jornada diaria"
+                    :rules="jornadaRules"
+                    required
+                  ></v-text-field>
+                  <v-radio-group v-model="personaEditar.tipo_telefono" row>
+                    <v-radio label="Casa" value="1" color="primary" :rules="telefonoRules"></v-radio>
+                    <v-radio label="Celular" value="2" color="primary" :rules="telefonoRules"></v-radio>
+                  </v-radio-group>
+                  <v-text-field
+                    v-model="personaEditar.numero"
+                    label="Número telefónico"
+                    :counter="8"
+                    :rules="numeroRules"
+                    required
+                  ></v-text-field>
+                </v-form>
+                
+                <!-- !SECTION  -->
+              </v-flex>
+              <!-- SECTION Right -->
+              <v-spacer></v-spacer>
+              <v-flex xs12 md5 v-if="!cambiarEmpleado">
+                <p>Tipo de teléfono</p>
+                <v-radio-group v-model="empleado.tipo_telefono" row>
                     <v-radio label="Casa" value="1" color="primary" :rules="telefonoRules"></v-radio>
                     <v-radio label="Celular" value="2" color="primary" :rules="telefonoRules"></v-radio>
                   </v-radio-group>
@@ -74,12 +152,25 @@
                     :rules="numeroRules"
                     required
                   ></v-text-field>
-                </v-form>
-                <!-- !SECTION  -->
-              </v-flex>
-              <!-- SECTION Right -->
-              <v-spacer></v-spacer>
-              <v-flex xs12 md6>
+                <v-menu
+                  v-model="menu2"
+                  :close-on-content-click="false"
+                  :nudge-right="40"
+                  transition="scale-transition"
+                  offset-y
+                  min-width="290px"
+                >
+                  <template v-slot:activator="{ on }">
+                    <v-text-field
+                      v-model="date"
+                      label="Fecha de nacimiento"
+                      prepend-icon="event"
+                      readonly
+                      v-on="on"
+                    ></v-text-field>
+                  </template>
+                  <v-date-picker v-model="date" @input="menu2 = false"></v-date-picker>
+                </v-menu>
                 <v-sheet>
                   <p>Cargo del empleado</p>
                   <v-radio-group v-model="empleado.tipo_empleado" row>
@@ -87,9 +178,45 @@
                     <v-radio label="Dependiente" value="3" color="primary" :rules="cargoRules"></v-radio>
                     <v-radio label="Mensajero" value="4" color="primary" :rules="cargoRules"></v-radio>
                   </v-radio-group>
+                   <v-menu
+                  v-model="menu2"
+                  :close-on-content-click="false"
+                  :nudge-right="40"
+                  transition="scale-transition"
+                  offset-y
+                  min-width="290px"
+                >
+                  <template v-slot:activator="{ on }">
+                    <v-text-field
+                      v-model="date"
+                      label="Fecha de nacimiento"
+                      prepend-icon="event"
+                      readonly
+                      v-on="on"
+                    ></v-text-field>
+                  </template>
+                  <v-date-picker v-model="date" @input="menu2 = false"></v-date-picker>
+                </v-menu>
+                  <template v-if="edit ===false ">
+                    <br />
+                    <v-btn color="success"  class="btn-1, btn" @click="enviarEmpleado">Nuevo empleado</v-btn>
+                    
+                    <v-btn color="warning"  class="btn-1, btn" @click="reset">Borrar formulario</v-btn>
+                  </template>
+                </v-sheet>
+              </v-flex>
+
+              <v-flex xs12 md6 v-if="cambiarEmpleado">
+                <v-sheet>
+                  <p>Cargo del empleado</p>
+                  <v-radio-group v-model="personaEditar.tipo_empleado" row>
+                    <v-radio label="Doctor" value="2" color="primary" :rules="cargoRules"></v-radio>
+                    <v-radio label="Dependiente" value="3" color="primary" :rules="cargoRules"></v-radio>
+                    <v-radio label="Mensajero" value="4" color="primary" :rules="cargoRules"></v-radio>
+                  </v-radio-group>
                   <v-card>
                     <v-date-picker
-                      v-model="empleado.fecha_contrato"
+                      v-model="personaEditar.fecha_contrato"
                       full-width
                       locale="es"
                       :min="min"
@@ -99,7 +226,7 @@
                   </v-card>
                   <template v-if="edit ===false ">
                     <br />
-                    <v-btn  color="success" @click="postEmpleado">Nuevo empleado</v-btn>
+                    <v-btn color="success" @click="postEmpleado">Nuevo empleado</v-btn>
                     <v-btn color="warning" @click="reset">Borrar formulario</v-btn>
                     <v-btn color="success" @click="updateEmpleado">Actualizar</v-btn>
                   </template>
@@ -129,12 +256,12 @@
                     <th class="th">Teléfono</th>
                     <th class="th">Salario por hora</th>
                     <th class="th">Jornada laboral</th>
-                    <th class="th">BORRAR</th>
                     <th class="th">Actualizar</th>
+                    <th class="th">Eliminar</th>
                   </tr>
                 </thead>
                 <tbody>
-                  <tr v-for="item of allEmpleados" :key="item.id">
+                  <tr v-for="item of empleados" :key="item.id">
                     <td class="td">{{item.cedula}}</td>
                     <td class="td">{{item.nombre}}</td>
                     <td class="td">{{item.p_apellido}}</td>
@@ -144,14 +271,6 @@
                     <td class="td">{{item.numero}}</td>
                     <td class="td">{{item.salario_hora}}</td>
                     <td class="td">{{item.jornada}}</td>
-                    <td class="td" @click="deleteEmpleado(item.cedula)">
-                      DELETE
-                      <v-icon small color="error" class="icons">delete</v-icon>
-                    </td>
-                    <td class="td" @click="getOneEmpleado(item.cedula)">
-                      actualizar
-                      <v-icon small color="error" class="icons">delete</v-icon>
-                    </td>
                   </tr>
                 </tbody>
               </table>
@@ -171,11 +290,13 @@ export default {
       tab: [],
       items: ["Nuevo empleado", "Todos los empleados"],
       min: new Date().toISOString().substr(0, 10),
+      cambiarEmpleado: false,
+      empleado: new Empleado(),
+      empleados: [],
+      actEdit: "",
+      personaEditar: {},
       valid: true,
       edit: false,
-      empleado: new Empleado(),
-      empleado: [],
-      actEdit: "",
       cedulaRules: [
         v => !!v || "Por favor ingrese la cédula del empleado",
         v => /^\d+$/.test(v) || "Solo se admiten números positivos",
@@ -198,10 +319,15 @@ export default {
       ],
       correoRules: [
         v => !!v || "Por favor ingrese el correo del empleado",
+        // v => /[a-z]*/ || "Solo se admiten letras minusculas",
         v =>
           /[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/.test(
             v
           ) || "Error el escribir el correo"
+      ],
+      direccionRules:[
+        v => !!v || "Por favor ingrese la dirección del empleado",
+        v => (v && v.length <= 50) || "La dirección excede el máximo permitido"
       ],
       cargoRules: [v => !!v || "Por favor seleccione un cargo"],
       salarioRules: [
@@ -226,54 +352,49 @@ export default {
       telefonoRules: [v => !!v || "Por favor selecciones un tipo de telefono"]
     };
   },
-
+  created() {
+    this.obtenerEmpleados();
+  },
   methods: {
-    ...mapGetters(["", "oneEmpleado"]),
-    ...mapActions([
-      "fetchEmpleado",
-      "insertEmpleado",
-      "deletedEmpleado",
-      "updEmpleado",
-      "getEmpleado"
-    ]),
-    postEmpleado(empleado) {
-      this.insertEmpleado(this.empleado)
-      this.empleado = new Empleado()
-      this.reset()
+    enviarEmpleado() {
+      // faltan datos
+      const data = {
+        _cedula: empleado.cedula,
+        _nombre: empleado.nombre,
+        _p_apellido: empleado.p_apellido,
+        _s_apellido: empleado.s_apellido,
+        _correo: empleado.correo,
+        _fecha_contrato: empleado.fecha_contrato,
+        _tipo_empleado: empleado.tipo_empleado,
+        _salario_hora: empleado.salario_hora,
+        _jornada: empleado.jornada,
+        _numero: empleado.numero,
+        _tipo_telefono: empleado.tipo_telefono
+      };
+      this.axios
+        .post("/empleados", data)
+        .then(res => {})
+        .catch(e => {
+          console.log(e.response);
+        });
     },
-    validate() {
-      if (this.$refs.form.validate()) {
-        this.snackbar = true
-      }
-    },
-    deleteEmpleado(cedula) {
-      this.deletedEmpleado(cedula)
-      this.empleado = new Empleado()
-      this.fetchEmpleado()
-    },
-    getOneEmpleado(cedula) {
-      if (this.edit === false) {
-        this.getEmpleado(cedula)
-        this.empleado = this.oneEmpleado()
-      }
-    },
-    updateEmpleado(empleado) {
-      this.updEmpleado(this.empleado)
-      this.fetchEmpleado()
-      this.reset()
-      this.edit = false
+    obtenerEmpleados() {
+      this.axios
+        .get("/empleados")
+        .then(res => {
+          this.empleados = res.data;
+        })
+        .catch(e => {
+          console.log(e.response);
+        });
     },
     reset() {
       this.$refs.form.reset();
       this.empleado = new Empleado()
       this.fetchEmpleado()
     }
-  },
-  created() {
-    this.fetchEmpleado()
-  },
-  computed: mapGetters(["allEmpleados"])
-};
+  }
+}
 </script>
 <style>
 .basil {
@@ -309,5 +430,9 @@ tr:nth-of-type(odd) {
 }
 .icons {
   cursor: pointer;
+}
+.btn {
+  width: 100%;
+  margin: 0.6em;
 }
 </style>

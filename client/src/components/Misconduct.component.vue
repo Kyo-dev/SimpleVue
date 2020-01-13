@@ -71,7 +71,7 @@
               </v-flex>
               <v-spacer></v-spacer>
               <v-flex xs12 md6 v-if="!cambiarConducta">
-                <v-card>
+                <v-card class="container-calendario">
                   <v-date-picker
                     v-model="disciplina.fecha"
                     full-width
@@ -82,9 +82,8 @@
                   ></v-date-picker>
                 </v-card>
               </v-flex>
-
               <v-flex xs12 md6 v-if="cambiarConducta">
-                <v-card>
+                <v-card class="container-calendario">
                   <v-date-picker
                     v-model="disciplinaEditar.fecha"
                     full-width
@@ -200,22 +199,22 @@ export default {
       this.axios
         .get("/disciplina")
         .then(res => {
-          this.disciplinas = res.data
+          this.disciplinas = res.data;
         })
         .catch(e => {
-          console.log(e.response)
+          console.log(e.response);
         });
     },
     editarConducta(id) {
-      this.cambiarConducta = true
-      console.log(id)
+      this.cambiarConducta = true;
+      console.log(id);
       this.axios
         .get(`/disciplina/${id}`)
         .then(res => {
-          this.disciplinaEditar = res.data
+          this.disciplinaEditar = res.data;
         })
         .catch(e => {
-          console.log(e.response)
+          console.log(e.response);
         });
     },
     actualizarConducta(item) {
@@ -290,6 +289,10 @@ tr:nth-of-type(odd) {
   cursor: pointer;
 }
 .btn {
-  display: block;
+  width: 100%;
+  margin: 0.6em;
+}
+.container-calendario {
+  margin: 1.4em;
 }
 </style>

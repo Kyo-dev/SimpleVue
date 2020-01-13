@@ -17,12 +17,14 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `nuevoEmpleado`(
     in _tipo_telefono tinyint,
     in _farmacia tinyint,
     in _direccion varchar(300),
-    in _fecha_nacimiento datetime
+    in _fecha_nacimiento datetime,
+    in _permanente boolean
 )
 begin
 	IF NOT EXISTS (select cedula from empleados where cedula = _cedula) THEN
-		insert into empleados (cedula, nombre, p_apellido, s_apellido, correo, fecha_contrato, tipo_empleado, farmacia, direccion, fecha_nacimiento)
-        values(_cedula, _nombre, _p_apellido, _s_apellido, _correo, _fecha_contrato, _tipo_empleado, _farmacia, _direccion, _fecha_nacimiento);
+		select @auxCorreo:=  lower(_correo);
+		insert into empleados (cedula, nombre, p_apellido, s_apellido,  correo, fecha_contrato, tipo_empleado, farmacia, direccion, fecha_nacimiento, permanente)
+        values(_cedula, _nombre, _p_apellido, _s_apellido, @auxCorreo, _fecha_contrato, _tipo_empleado, _farmacia, _direccion, _fecha_nacimiento, _permanente);
         insert into salarios(cedula, salario_hora, jornada)
         values(_cedula, _salario_hora, _jornada);
         insert into telefonos(numero, tipo_telefono, cedula)
@@ -590,3 +592,98 @@ END$$
 
 DELIMITER ;
 
+
+
+USE `rrhh_db`;
+DROP procedure IF EXISTS `nuevoRetencion`;
+
+DELIMITER $$
+USE `rrhh_db`$$
+CREATE DEFINER=`root`@`localhost` PROCEDURE `nuevoRetencion`(
+	in _cedula varchar(9),
+    in _fecha datetime,
+    in _retencion decimal(10,2),
+    in _descripcion varchar(300)
+)
+BEGIN
+IF (SELECT cedula FROM empleados WHERE cedula = _cedula AND activo = true) then
+	select @auxSalario:= ((salario_hora * jornada)*26) as salario from salarios where cedula = _cedula;
+    select @contadorRetenciones:= sum(retencion) from retencion_salarial where cedula = _cedula;
+    IF (@contadorRetenciones > 0) THEN
+		IF (@auxSalario > _retencion) THEN
+			IF(@auxSalario > (@contadorRetenciones + _retencion)) THEN
+				INSERT INTO retencion_salarial(cedula, retencion, fecha, descripcion)
+				VALUES(_cedula, _retencion, _fecha, _descripcion);
+			ELSE 	
+				SELECT 'El salario no es suficiente para pagar las retenciones del trabajador.' as mensaje;
+            END IF;
+		ELSE
+			SELECT 'La retención no puede exceder el salario del trabajador' as mensaje;
+        END IF;
+    END IF;
+		IF (@auxSalario > _retencion) THEN
+			IF(@auxSalario > (@contadorRetenciones + _retencion)) THEN
+				INSERT INTO retencion_salarial(cedula, retencion, fecha, descripcion)
+				VALUES(_cedula, _retencion, _fecha, _descripcion);
+			ELSE 	
+				SELECT 'El salario no es suficiente para pagar las retenciones del trabajador.' as mensaje;
+            END IF;
+		ELSE
+			SELECT 'La retención no puede exceder el salario del trabajador' as mensaje;
+        END IF;
+		ELSE
+        IF (@auxSalario > _retencion) THEN
+			INSERT INTO retencion_salarial(cedula, retencion, fecha, descripcion)
+			VALUES(_cedula, _retencion, _fecha, _descripcion);
+		ELSE
+			SELECT 'La retención no puede exceder el salario del trabajador' as mensaje;
+        END IF;
+    END IF;
+END$$
+
+DELIMITER ;
+
+
+
+USE `rrhh_db`;
+DROP procedure IF EXISTS `actualizarRetencion`;
+
+DELIMITER $$
+USE `rrhh_db`$$
+CREATE PROCEDURE `actualizarRetencion` (
+	in _id integer,
+	in _cedula varchar(9),
+    in _fecha datetime,
+    in _retencion decimal(10,2),
+	in _descripcion varchar(300)
+)
+BEGIN
+IF (SELECT cedula FROM empleados WHERE cedula = _cedula AND activo = true) then
+	select @auxSalario:= ((salario_hora * jornada)*26) as salario from salarios where cedula = _cedula;
+    SET @auxRetencion = 0;
+    select @contadorRetenciones:= sum(retencion) as retencion from retencion_salarial where cedula = _cedula;
+    IF (@contadorRetenciones > 0) THEN
+		set @auxRetencion = @auxRetencion + @contadorRetencines;
+    END IF;
+    IF (@auxSalario > _retencion) THEN
+		IF(@auxSalario > @contadorRetenciones) THEN
+			IF(select activo from retencion_salarial where id = _id and activo = true) THEN
+				update retencion_salarial
+				set cedula = _cedula,
+				retencion = _retencion,
+				descripcion =_descripcion,
+				fecha = _fecha
+				where id = _id;
+			END IF;
+        ELSE
+			SELECT 'El salario no es suficiente para pagar las retenciones del trabajador.' as mensaje;
+        END IF;
+        ELSE
+        SELECT 'La retención no puede exceder el salario del trabajador' as mensaje;
+    END IF;
+    ELSE
+	SELECT 'El usuario no existe' as mensaje;
+END IF;
+END$$
+
+DELIMITER ;

@@ -44,7 +44,9 @@
                       class="btn-1 btn"
                     >Nuevo Permiso</v-btn>
                   </template>
-                  <v-btn class="btn" color="warning" :disabled="!valid">Borrar formulario</v-btn>
+                  <template v-if="edit === false ">
+                    <v-btn class="btn-1, btn" color="warning" @click="cancelar">Cancelar</v-btn>
+                  </template>
                 </v-form>
                 <!-- FORMULARIO PARA EDITAR -->
                 <v-form ref="form" v-model="valid" v-if="cambiarPermiso">
@@ -77,17 +79,12 @@
                       class="btn-1 btn"
                     >Editar Permiso</v-btn>
                   </template>
-                  <v-btn
-                    class="btn"
-                    color="warning"
-                    :disabled="!valid"
-                    @click="reset"
-                  >Cancelar</v-btn>
+                  <v-btn class="btn-1, btn" color="warning" @click="cancelar">Cancelar</v-btn>
                 </v-form>
               </v-flex>
               <v-spacer></v-spacer>
               <v-flex xs12 md6 v-if="!cambiarPermiso">
-                <v-card>
+                <v-card class="container-calendario">
                   <v-date-picker
                     v-model="permiso.fecha"
                     full-width
@@ -99,7 +96,7 @@
                 </v-card>
               </v-flex>
               <v-flex xs12 md6 v-if="cambiarPermiso">
-                <v-card>
+                <v-card class="container-calendario">
                   <v-date-picker
                     v-model="permisoEditar.fecha"
                     full-width
@@ -165,7 +162,6 @@
   </v-card>
 </template>
 <script>
-
 import Permiso from "../model/permits.model";
 export default {
   data() {
@@ -204,18 +200,15 @@ export default {
     enviarPermiso() {
       const data = {
         _cedula: this.permiso.cedula,
-        _fecha: this.permiso.fecha,
         _descripcion: this.permiso.descripcion,
-        _costoSalarial: this.permiso.costoSalarial
+        _costoSalarial: this.permiso.costoSalarial,
+        _fecha: this.permiso.fecha
       };
       this.axios
         .post("/permisos", data)
         .then(res => {
           this.permisos.push(res.data);
-          this.permiso.cedula = "";
-          this.permiso.fecha = "";
-          this.permiso.descripcion = "";
-          this.permiso.costoSalarial = "";
+          this.cancelar();
           this.obtenerPermisos();
         })
         .catch(e => {
@@ -233,43 +226,44 @@ export default {
           console.log(e.response);
         });
     },
-    editarPermiso(id){
-      this.cambiarPermiso = true
-      console.log(id)
-      this.axios.get(`/permisos/${id}`)
+    editarPermiso(id) {
+      this.cambiarPermiso = true;
+      console.log(id);
+      this.axios
+        .get(`/permisos/${id}`)
         .then(res => {
-          console.log(res.data)
-          this.permisoEditar = res.data
+          console.log(res.data);
+          this.permisoEditar = res.data;
         })
         .catch(e => {
-          console.log(e.response)
-        })
+          console.log(e.response);
+        });
     },
-    actualizarPermiso(item){
-      const data  = {
+    actualizarPermiso(item) {
+      const data = {
         _fecha: this.permisoEditar.fecha,
         _descripcion: this.permisoEditar.descripcion,
         _costoSalarial: this.permisoEditar.costoSalarial
-      }
-      this.axios.put(`/permisos/${item.id}`, data)
-        .then(res =>{
-          this.obtenerPermisos()
-          this.cambiarPermiso = false
-        })
+      };
+      this.axios.put(`/permisos/${item.id}`, data).then(res => {
+        this.obtenerPermisos();
+        this.cancelar();
+      });
     },
-    eliminarPermiso(id){
-      console.log(id)
-      this.axios.delete(`/permisos/${id}`)
-        .then(res =>{
-          this.obtenerPermisos()
+    eliminarPermiso(id) {
+      console.log(id);
+      this.axios
+        .delete(`/permisos/${id}`)
+        .then(res => {
+          this.obtenerPermisos();
         })
         .catch(e => {
-          console.log(e.permisos)
-        })
+          console.log(e.permisos);
+        });
     },
-    reset() {
+    cancelar() {
       this.$refs.form.reset();
-      this.permiso = new Permiso();
+      this.cambiarPermiso = false;
     }
   }
 };
@@ -311,6 +305,10 @@ tr:nth-of-type(odd) {
   cursor: pointer;
 }
 .btn {
-  display: block;
+  width: 100%;
+  margin: 0.6em;
+}
+.container-calendario {
+  margin: 1.4em;
 }
 </style>

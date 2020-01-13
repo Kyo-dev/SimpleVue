@@ -370,7 +370,7 @@ tr:nth-of-type(odd) {
   color: black !important;
 }
 .btn {
-  display: inline;
-  margin: 0.4em;
+  width: 100%;
+  margin: 0.6em;
 }
 </style>

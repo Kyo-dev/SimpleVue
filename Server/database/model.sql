@@ -16,7 +16,6 @@ create table farmacia (
     ins decimal(6.2) not null,
     activo boolean default true not null,
     constraint pk_farmacia primary key(id)
-    
 );
 create table tipo_empleados(
 	id tinyint auto_increment not null,
@@ -35,12 +34,20 @@ create table empleados(
     fecha_nacimiento datetime not null,
     direccion varchar(300) not null,
     farmacia tinyint not null,
+    permanente boolean default true not null,
     activo boolean default true not null,
     constraint fk_empleados_tipo_empleado foreign key (tipo_empleado) references tipo_empleados(id),
     constraint fk_farmacia foreign key(farmacia) references farmacia(id),
     constraint pk_empleados primary key (cedula)
 );
-
+create table empleados_temporales(
+	id tinyint auto_increment,
+    cedula varchar(50) not null,
+    fecha datetime default now()  not null,
+    descripcion varchar(300) not null,
+    constraint fk_empleados_temporales_empleados foreign key(cedula) references empleados(cedula),
+    constraint pk_empleados_temporales primary key(id)
+);
 create table despidos(
     id int auto_increment not null,
     cedula varchar(9) not null,
@@ -123,11 +130,8 @@ create table salarios(
     cedula varchar(50) not null,
 	salario_hora decimal(10,2) not null,
     jornada decimal(4.2) not null,
-    retencion decimal(10,2) default 0 not null,
     activo boolean default true not null,
 	constraint fk_salario_empleados foreign key(cedula) references empleados(cedula),
-    constraint ch_salario_hora check(salario_hora >= 0),
-    constraint ch_jornada check(jornada >= 0),
     constraint pk_salario primary key(id)
 );
 create table aumento_salarial(
@@ -139,6 +143,16 @@ create table aumento_salarial(
     constraint fk_aumentos_empleados foreign key(cedula) references empleados(cedula),
     constraint ch_aumento_salarial check(cantidad >= 0),
     constraint pk_aumento_salarial primary key(id)
+);
+create table retencion_salarial(
+	id int auto_increment,
+    cedula varchar(50) not null,
+	retencion decimal(10,2) default 0 not null,
+    fecha datetime default now() not null,
+    descripcion varchar(300) not null,
+    activo boolean default true not null,
+    constraint fk_retencion_salarial_empleados foreign key(cedula) references empleados(cedula),
+    constraint pk_retencion_salarial primary key(id)
 );
 create table bonos(
 	id int auto_increment,
@@ -158,8 +172,8 @@ create table dias_disponibles(
     activo boolean default true not null,
     constraint fk_dias_vacacionales foreign key(cedula) references empleados(cedula),
     constraint pk_dias_disponibles primary key(id)
-    
 );
+
 create table fechas_vacaciones(
 	id int auto_increment,
     cedula varchar(50) not null ,

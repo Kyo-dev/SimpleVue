@@ -27,16 +27,21 @@
                       class="btn-1 btn"
                     >nuevas vacacioens</v-btn>
                   </template>
-                  <v-btn class="btn" color="warning" :disabled="!valid" @click="reset">Borrar </v-btn>
+                  <v-btn class="btn" color="warning" :disabled="!valid" @click="reset">Borrar</v-btn>
                   <template v-if="edit === true"></template>
-                  <v-btn class="btn" color="success" :disabled="!valid" @click="actualizarVacaciones">Actualizar</v-btn>
+                  <v-btn
+                    class="btn"
+                    color="success"
+                    :disabled="!valid"
+                    @click="actualizarVacaciones"
+                  >Actualizar</v-btn>
                 </v-form>
               </v-col>
             </v-row>
             <v-row row wrap align-center>
               <v-flex xs12 md5>
                 <h1 color="primary">Fecha salida</h1>
-                <v-card>
+                <v-card class="container-calendario">
                   <v-date-picker
                     v-model="vacaciones.fecha_salida"
                     full-width
@@ -50,7 +55,7 @@
               <v-spacer></v-spacer>
               <v-flex xs12 md5>
                 <h1 color="primary">Fecha entrada</h1>
-                <v-card>
+                <v-card class="container-calendario">
                   <v-date-picker
                     v-model="vacaciones.fecha_entrada"
                     full-width
@@ -81,8 +86,8 @@
                       <th class="th">Nombre</th>
                       <th class="th">Fecha salida</th>
                       <th class="th">Fecha entrada</th>
-                      <th class="th">BORRAR</th>
                       <th class="th">Actualizar</th>
+                      <th class="th">Eliminar</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -92,15 +97,6 @@
                       <td class="td">{{item.nombre}}</td>
                       <td class="td">{{item.fecha_salida}}</td>
                       <td class="td">{{item.fecha_entrada}}</td>
-
-                      <td class="td icons">
-                        DELETE
-                        <v-icon small color="error" @click="borrarVacacioenes(item.id)" class="icons">delete</v-icon>
-                      </td>
-                      <td class="td icons" @click="vacacionesID(item.id)" >
-                        actualizar
-                        <v-icon small color="error" class="icons">delete</v-icon>
-                      </td>
                     </tr>
                   </tbody>
                 </table>
@@ -131,37 +127,43 @@ export default {
     };
   },
   methods: {
-    ...mapGetters(["", "oneVacacion"]),
-    ...mapActions(["fetchVacaciones", "insertarVacaciones", "obtenerVacacionesID", "updVacaciones", "deletedVacaciones"]),
-    nuevasVacaciones(vacaciones) {
-      this.insertarVacaciones(this.vacaciones)
-      console.log(this.vacaciones)
-      this.reset()
-      this.fetchVacaciones()
-    },
-    vacacionesID(id){
-      if (this.edit === false) {
-        this.obtenerVacacionesID(id)
-        this.vacaciones = this.oneVacacion()
-        console.log(this.vacaciones)
-      }
-    },
-    actualizarVacaciones(vacaciones) {
-      this.updVacaciones(this.vacaciones)
-      console.log(this.vacaciones)
-      this.fetchVacaciones()
-      this.reset()
-      this.edit = false
-    },
-    borrarVacacioenes(id) {
-      this.deletedVacaciones(id)
-      this.vacaciones = new Vacaciones()
-      this.fetchVacaciones()
-    },
-    reset() {
-      this.$refs.form.reset()
-      this.vacaciones = new Vacaciones()
-    }
+  //   ...mapGetters(["", "oneVacacion"]),
+  //   ...mapActions([
+  //     "fetchVacaciones",
+  //     "insertarVacaciones",
+  //     "obtenerVacacionesID",
+  //     "updVacaciones",
+  //     "deletedVacaciones"
+  //   ]),
+  //   nuevasVacaciones(vacaciones) {
+  //     this.insertarVacaciones(this.vacaciones);
+  //     console.log(this.vacaciones);
+  //     this.reset();
+  //     this.fetchVacaciones();
+  //   },
+  //   vacacionesID(id) {
+  //     if (this.edit === false) {
+  //       this.obtenerVacacionesID(id);
+  //       this.vacaciones = this.oneVacacion();
+  //       console.log(this.vacaciones);
+  //     }
+  //   },
+  //   actualizarVacaciones(vacaciones) {
+  //     this.updVacaciones(this.vacaciones);
+  //     console.log(this.vacaciones);
+  //     this.fetchVacaciones();
+  //     this.reset();
+  //     this.edit = false;
+  //   },
+  //   borrarVacacioenes(id) {
+  //     this.deletedVacaciones(id);
+  //     this.vacaciones = new Vacaciones();
+  //     this.fetchVacaciones();
+  //   },
+  //   reset() {
+  //     this.$refs.form.reset();
+  //     this.vacaciones = new Vacaciones();
+  //   }
   },
   created() {
     this.fetchVacaciones();
@@ -205,8 +207,11 @@ tr:nth-of-type(odd) {
 .icons {
   cursor: pointer;
 }
-.btn{
-  display:  inline;
+.btn {
+  display: inline;
   margin: 0 0.5em;
+}
+.container-calendario {
+  margin: 1.4em;
 }
 </style>

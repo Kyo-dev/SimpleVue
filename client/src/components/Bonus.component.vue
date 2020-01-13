@@ -44,7 +44,7 @@
                     >Nuevo Bono</v-btn>
                   </template>
                   <template v-if="edit === false ">
-                    <v-btn  class="btn-1, btn" color="warning" @click="cancelar">Cancelar</v-btn>
+                    <v-btn class="btn-1, btn" color="warning" @click="cancelar">Cancelar</v-btn>
                   </template>
                 </v-form>
 
@@ -77,13 +77,14 @@
                       @click="actualizarBono(bonoEditar)"
                     >Editar Bono</v-btn>
                   </template>
-                    <v-btn  class="btn-1, btn" color="warning" @click="cancelar">Cancelar</v-btn>
+                  <v-btn class="btn-1, btn" color="warning" @click="cancelar">Cancelar</v-btn>
                 </v-form>
               </v-flex>
               <v-spacer></v-spacer>
               <v-flex xs12 md6 v-if="cambiarBono">
-                <v-card>
+                <v-card class="container-calendario">
                   <v-date-picker
+                    class="cl-calendario"
                     v-model="bonoEditar.fecha"
                     full-width
                     locale="es"
@@ -94,7 +95,7 @@
                 </v-card>
               </v-flex>
               <v-flex xs12 md6 v-if="!cambiarBono">
-                <v-card>
+                <v-card class="container-calendario">
                   <v-date-picker
                     v-model="bono.fecha"
                     full-width
@@ -121,23 +122,23 @@
                   <thead>
                     <tr>
                       <th class="th">Cedula</th>
+                      <th class="th">Apellido</th>
+                      <th class="th">Nombre</th>
                       <th class="th">Motivo</th>
                       <th class="th">Fecha</th>
                       <th class="th">Cantidad</th>
-                      <th class="th">Apellido</th>
-                      <th class="th">Nombre</th>
-                      <th class="th">BORRAR</th>
+                      <th class="th">Eliminiar</th>
                       <th class="th">Actualizar</th>
                     </tr>
                   </thead>
                   <tbody>
                     <tr v-for="bono of bonos" :key="bono.id">
                       <td class="td">{{bono.cedula}}</td>
+                      <td class="td">{{bono.p_apellido}}</td>
+                      <td class="td">{{bono.nombre}}</td>
                       <td class="td">{{bono.motivo}}</td>
                       <td class="td">{{bono.fecha}}</td>
                       <td class="td">{{bono.cantidad}}</td>
-                      <td class="td">{{bono.p_apellido}}</td>
-                      <td class="td">{{bono.nombre}}</td>
                       <td>
                         <v-btn
                           color="danger"
@@ -206,7 +207,7 @@ export default {
         .post(`/bonos`, data)
         .then(res => {
           this.bonos.push(res.data);
-          this.cancelar()
+          this.cancelar();
           this.obtenerBonos();
         })
         .catch(e => {
@@ -246,7 +247,7 @@ export default {
         .put(`/bonos/${item.id}`, data)
         .then(res => {
           this.obtenerBonos();
-          this.cancelar()
+          this.cancelar();
         })
         .catch(e => {
           console.log(e.response);
@@ -264,8 +265,8 @@ export default {
         });
     },
     cancelar() {
-      this.$refs.form.reset()
-      this.cambiarBono = false
+      this.$refs.form.reset();
+      this.cambiarBono = false;
     }
   }
 };
@@ -307,6 +308,10 @@ tr:nth-of-type(odd) {
   cursor: pointer;
 }
 .btn {
-  display: block;
+  width: 100%;
+  margin: 0.6em;
+}
+.container-calendario {
+  margin: 1.4em;
 }
 </style>

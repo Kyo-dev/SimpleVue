@@ -39,9 +39,10 @@ export async function nuevoEmpleado(req, res) {
 
 export async function todosEmpleados(req, res) {
     await mysqlConnection.query(`SELECT a.cedula, a.nombre, a.p_apellido, a.s_apellido, a.correo, substr(a.fecha_contrato, 1, 10) as fecha_contrato, a.tipo_empleado, b.salario_hora, b.jornada, c.numero
-                                FROM empleados a inner join salarios b on a.cedula = b.cedula_empleado
-                                inner join telefonos c on a.cedula = c.cedula_empleado
-                                where a.activo = true and a.tipo_empleado > 1;`, (err, rows, fields) => {
+                                FROM empleados a inner join salarios b on a.cedula = b.cedula
+                                inner join telefonos c on a.cedula = c.cedula
+                                where a.activo = true`, (err, rows, fields) => {
+                                    //and a.tipo_empleado > 1;
         if (!err && JSON.stringify(rows).length > 0) {
             res.json(rows)
         } else {
@@ -56,8 +57,8 @@ export async function empleadoDNI(req, res) {
     SELECT a.cedula, a.nombre, a.p_apellido, a.s_apellido, a.correo, substr(a.fecha_contrato, 1, 10) as fecha_contrato,
            a.tipo_empleado, b.salario_hora, b.jornada, c.numero, c.numero, c.tipo_telefono
     FROM empleados a 
-    INNER JOIN salarios b on a.cedula = b.cedula_empleado
-    INNER JOIN telefonos c on a.cedula = c.cedula_empleado
+    INNER JOIN salarios b on a.cedula = b.cedula
+    INNER JOIN telefonos c on a.cedula = c.cedula
     WHERE a.activo = true AND cedula = ?;`, [_cedula], (err, rows, fields) => {
         if (!err && rows.length > 0) {
             res.json(rows[0])

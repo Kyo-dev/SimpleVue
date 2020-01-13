@@ -12,6 +12,7 @@ import taskRoute from './routes/task'
 import holidayRoute from './routes/holiday'
 import overtime from './routes/overtime'
 import payroll from './routes/payroll'
+import wageWithholding from './routes/wageWithholding'
 
 app.use((req, res, next)=>{
     res.header("Access-Control-Allow-Origin", "*")
@@ -41,6 +42,7 @@ app.use(('/api/usuarios'), taskRoute)
 app.use(('/api/usuarios'), holidayRoute)
 app.use(('/api/usuarios'), overtime)
 app.use(('/api/usuarios'), payroll)
+app.use(('/api/usuarios'), wageWithholding)
 
 // app.use(('/api/registro-adm'), registerRoute)
 // app.use(('/api/login'), loginRoute)

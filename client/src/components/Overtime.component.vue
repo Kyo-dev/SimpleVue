@@ -44,10 +44,9 @@
                     >registrar horas extra</v-btn>
                   </template>
                   <template v-if="edit === false ">
-                    <v-btn  class="btn-1, btn" color="warning" @click="cancelar">Cancelar</v-btn>
+                    <v-btn class="btn-1, btn" color="warning" @click="cancelar">Cancelar</v-btn>
                   </template>
                 </v-form>
-
                 <v-form ref="form" v-model="valid" v-if="cambiarHorasExtra">
                   <h3>Editar</h3>
                   <v-text-field
@@ -78,12 +77,12 @@
                       class="btn-1, btn"
                     >Actualizar horas extra</v-btn>
                   </template>
-                  <v-btn  class="btn-1, btn" color="warning" @click="cancelar">Cancelar</v-btn>
+                  <v-btn class="btn-1, btn" color="warning" @click="cancelar">Cancelar</v-btn>
                 </v-form>
               </v-flex>
               <v-spacer></v-spacer>
               <v-flex xs12 md6 v-if="!cambiarHorasExtra">
-                <v-card>
+                <v-card class="container-calendario">
                   <v-date-picker
                     v-model="obj_horasExtra.fecha"
                     full-width
@@ -95,7 +94,7 @@
                 </v-card>
               </v-flex>
               <v-flex xs12 md6 v-if="cambiarHorasExtra">
-                <v-card>
+                <v-card class="container-calendario">
                   <v-date-picker
                     v-model="horasExtraEditar.fecha"
                     full-width
@@ -215,11 +214,11 @@ export default {
         .post(`/horas-extra`, data)
         .then(res => {
           this.obj_horasExtras.push(res.data);
-          this.cancelar()
-          this.obtenerHorasExtra()
+          this.cancelar();
+          this.obtenerHorasExtra();
         })
         .catch(e => {
-          console.log(e.response)
+          console.log(e.response);
         });
     },
     obtenerHorasExtra() {
@@ -253,8 +252,8 @@ export default {
       this.axios
         .put(`/horas-extra/${item.id}`, data)
         .then(res => {
-          this.obtenerHorasExtra()
-          this.cancelar()
+          this.obtenerHorasExtra();
+          this.cancelar();
         })
         .catch(e => {
           console.log(e.response);
@@ -271,8 +270,8 @@ export default {
         });
     },
     cancelar() {
-      this.$refs.form.reset()
-      this.cambiarHorasExtra = false
+      this.$refs.form.reset();
+      this.cambiarHorasExtra = false;
     }
   }
 };
@@ -316,5 +315,8 @@ tr:nth-of-type(odd) {
 .btn {
   width: 100%;
   margin: 0.6em;
+}
+.container-calendario {
+  margin: 1.4em;
 }
 </style>

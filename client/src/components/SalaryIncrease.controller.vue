@@ -14,7 +14,6 @@
           <v-card flat>
             <v-layout row wrap align-center>
               <v-flex xs12 md4>
-
                 <v-form ref="form" v-model="valid" v-if="!cambiarSalario">
                   <v-text-field
                     v-model="salario.cedula"
@@ -38,8 +37,8 @@
                     >Nuevo aumento</v-btn>
                   </template>
                   <template v-if="edit === false ">
-                    <v-btn  class="btn-1, btn" color="warning" @click="cancelar">Cancelar</v-btn>
-                  </template>                  
+                    <v-btn class="btn-1, btn" color="warning" @click="cancelar">Cancelar</v-btn>
+                  </template>
                 </v-form>
 
                 <v-form ref="form" v-model="valid" v-if="cambiarSalario">
@@ -65,15 +64,13 @@
                       class="btn-1 btn"
                     >Nuevo aumento</v-btn>
                   </template>
-                  <v-btn  class="btn-1, btn" color="warning" @click="cancelar">Cancelar</v-btn>
+                  <v-btn class="btn-1, btn" color="warning" @click="cancelar">Cancelar</v-btn>
                   <template v-if="edit === true"></template>
-                  
                 </v-form>
-
               </v-flex>
               <v-spacer></v-spacer>
               <v-flex xs12 md6 v-if="!cambiarSalario">
-                <v-card>
+                <v-card class="container-calendario">
                   <v-date-picker
                     v-model="salario.fecha"
                     full-width
@@ -84,9 +81,8 @@
                   ></v-date-picker>
                 </v-card>
               </v-flex>
-
               <v-flex xs12 md6 v-if="cambiarSalario">
-                <v-card>
+                <v-card class="container-calendario">
                   <v-date-picker
                     v-model="salarioEditar.fecha"
                     full-width
@@ -104,7 +100,7 @@
       <v-tab-item>
         <v-card flat>
           <v-card-text>
-            <h1>Preguntar si se puede hacer rebajas en el salario</h1>
+            <h1>Faltan las rutas en Node.js</h1>
           </v-card-text>
         </v-card>
       </v-tab-item>
@@ -122,7 +118,10 @@
                       <th class="th">Cedula</th>
                       <th class="th">Apellido</th>
                       <th class="th">Nombre</th>
-                      <th class="th">Aumento otorgado <br> por hora laboral</th>
+                      <th class="th">
+                        Aumento otorgado
+                        <br />por hora laboral
+                      </th>
                       <th class="th">Fecha</th>
                       <th class="th">Salario por dia</th>
                       <th class="th">Actualizar</th>
@@ -169,7 +168,7 @@ export default {
   data() {
     return {
       tab: [],
-      items: ["Aumento salarial", "Rebaja salarial", "Información"],
+      items: ["Aumento salarial", "Retención salarial", "Información"],
       salario: new Salario(),
       salarios: [],
       min: new Date().toISOString().substr(0, 10),
@@ -191,64 +190,64 @@ export default {
     };
   },
   created() {
-     this.obtenerSalarios()
+    this.obtenerSalarios();
   },
   methods: {
-    enviarAumento(){
+    enviarAumento() {
       const data = {
         _cedula: this.salario.cedula,
         _cantidad: this.salario.cantidad,
         _fecha: this.salario.fecha
-      }
+      };
       this.axios
-        .post('/salarios', data)
-        .then(res =>{
-          this.salarios.push(res.data)
-          this.cancelar()
-          this.obtenerSalarios()
+        .post("/salarios", data)
+        .then(res => {
+          this.salarios.push(res.data);
+          this.cancelar();
+          this.obtenerSalarios();
         })
         .catch(e => {
-          console.log(e.response)
-        })
+          console.log(e.response);
+        });
     },
-    obtenerSalarios(){
+    obtenerSalarios() {
       this.axios
-        .get('/salarios')
+        .get("/salarios")
         .then(res => {
-          this.salarios = res.data
+          this.salarios = res.data;
         })
-        .catch( e =>{
-          console.log(e.response)
-        })
+        .catch(e => {
+          console.log(e.response);
+        });
     },
-    editarSalario(id){
+    editarSalario(id) {
       this.cambiarSalario = true;
       this.axios
         .get(`/salarios/${id}`)
         .then(res => {
-          this.salarioEditar = res.data
-        })
-        .catch(e =>{
-          console.log(e.response)
-        })
-    },
-    eliminarAumento(id, cedula){
-      console.log(id)
-      const data = {_cedula: cedula}
-      console.log(cedula)
-      console.log(id)
-      this.axios
-        .put(`/salarios/${id}`, data)
-        .then(res =>{
-          this.obtenerSalarios()
+          this.salarioEditar = res.data;
         })
         .catch(e => {
-          console.log(e.response)
+          console.log(e.response);
+        });
+    },
+    eliminarAumento(id, cedula) {
+      console.log(id);
+      const data = { _cedula: cedula };
+      console.log(cedula);
+      console.log(id);
+      this.axios
+        .put(`/salarios/${id}`, data)
+        .then(res => {
+          this.obtenerSalarios();
         })
+        .catch(e => {
+          console.log(e.response);
+        });
     },
     cancelar() {
-      this.$refs.form.reset()
-      this.cambiarSalario = false
+      this.$refs.form.reset();
+      this.cambiarSalario = false;
     }
   }
 };
@@ -289,7 +288,11 @@ tr:nth-of-type(odd) {
 .icons {
   cursor: pointer;
 }
-.btn{
-  display: block;
+.btn {
+  width: 100%;
+  margin: 0.6em;
+}
+.container-calendario {
+  margin: 1.4em;
 }
 </style>
